@@ -14,32 +14,30 @@ const Toaster = ({ ...props }: ToasterProps) => {
       className="toaster group"
       icons={{
         success: (
-          <CircleCheckIcon className="size-4" />
+          <CircleCheckIcon className="size-4 shrink-0 text-[var(--success)]" />
         ),
         info: (
-          <InfoIcon className="size-4" />
+          <InfoIcon className="size-4 shrink-0 text-[var(--primary)]" />
         ),
         warning: (
-          <TriangleAlertIcon className="size-4" />
+          <TriangleAlertIcon className="size-4 shrink-0 text-[var(--warning)]" />
         ),
         error: (
-          <OctagonXIcon className="size-4" />
+          <OctagonXIcon className="size-4 shrink-0 text-[var(--destructive)]" />
         ),
         loading: (
-          <Loader2Icon className="size-4 animate-spin" />
+          <Loader2Icon className="size-4 shrink-0 animate-spin text-muted-foreground" />
         ),
       }}
-      style={
-        {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)",
-        } as React.CSSProperties
-      }
       toastOptions={{
         classNames: {
-          toast: "cn-toast",
+          toast:
+            "group toast group-[.toaster]:bg-card group-[.toaster]:text-card-foreground group-[.toaster]:border-border group-[.toaster]:shadow-sm rounded-lg text-xs font-medium py-2 px-3 min-h-0 flex items-center gap-2 border",
+          description: "group-[.toast]:text-muted-foreground text-[11px]",
+          actionButton:
+            "group-[.toast]:bg-primary group-[.toast]:text-primary-foreground text-xs px-2 py-0.5 rounded",
+          cancelButton:
+            "group-[.toast]:bg-muted group-[.toast]:text-muted-foreground text-xs px-2 py-0.5 rounded",
         },
       }}
       {...props}
