@@ -6,6 +6,8 @@ export type UserProfile = {
   fullName: string;
   bio: string | null;
   avatarUrl: string | null;
+  gender: string | null;
+  occupation: string | null;
   createdAt: string;
   updatedAt: string;
 };
