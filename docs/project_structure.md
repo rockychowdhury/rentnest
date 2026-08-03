@@ -10,7 +10,7 @@ This document details the exact directory layout and architecture of the **RentN
 - **Route Groups**: Organized via `(public)`, `(auth)`, and `(dashboard)` route groups. Route groups isolate layouts without adding URL path prefixes.
 - **Role-Based Dashboards**: Explicit, isolated dashboard trees for each user role (`admin-dashboard/`, `landlord-dashboard/`, `tenant-dashboard/`), ensuring zero route collisions and clean separation of concerns.
 - **Server Actions & Private Components**: Co-located inside `app/(dashboard)/_actions/` and `app/(dashboard)/_components/`.
-- **Middleware Security**: Guarded by `middleware.ts` re-exporting `proxy.ts`, which verifies JWT access/refresh tokens in HTTP-only cookies and enforces strict role-based access control.
+- **Middleware Security**: Guarded by `proxy.ts`, which verifies JWT access/refresh tokens in HTTP-only cookies and enforces strict role-based access control.
 
 ---
 
@@ -221,8 +221,7 @@ rentnest/
 ├── public/                                       # Static Assets
 │   └── assets/                                   # Images & icons
 │
-├── middleware.ts                                 # Next.js Route Guard Middleware (re-exports proxy.ts)
-├── proxy.ts                                      # JWT auth guard, token refresh, and RBAC redirect rules
+├── proxy.ts                                      # Next.js Route Guard Middleware (handles JWT auth & RBAC redirect rules)
 ├── next.config.ts                                # Next.js compiler & remote image domain configuration
 ├── postcss.config.mjs                            # PostCSS configuration
 ├── tsconfig.json                                 # TypeScript compiler configuration
@@ -234,7 +233,7 @@ rentnest/
 ## Key Design Patterns & Guidelines
 
 1. **Route Group Isolation**: The `(public)`, `(auth)`, and `(dashboard)` directories serve as structural boundary wrappers to isolate layout trees (navigation bars, sidebars, headers) without polluting URL paths.
-2. **Explicit Role Dashboards**: Dashboards are cleanly separated into `/admin-dashboard`, `/landlord-dashboard`, and `/tenant-dashboard` to ensure strict RBAC access control via `middleware.ts`.
+2. **Explicit Role Dashboards**: Dashboards are cleanly separated into `/admin-dashboard`, `/landlord-dashboard`, and `/tenant-dashboard` to ensure strict RBAC access control via `proxy.ts`.
 3. **Server Actions (`_actions/`)**: Asynchronous Next.js Server Actions encapsulate mutation logic, revalidation triggers (`revalidatePath`), and authenticated API calls using `fetchApi` with Bearer headers.
 4. **Data Services (`service/`)**: Read-only server-side fetching services provide typed data directly to App Router server components.
 5. **Client UI Primitives (`components/ui/`)**: Built using Shadcn UI primitives with Radix UI accessibility standards and Tailwind CSS styling.
