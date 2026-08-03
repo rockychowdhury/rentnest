@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { LoginForm } from "@/components/forms/LoginForm";
+import { Logo } from "@/components/shared/logo";
 
 export default function LoginPage() {
   return (
@@ -31,11 +32,12 @@ export default function LoginPage() {
             alt="Modern property interior"
             fill
             priority
+            unoptimized
             className="h-full w-full object-cover opacity-90"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
           <div className="absolute bottom-10 left-10 right-10 text-white">
-            <h2 className="text-3xl font-heading font-bold mb-2">RentNest</h2>
+            <Logo isDark className="mb-2" />
             <p className="text-sm text-slate-300">
               The smart way to manage and discover rental properties.
             </p>
