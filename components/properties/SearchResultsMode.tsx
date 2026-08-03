@@ -5,13 +5,15 @@ import { PropertyCard } from "./PropertyCard";
 import { GetPropertiesResponse } from "@/service/getProperties";
 import { Button } from "@/components/ui/button";
 
+import { CustomPagination } from "@/components/shared/pagination";
+
 interface SearchResultsModeProps {
   results: GetPropertiesResponse;
   searchParams: Record<string, string | string[] | undefined>;
 }
 
 export function SearchResultsMode({ results, searchParams }: SearchResultsModeProps) {
-  const { data, total } = results;
+  const { data, total, page } = results;
 
   if (total === 0) {
     return (
@@ -54,6 +56,9 @@ export function SearchResultsMode({ results, searchParams }: SearchResultsModePr
           <PropertyCard key={property.id} property={property} layout="grid" />
         ))}
       </div>
+
+      {/* Pagination */}
+      <CustomPagination meta={{ page: page || 1, limit: 12, total }} />
     </div>
   );
 }

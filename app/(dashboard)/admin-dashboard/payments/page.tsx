@@ -8,11 +8,14 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { CustomPagination } from "@/components/shared/pagination";
 
 export default function AdminPaymentsPage() {
   const [payments, setPayments] = useState<any[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -67,8 +70,10 @@ export default function AdminPaymentsPage() {
             <div className="p-8 text-center text-muted-foreground">
               <p>No payments found matching the selected filter.</p>
             </div>
-          ) : (
-            <div className="overflow-x-auto w-full">
+          ) : (() => {
+            const paginatedPayments = payments.slice((page - 1) * limit, page * limit);
+            return (
+            <div className="overflow-x-auto w-full p-4 space-y-4">
               <Table className="min-w-[650px] sm:min-w-full">
                 <TableHeader>
                   <TableRow>
@@ -81,7 +86,7 @@ export default function AdminPaymentsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {payments.map((payment) => (
+                  {paginatedPayments.map((payment) => (
                     <TableRow key={payment.id}>
                       <TableCell className="font-mono text-xs">
                         {payment.transactionId || payment.id.substring(0, 13)}
@@ -110,8 +115,14 @@ export default function AdminPaymentsPage() {
                   ))}
                 </TableBody>
               </Table>
+
+              <CustomPagination
+                meta={{ page, limit, total: payments.length }}
+                onPageChange={(p) => setPage(p)}
+              />
             </div>
-          )}
+            );
+          })()}
         </CardContent>
       </Card>
     </div>

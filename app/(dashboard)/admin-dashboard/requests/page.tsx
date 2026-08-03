@@ -10,10 +10,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, XCircle } from "lucide-react";
 import { toast } from "sonner";
+import { CustomPagination } from "@/components/shared/pagination";
 
 export default function AdminRequestsPage() {
   const [requests, setRequests] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   const fetchRequests = async () => {
     setLoading(true);
@@ -60,8 +63,10 @@ export default function AdminRequestsPage() {
             <div className="p-8 text-center text-muted-foreground">
               <p>No requests found in the system.</p>
             </div>
-          ) : (
-            <div className="overflow-x-auto w-full">
+          ) : (() => {
+            const paginatedRequests = requests.slice((page - 1) * limit, page * limit);
+            return (
+            <div className="overflow-x-auto w-full p-4 space-y-4">
               <Table className="min-w-[600px] sm:min-w-full">
                 <TableHeader>
                   <TableRow>
@@ -74,7 +79,7 @@ export default function AdminRequestsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {requests.map((request) => (
+                  {paginatedRequests.map((request) => (
                     <TableRow key={request.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -135,8 +140,14 @@ export default function AdminRequestsPage() {
                   ))}
                 </TableBody>
               </Table>
+
+              <CustomPagination
+                meta={{ page, limit, total: requests.length }}
+                onPageChange={(p) => setPage(p)}
+              />
             </div>
-          )}
+            );
+          })()}
         </CardContent>
       </Card>
     </div>

@@ -10,6 +10,7 @@ import { Review } from "@/types";
 import { Textarea } from "@/components/ui/textarea";
 import { Star } from "lucide-react";
 import { toast } from "sonner";
+import { CustomPagination } from "@/components/shared/pagination";
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -17,6 +18,8 @@ export default function ReviewsPage() {
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [responseText, setResponseText] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [page, setPage] = useState(1);
+  const limit = 5;
 
   useEffect(() => {
     fetchReviews();
@@ -75,8 +78,11 @@ export default function ReviewsPage() {
               <p>No reviews found for your properties.</p>
             </CardContent>
           </Card>
-        ) : (
-          reviews.map((review) => (
+        ) : (() => {
+          const paginatedReviews = reviews.slice((page - 1) * limit, page * limit);
+          return (
+          <>
+          {paginatedReviews.map((review) => (
             <Card key={review.id} className="border-border shadow-sm overflow-hidden bg-card/50 backdrop-blur-sm">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
@@ -167,7 +173,14 @@ export default function ReviewsPage() {
               </CardContent>
             </Card>
           ))
-        )}
+          }
+          <CustomPagination
+            meta={{ page, limit, total: reviews.length }}
+            onPageChange={(p) => setPage(p)}
+          />
+          </>
+          );
+        })()}
       </div>
     </div>
   );

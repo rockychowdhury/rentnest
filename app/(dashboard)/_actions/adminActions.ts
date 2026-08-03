@@ -228,12 +228,33 @@ export async function adminGetUserById(userId: string) {
   });
 }
 
-export async function adminRestoreUser(userId: string) {
+export async function adminRestoreUser(identifier: { email?: string; userId?: string; id?: string } | string, emailParam?: string) {
   const headers = await getAuthHeaders();
+  
+  let payload: Record<string, any> = {};
+
+  if (typeof identifier === "object") {
+    payload = {
+      email: identifier.email,
+      userId: identifier.userId || identifier.id,
+      id: identifier.id || identifier.userId,
+    };
+  } else if (typeof identifier === "string") {
+    if (identifier.includes("@")) {
+      payload = { email: identifier };
+    } else {
+      payload = {
+        email: emailParam,
+        userId: identifier,
+        id: identifier,
+      };
+    }
+  }
+
   const result = await fetchApi("/users/restore", {
     method: "POST",
     headers,
-    body: { userId },
+    body: payload,
   });
   if (result.success) {
     revalidatePath("/admin-dashboard/users");

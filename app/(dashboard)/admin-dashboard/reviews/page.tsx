@@ -11,10 +11,13 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { MoreHorizontal, Trash2, Star } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { CustomPagination } from "@/components/shared/pagination";
 
 export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   const fetchAllReviews = async () => {
     setLoading(true);
@@ -75,8 +78,10 @@ export default function AdminReviewsPage() {
             <div className="p-8 text-center text-muted-foreground">Loading reviews...</div>
           ) : reviews.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">No property reviews found.</div>
-          ) : (
-            <div className="overflow-x-auto w-full">
+          ) : (() => {
+            const paginatedReviews = reviews.slice((page - 1) * limit, page * limit);
+            return (
+            <div className="overflow-x-auto w-full p-4 space-y-4">
               <Table className="min-w-[700px] sm:min-w-full">
                 <TableHeader>
                   <TableRow>
@@ -89,7 +94,7 @@ export default function AdminReviewsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {reviews.map((review) => (
+                  {paginatedReviews.map((review) => (
                     <TableRow key={review.id}>
                       <TableCell className="font-medium text-sm">
                         {review.propertyTitle || review.property?.title || "Property"}
@@ -129,8 +134,14 @@ export default function AdminReviewsPage() {
                   ))}
                 </TableBody>
               </Table>
+
+              <CustomPagination
+                meta={{ page, limit, total: reviews.length }}
+                onPageChange={(p) => setPage(p)}
+              />
             </div>
-          )}
+            );
+          })()}
         </CardContent>
       </Card>
     </div>

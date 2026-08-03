@@ -10,10 +10,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, CheckCircle2, AlertOctagon, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { CustomPagination } from "@/components/shared/pagination";
 
 export default function AdminLeasesPage() {
   const [leases, setLeases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   const fetchLeases = async () => {
     setLoading(true);
@@ -59,8 +62,10 @@ export default function AdminLeasesPage() {
             <div className="p-8 text-center text-muted-foreground">
               <p>No leases found in the system.</p>
             </div>
-          ) : (
-            <div className="overflow-x-auto w-full">
+          ) : (() => {
+            const paginatedLeases = leases.slice((page - 1) * limit, page * limit);
+            return (
+            <div className="overflow-x-auto w-full p-4 space-y-4">
               <Table className="min-w-[600px] sm:min-w-full">
                 <TableHeader>
                   <TableRow>
@@ -73,7 +78,7 @@ export default function AdminLeasesPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {leases.map((lease) => (
+                  {paginatedLeases.map((lease) => (
                     <TableRow key={lease.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -149,8 +154,14 @@ export default function AdminLeasesPage() {
                   ))}
                 </TableBody>
               </Table>
+
+              <CustomPagination
+                meta={{ page, limit, total: leases.length }}
+                onPageChange={(p) => setPage(p)}
+              />
             </div>
-          )}
+            );
+          })()}
         </CardContent>
       </Card>
     </div>

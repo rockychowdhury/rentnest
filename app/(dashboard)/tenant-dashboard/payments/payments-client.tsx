@@ -7,6 +7,7 @@ import { formatCurrency } from "@/lib/utils/formatUtils";
 import { format } from "date-fns";
 import { CheckoutButton } from "@/components/payments/CheckoutButton";
 import Link from "next/link";
+import { CustomPagination } from "@/components/shared/pagination";
 
 export function PaymentsClient({ paymentsData }: { paymentsData: { statementPayments: any[], pendingPayments: any[], pendingLeases: any[] } }) {
   const { statementPayments, pendingPayments, pendingLeases } = paymentsData;
@@ -31,6 +32,8 @@ export function PaymentsClient({ paymentsData }: { paymentsData: { statementPaym
   ];
 
   const [dueIndex, setDueIndex] = useState(0);
+  const [statementPage, setStatementPage] = useState(1);
+  const statementLimit = 5;
 
   const handleNextDue = () => {
     setDueIndex((prev) => (prev + 1) % dueItems.length);
@@ -56,8 +59,9 @@ export function PaymentsClient({ paymentsData }: { paymentsData: { statementPaym
           
           <div className="bg-card border border-border rounded-2xl overflow-hidden">
             {statementPayments && statementPayments.length > 0 ? (
+              <>
               <div className="divide-y divide-border/50">
-                {statementPayments.map((payment) => (
+                {statementPayments.slice((statementPage - 1) * statementLimit, statementPage * statementLimit).map((payment) => (
                   <div key={payment.id} className="p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:bg-muted/10 transition-colors">
                     <div>
                       <div className="flex items-center gap-2">
@@ -88,6 +92,13 @@ export function PaymentsClient({ paymentsData }: { paymentsData: { statementPaym
                   </div>
                 ))}
               </div>
+              <div className="px-4 pb-2">
+                <CustomPagination
+                  meta={{ page: statementPage, limit: statementLimit, total: statementPayments.length }}
+                  onPageChange={(p) => setStatementPage(p)}
+                />
+              </div>
+              </>
             ) : (
               <div className="p-8 flex flex-col items-center justify-center text-center space-y-3 min-h-[250px]">
                 <FileText className="size-8 text-muted-foreground/50" />

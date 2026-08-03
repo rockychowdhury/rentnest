@@ -12,9 +12,13 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
+import { CustomPagination } from "@/components/shared/pagination";
+
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const limit = 10;
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -43,8 +47,8 @@ export default function AdminUsersPage() {
     }
   };
 
-  const handleRestoreUser = async (id: string) => {
-    const res = await adminRestoreUser(id);
+  const handleRestoreUser = async (id: string, email?: string) => {
+    const res = await adminRestoreUser(id, email);
     if (res.success) {
       toast.success("User account restored successfully");
       fetchUsers();
@@ -53,6 +57,7 @@ export default function AdminUsersPage() {
     }
   };
 
+  const paginatedUsers = users.slice((page - 1) * limit, page * limit);
 
   return (
     <div className="space-y-6">
@@ -70,81 +75,86 @@ export default function AdminUsersPage() {
           ) : users.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">No users found.</div>
           ) : (
-            <div className="overflow-x-auto w-full">
+            <div className="overflow-x-auto w-full p-4 space-y-4">
               <Table className="min-w-[700px] sm:min-w-full">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>User</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Joined</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="w-[80px]">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user) => (
-                  <TableRow key={user.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar className="size-8">
-                          <AvatarImage src={user.profile?.avatarUrl || undefined} />
-                          <AvatarFallback>
-                            {user.profile?.fullName?.substring(0, 2).toUpperCase() || "U"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium text-sm">
-                          {user.profile?.fullName || "No Name"}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{user.role}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {format(new Date(user.createdAt), "MMM dd, yyyy")}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={user.status === "ACTIVE" ? "default" : "destructive"}>
-                        {user.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger className="inline-flex items-center justify-center rounded-md text-sm font-medium h-8 w-8 p-0 hover:bg-accent hover:text-accent-foreground outline-none">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          {user.status !== "ACTIVE" && (
-                            <>
-                              <DropdownMenuItem onClick={() => handleUpdateStatus(user.id, "ACTIVE")}>
-                                <ShieldCheck className="mr-2 h-4 w-4 text-green-500" />
-                                Activate User
-                              </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleRestoreUser(user.id)}>
-                                <RotateCcw className="mr-2 h-4 w-4 text-blue-500" />
-                                Restore Account
-                              </DropdownMenuItem>
-                            </>
-                          )}
-                          {user.status !== "BANNED" && user.role !== "ADMIN" && (
-                            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleUpdateStatus(user.id, "BANNED")}>
-                              <ShieldAlert className="mr-2 h-4 w-4" />
-                              Ban User
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>User</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Joined</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="w-[80px]">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {paginatedUsers.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="size-8">
+                            <AvatarImage src={user.profile?.avatarUrl || undefined} />
+                            <AvatarFallback>
+                              {user.profile?.fullName?.substring(0, 2).toUpperCase() || "U"}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium text-sm">
+                            {user.profile?.fullName || "No Name"}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{user.role}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(user.createdAt), "MMM dd, yyyy")}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={user.status === "ACTIVE" ? "default" : "destructive"}>
+                          {user.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger className="inline-flex items-center justify-center rounded-md text-sm font-medium h-8 w-8 p-0 hover:bg-accent hover:text-accent-foreground outline-none">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            {user.status !== "ACTIVE" && (
+                              <>
+                                <DropdownMenuItem onClick={() => handleUpdateStatus(user.id, "ACTIVE")}>
+                                  <ShieldCheck className="mr-2 h-4 w-4 text-green-500" />
+                                  Activate User
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleRestoreUser(user.id, user.email)}>
+                                  <RotateCcw className="mr-2 h-4 w-4 text-blue-500" />
+                                  Restore Account
+                                </DropdownMenuItem>
+                              </>
+                            )}
+                            {user.status !== "BANNED" && user.role !== "ADMIN" && (
+                              <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleUpdateStatus(user.id, "BANNED")}>
+                                <ShieldAlert className="mr-2 h-4 w-4" />
+                                Ban User
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+
+              <CustomPagination
+                meta={{ page, limit, total: users.length }}
+                onPageChange={(p) => setPage(p)}
+              />
+            </div>
           )}
         </CardContent>
       </Card>
