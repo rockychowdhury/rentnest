@@ -1,4 +1,4 @@
-import { Property, PropertyUnit, Pricing, User } from "./";
+import { Property, PropertyUnit, Pricing, User, RentType } from "./";
 
 export enum RentalRequestStatus {
   PENDING = "PENDING",
@@ -32,6 +32,8 @@ export interface RentalRequest {
   duration: number;
   message?: string;
   status: RentalRequestStatus;
+  agreedAmount?: number;
+  rentType?: RentType | string;
   landlordResponse?: string;
   createdAt: string;
   updatedAt: string;

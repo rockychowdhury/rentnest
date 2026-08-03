@@ -11,8 +11,16 @@ export enum UnitStatus {
 }
 
 export enum RentType {
-  MONTHLY = "MONTHLY",
+  HOURLY = "HOURLY",
   DAILY = "DAILY",
+  WEEKLY = "WEEKLY",
+  MONTHLY = "MONTHLY",
+  YEARLY = "YEARLY",
+}
+
+export enum Currency {
+  BDT = "BDT",
+  USD = "USD",
 }
 
 export interface Division {
@@ -24,12 +32,14 @@ export interface District {
   id: string;
   name: string;
   divisionId: string;
+  division?: Division;
 }
 
 export interface Upazila {
   id: string;
   name: string;
   districtId: string;
+  district?: District;
 }
 
 export interface Category {
@@ -53,9 +63,9 @@ export interface PropertyAmenity {
 
 export interface Address {
   id: string;
-  propertyId: string;
+  propertyId?: string;
   upazilaId: string;
-  buildingNumber?: string;
+  buildingNo?: string;
   streetAddress: string;
   addressLine2?: string;
   landmark?: string;
@@ -105,9 +115,17 @@ export interface Property {
   categoryId: string;
   landlordId: string;
   status: PropertyStatus;
+  isFeatured?: boolean;
+  createdAt?: string;
   deletedAt?: Date | string | null;
   totalUnits: number;
   
+  landlord?: {
+    id: string;
+    phone?: string;
+    email?: string;
+    profile?: { fullName?: string };
+  };
   category?: Category;
   address?: Address;
   amenities?: PropertyAmenity[];
