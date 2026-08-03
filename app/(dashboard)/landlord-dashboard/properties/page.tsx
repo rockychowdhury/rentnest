@@ -1,0 +1,173 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Plus, Home } from "lucide-react";
+import { Property, PropertyStatus } from "@/types";
+import { getMyProperties, updatePropertyStatus, archiveProperty, restoreProperty } from "@/app/(dashboard)/_actions/propertiesActions";
+import { PropertyManageCard } from "@/app/(dashboard)/_components/properties/PropertyManageCard";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export default function PropertiesListPage() {
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchProperties = async () => {
+    setIsLoading(true);
+    const res = await getMyProperties();
+    if (res.success) {
+      setProperties(res.data);
+    } else {
+      toast.error(res.error || "Failed to load properties");
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchProperties();
+  }, []);
+
+  const handleStatusChange = async (id: string, status: PropertyStatus) => {
+    const res = await updatePropertyStatus(id, status);
+    if (res.success) {
+      toast.success("Status updated");
+      fetchProperties();
+    } else {
+      toast.error(res.error || "Failed to update status");
+    }
+  };
+
+  const handleArchive = async (id: string) => {
+    const res = await archiveProperty(id);
+    if (res.success) {
+      toast.success("Property archived");
+      fetchProperties();
+    } else {
+      toast.error(res.error || "Failed to archive property");
+    }
+  };
+
+  const handleRestore = async (id: string) => {
+    const res = await restoreProperty(id);
+    if (res.success) {
+      toast.success("Property restored");
+      fetchProperties();
+    } else {
+      toast.error(res.error || "Failed to restore property");
+    }
+  };
+
+  const renderPropertyList = (filteredProps: Property[]) => {
+    if (filteredProps.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-20 border border-dashed rounded-lg bg-muted/10">
+          <Home className="h-12 w-12 text-muted-foreground mb-4" />
+          <h3 className="text-xl font-semibold mb-2">No properties found</h3>
+          <p className="text-muted-foreground text-center max-w-sm mb-6">
+            There are no properties matching this filter.
+          </p>
+        </div>
+      );
+    }
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {filteredProps.map((property) => (
+          <PropertyManageCard
+            key={property.id}
+            property={property}
+            onStatusChange={handleStatusChange}
+            onArchive={handleArchive}
+            onRestore={handleRestore}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <Skeleton className="h-10 w-48" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <Skeleton className="h-12 w-full" />
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-80 w-full" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Global empty state
+  if (properties.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-32 border rounded-lg bg-card shadow-sm text-center">
+        <div className="bg-primary/10 p-4 rounded-full mb-6">
+          <Home className="h-12 w-12 text-primary" />
+        </div>
+        <h2 className="text-2xl font-bold mb-2">You haven't listed a property yet</h2>
+        <p className="text-muted-foreground max-w-md mb-8">
+          Create your first property listing to start receiving inquiries and managing tenants.
+        </p>
+        <Link href="/landlord-dashboard/properties/new" className={`bg-primary hover:bg-primary-hover ${buttonVariants({ variant: "default" })}`}>
+          <Plus className="mr-2 h-4 w-4" />
+          Create your first listing
+        </Link>
+      </div>
+    );
+  }
+
+  const activeProperties = properties.filter((p) => !p.deletedAt);
+  const archivedProperties = properties.filter((p) => !!p.deletedAt);
+
+  const draftProperties = activeProperties.filter((p) => p.status === PropertyStatus.DRAFT);
+  const publishedProperties = activeProperties.filter((p) => p.status === PropertyStatus.PUBLISHED);
+  const inactiveProperties = activeProperties.filter((p) => p.status === PropertyStatus.INACTIVE);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Properties</h1>
+          <p className="text-muted-foreground">Manage your property portfolio and listings.</p>
+        </div>
+        <Link href="/landlord-dashboard/properties/new" className={`bg-primary hover:bg-primary-hover ${buttonVariants({ variant: "default" })}`}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Property
+        </Link>
+      </div>
+
+      <Tabs defaultValue="all" className="w-full">
+        <TabsList className="mb-4 flex overflow-x-auto max-w-full justify-start h-auto p-1 gap-1">
+          <TabsTrigger value="all" className="text-xs sm:text-sm shrink-0">All ({activeProperties.length})</TabsTrigger>
+          <TabsTrigger value="published" className="text-xs sm:text-sm shrink-0">Published ({publishedProperties.length})</TabsTrigger>
+          <TabsTrigger value="draft" className="text-xs sm:text-sm shrink-0">Drafts ({draftProperties.length})</TabsTrigger>
+          <TabsTrigger value="inactive" className="text-xs sm:text-sm shrink-0">Inactive ({inactiveProperties.length})</TabsTrigger>
+          <TabsTrigger value="archived" className="text-xs sm:text-sm shrink-0">Archived ({archivedProperties.length})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="mt-0">
+          {renderPropertyList(activeProperties)}
+        </TabsContent>
+        <TabsContent value="published" className="mt-0">
+          {renderPropertyList(publishedProperties)}
+        </TabsContent>
+        <TabsContent value="draft" className="mt-0">
+          {renderPropertyList(draftProperties)}
+        </TabsContent>
+        <TabsContent value="inactive" className="mt-0">
+          {renderPropertyList(inactiveProperties)}
+        </TabsContent>
+        <TabsContent value="archived" className="mt-0">
+          {renderPropertyList(archivedProperties)}
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
