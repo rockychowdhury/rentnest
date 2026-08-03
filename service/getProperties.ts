@@ -1,30 +1,57 @@
 import { API_BASE_URL } from "@/lib/api";
 
+export interface PropertyUnitSummary {
+  id: string;
+  unitLabel: string;
+  status: string;
+  bedrooms: number;
+  bathrooms: number;
+  sizeSqft?: number;
+  pricing?: {
+    id: string;
+    rentType: string;
+    rentAmount: number;
+    securityDeposit?: number;
+  }[];
+}
+
 export interface PropertyItem {
   id: string;
   title: string;
   description: string;
   minPrice: number;
   maxPrice: number;
+  primaryRentType: string;
   location: string;
   division: string;
   district: string;
   upazila: string;
-  categorySlug: string;
+  streetAddress?: string;
+  categoryId: string;
   categoryName: string;
+  categorySlug?: string;
   bedroomsMin: number;
   bedroomsMax: number;
   bathroomsMin: number;
   bathroomsMax: number;
-  rentType: "MONTHLY" | "DAILY";
   availableNow: boolean;
   availableUnits: number;
   totalUnits: number;
   isFeatured: boolean;
   rating?: number;
   reviewCount?: number;
+  amenitiesList: { id: string; name: string }[];
   amenities: string[];
+  coverImage: string;
+  allImages: string[];
   placeholderLabel: string;
+  landlord?: {
+    fullName?: string;
+    avatarUrl?: string;
+    email?: string;
+    phone?: string;
+  };
+  units: PropertyUnitSummary[];
   createdAt: string;
   popularityScore: number;
 }
@@ -59,6 +86,7 @@ export interface GetPropertiesResponse {
 export async function getProperties(params: GetPropertiesQueryParams = {}): Promise<GetPropertiesResponse> {
   const query = new URLSearchParams();
 
+  if (params.isFeatured !== undefined) query.append("isFeatured", params.isFeatured.toString());
   if (params.searchTerm) query.append("searchTerm", params.searchTerm);
   if (params.location) query.append("location", params.location);
   if (params.division) query.append("division", params.division);
@@ -71,7 +99,6 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
   if (params.bathrooms !== undefined) query.append("bathrooms", params.bathrooms.toString());
   if (params.rentType) query.append("rentType", params.rentType);
   if (params.availableNow !== undefined) query.append("availableNow", params.availableNow.toString());
-  if (params.isFeatured !== undefined) query.append("isFeatured", params.isFeatured.toString());
   if (params.sort) query.append("sort", params.sort);
   if (params.page !== undefined) query.append("page", params.page.toString());
   if (params.limit !== undefined) query.append("limit", params.limit.toString());
@@ -84,7 +111,7 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
 
   try {
     const res = await fetch(url, {
-      cache: "no-store",
+      next: { revalidate: 5 },
     });
 
     if (!res.ok) {
@@ -102,29 +129,31 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
     const meta = responseData.meta || { total: 0, page: 1, limit: 10 };
 
     const mappedData: PropertyItem[] = backendProperties.map((p: any) => {
-      // Safely extract location data based on the provided address schema
       const upazila = p.address?.upazila?.name || "";
       const district = p.address?.upazila?.district?.name || "";
       const division = p.address?.upazila?.district?.division?.name || "";
+      const streetAddress = p.address?.streetAddress || "";
       
-      const locationParts = [p.address?.streetAddress, upazila, district].filter(Boolean);
+      const locationParts = [streetAddress, upazila, district].filter(Boolean);
       const locationStr = locationParts.join(", ") || "Location not specified";
 
-      // These relations might or might not be populated in the list endpoint.
-      // If they are missing, we fall back to sensible defaults.
       const units = p.units || [];
       const images = p.images || [];
       const amenities = p.amenities || [];
 
-      // Extract pricing
+      // Extract pricing & rent types
       let minPrice = 0;
       let maxPrice = 0;
+      let primaryRentType = "MONTHLY";
       
       if (units.length > 0) {
         const allPrices: number[] = [];
         units.forEach((u: any) => {
           if (u.pricing && u.pricing.length > 0) {
-            u.pricing.forEach((pr: any) => allPrices.push(Number(pr.rentAmount)));
+            u.pricing.forEach((pr: any) => {
+              if (pr.rentAmount) allPrices.push(Number(pr.rentAmount));
+              if (pr.rentType) primaryRentType = pr.rentType;
+            });
           }
         });
         
@@ -149,11 +178,29 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
         bathroomsMax = Math.max(...baths);
       }
 
-      // Extract available units
+      // Available units
       const availableUnitsCount = units.filter((u: any) => u.status === 'AVAILABLE').length;
 
-      // Extract amenities (expecting { amenity: { name: '...' } })
-      const amenityNames = amenities.map((a: any) => a.amenity?.name).filter(Boolean);
+      // Extract amenities
+      const amenitiesList = amenities.map((a: any) => ({
+        id: a.amenity?.id || a.id || "",
+        name: a.amenity?.name || a.name || "",
+      })).filter((a: any) => Boolean(a.name));
+
+      const amenityNames = amenitiesList.map((a: any) => a.name);
+
+      // Extract Images
+      const coverObj = images.find((i: any) => i.isCover) || images[0];
+      const coverImage = coverObj?.url || "";
+      const allImages = images.map((i: any) => i.url).filter(Boolean);
+
+      // Landlord Info
+      const landlord = p.landlord ? {
+        fullName: p.landlord.profile?.fullName || p.landlord.email || "Landlord",
+        avatarUrl: p.landlord.profile?.avatarUrl,
+        email: p.landlord.email,
+        phone: p.landlord.phone,
+      } : undefined;
 
       return {
         id: p.id,
@@ -161,25 +208,40 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
         description: p.description,
         minPrice,
         maxPrice,
+        primaryRentType,
         location: locationStr,
         division,
         district,
         upazila,
-        categorySlug: p.category?.id || "unknown", // Using ID as fallback
-        categoryName: p.category?.name || "Unknown",
+        streetAddress,
+        categoryId: p.category?.id || p.categoryId || "",
+        categoryName: p.category?.name || "Property",
+        categorySlug: p.category?.slug,
         bedroomsMin,
         bedroomsMax,
         bathroomsMin,
         bathroomsMax,
-        rentType: "MONTHLY", // Defaulting to MONTHLY as safe fallback
         availableNow: availableUnitsCount > 0,
         availableUnits: availableUnitsCount,
-        totalUnits: p.totalUnits || 1,
+        totalUnits: p.totalUnits || units.length || 1,
         isFeatured: !!p.isFeatured,
-        rating: 0,
-        reviewCount: 0,
+        rating: p.rating || 0,
+        reviewCount: p.reviewCount || 0,
+        amenitiesList,
         amenities: amenityNames,
-        placeholderLabel: images.length > 0 ? (images.find((i: any) => i.isCover)?.url || images[0].url) : "", 
+        coverImage,
+        allImages,
+        placeholderLabel: coverImage,
+        landlord,
+        units: units.map((u: any) => ({
+          id: u.id,
+          unitLabel: u.unitLabel,
+          status: u.status,
+          bedrooms: u.bedrooms,
+          bathrooms: u.bathrooms,
+          sizeSqft: u.sizeSqft,
+          pricing: u.pricing,
+        })),
         createdAt: p.createdAt,
         popularityScore: p.isFeatured ? 100 : 50,
       };

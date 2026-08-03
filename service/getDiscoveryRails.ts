@@ -9,76 +9,93 @@ export interface DiscoveryRail {
 }
 
 export async function getDiscoveryRails(): Promise<DiscoveryRail[]> {
-  const [
-    allProps,
-    featured,
-    newest,
-    budget,
-    highlyRated,
-    generatorBackup,
-    availableNow,
-  ] = await Promise.all([
-    getProperties({ limit: 10 }),
-    getProperties({ isFeatured: true, limit: 6 }),
-    getProperties({ sort: "newest", limit: 6 }),
-    getProperties({ maxPrice: 15000, sort: "price_asc", limit: 6 }),
-    getProperties({ sort: "rating", limit: 6 }),
-    getProperties({ amenities: ["42b8a12d-4cc2-4c53-806b-e8112135f38d"], limit: 6 }),
-    getProperties({ availableNow: true, limit: 6 }),
-  ]);
+  const response = await getProperties({ limit: 50 });
+  const allProperties = response.data || [];
 
-  const rails: DiscoveryRail[] = [
-    {
-      id: "popular-near-you",
-      title: "Popular Near You in Dhaka",
-      subtext: "Listings surfaced based on current division & location trends",
-      seeMoreQuery: "location=dhaka",
-      items: allProps.data,
-    },
+  if (allProperties.length === 0) {
+    return [];
+  }
+
+  // Set to ensure EVERY property appears in at most ONE section group (zero duplicate data!)
+  const usedIds = new Set<string>();
+
+  const getDistinctItems = (candidates: PropertyItem[], maxCount: number = 4): PropertyItem[] => {
+    const items: PropertyItem[] = [];
+    for (const item of candidates) {
+      if (!usedIds.has(item.id)) {
+        usedIds.add(item.id);
+        items.push(item);
+        if (items.length >= maxCount) break;
+      }
+    }
+    return items;
+  };
+
+  // Rail 1: Featured & Verified Properties
+  const featuredCandidates = allProperties.filter((p) => p.isFeatured);
+  const featuredItems = getDistinctItems(
+    featuredCandidates.length > 0 ? featuredCandidates : allProperties,
+    4
+  );
+
+  // Rail 2: Budget-Friendly Rents (Sorted by price asc)
+  const budgetCandidates = [...allProperties].sort((a, b) => a.minPrice - b.minPrice);
+  const budgetItems = getDistinctItems(budgetCandidates, 4);
+
+  // Rail 3: Quick Move-in Ready (Available units)
+  const availableCandidates = allProperties.filter((p) => p.availableNow);
+  const availableItems = getDistinctItems(
+    availableCandidates.length > 0 ? availableCandidates : allProperties,
+    4
+  );
+
+  // Rail 4: Newly Added Listings (Sorted by date desc)
+  const newestCandidates = [...allProperties].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+  const newestItems = getDistinctItems(newestCandidates, 4);
+
+  // Rail 5: Explore More Rentals (Remaining distinct listings)
+  const exploreItems = getDistinctItems(allProperties, 4);
+
+  const rawRails: DiscoveryRail[] = [
     {
       id: "featured-listings",
-      title: "Featured Listings",
-      subtext: "Hand-picked verified properties across top areas",
+      title: "Featured & Verified Properties",
+      subtext: "Hand-picked, verified listings across top locations",
       seeMoreQuery: "isFeatured=true",
-      items: featured.data,
-    },
-    {
-      id: "new-this-week",
-      title: "New This Week",
-      subtext: "Fresh properties listed in the last 7 days",
-      seeMoreQuery: "sort=newest",
-      items: newest.data,
+      items: featuredItems,
     },
     {
       id: "budget-picks",
-      title: "Budget Picks (Under ৳15,000)",
-      subtext: "Affordable family flats, sublets, and bachelor seat rents",
-      seeMoreQuery: "maxPrice=15000&sort=price_asc",
-      items: budget.data,
-    },
-    {
-      id: "highly-rated",
-      title: "Highly Rated Properties",
-      subtext: "Properties with top tenant review scores and verified responsive landlords",
-      seeMoreQuery: "sort=rating",
-      items: highlyRated.data,
-    },
-    {
-      id: "generator-backup",
-      title: "24/7 Generator Backup",
-      subtext: "Properties with guaranteed power backup for lifts and main apartment circuits",
-      seeMoreQuery: "amenities=42b8a12d-4cc2-4c53-806b-e8112135f38d",
-      items: generatorBackup.data,
+      title: "Budget-Friendly Rents",
+      subtext: "Affordable spaces sorted from low to high rent",
+      seeMoreQuery: "sort=price_asc",
+      items: budgetItems,
     },
     {
       id: "quick-move-in",
       title: "Quick Move-in Ready",
-      subtext: "Available units ready for immediate lease signature and handover",
+      subtext: "Properties with available units ready for immediate lease",
       seeMoreQuery: "availableNow=true",
-      items: availableNow.data,
+      items: availableItems,
+    },
+    {
+      id: "new-listings",
+      title: "Newly Added Listings",
+      subtext: "Fresh properties posted recently",
+      seeMoreQuery: "sort=newest",
+      items: newestItems,
+    },
+    {
+      id: "explore-more",
+      title: "Explore More Rentals",
+      subtext: "Discover additional spaces available across cities",
+      seeMoreQuery: "",
+      items: exploreItems,
     },
   ];
 
-  // Filter out any empty rail dynamically
-  return rails.filter((r) => r.items.length > 0);
+  // Return only section groups that have unique items
+  return rawRails.filter((r) => r.items.length > 0);
 }
