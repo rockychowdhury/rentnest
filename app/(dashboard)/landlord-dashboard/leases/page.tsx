@@ -7,8 +7,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Lease } from "@/types";
 import { TerminateLeaseButton } from "./terminate-lease-button";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Leases | Landlord Dashboard | RentNest",
 };
 

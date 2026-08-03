@@ -10,9 +10,10 @@ import { RecentActivityFeed, ActivityItem } from "@/components/dashboard/RecentA
 import { getMyProperties } from "../_actions/propertiesActions";
 import { getIncomingRentalRequests } from "../_actions/rentRequestActions";
 import { getLandlordPayments } from "../_actions/paymentActions";
-import { formatRelativeTime } from "@/lib/utils/formatUtils";
+import type { Metadata } from "next";
+import { Property, RentalRequest, Payment, PropertyUnit } from "@/types";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Landlord Analytics & Overview | RentNest",
 };
 
@@ -23,20 +24,20 @@ export default async function LandlordDashboardPage() {
     getLandlordPayments().catch(() => ({ success: false, data: [] })),
   ]);
 
-  const properties = Array.isArray(propertiesRes.data) ? propertiesRes.data : [];
-  const requests = Array.isArray(requestsRes.data) ? requestsRes.data : [];
-  const payments = Array.isArray(paymentsRes.data) ? paymentsRes.data : [];
+  const properties: Property[] = Array.isArray(propertiesRes.data) ? propertiesRes.data : [];
+  const requests: RentalRequest[] = Array.isArray(requestsRes.data) ? requestsRes.data : [];
+  const payments: Payment[] = Array.isArray(paymentsRes.data) ? paymentsRes.data : [];
 
   // Calculate Unit Counts & Occupancy
   let totalUnits = 0;
   let occupiedUnits = 0;
   let availableUnits = 0;
 
-  properties.forEach((p: any) => {
-    const units = p.units || [];
+  properties.forEach((p: Property) => {
+    const units: PropertyUnit[] = p.units || [];
     totalUnits += p.totalUnits || units.length || 1;
-    units.forEach((u: any) => {
-      if (u.status === "RENTED") occupiedUnits++;
+    units.forEach((u: PropertyUnit) => {
+      if ((u.status as string) === "RENTED" || u.status === "OCCUPIED") occupiedUnits++;
       else if (u.status === "AVAILABLE") availableUnits++;
     });
   });
@@ -44,11 +45,11 @@ export default async function LandlordDashboardPage() {
   const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
 
   // Requests Summary
-  const pendingRequests = requests.filter((r: any) => r.status === "PENDING");
+  const pendingRequests = requests.filter((r: RentalRequest) => (r.status as string) === "PENDING");
 
   // Income Metrics
-  const completedPayments = payments.filter((p: any) => p.status === "COMPLETED" || p.status === "SUCCESS");
-  const totalIncome = completedPayments.reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
+  const completedPayments = payments.filter((p: Payment) => (p.status as string) === "COMPLETED" || (p as any).status === "SUCCESS");
+  const totalIncome = completedPayments.reduce((sum: number, p: Payment) => sum + (Number(p.amount) || 0), 0);
 
   // Income Chart Data (6 Months)
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -57,11 +58,11 @@ export default async function LandlordDashboardPage() {
     const monthIdx = (currentMonth - 5 + i + 12) % 12;
     const name = monthNames[monthIdx];
     const monthIncome = payments
-      .filter((p: any) => {
+      .filter((p: Payment) => {
         const d = new Date(p.createdAt || Date.now());
-        return d.getMonth() === monthIdx && (p.status === "COMPLETED" || p.status === "SUCCESS");
+        return d.getMonth() === monthIdx && ((p.status as string) === "COMPLETED" || (p as any).status === "SUCCESS");
       })
-      .reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
+      .reduce((sum: number, p: Payment) => sum + (Number(p.amount) || 0), 0);
 
     return {
       name,
@@ -77,17 +78,17 @@ export default async function LandlordDashboardPage() {
 
   // Activity Feed
   const recentActivities: ActivityItem[] = [
-    ...requests.slice(0, 3).map((r: any) => ({
+    ...requests.slice(0, 3).map((r: RentalRequest) => ({
       id: `req-${r.id}`,
       title: `Rental Request: ${r.tenant?.profile?.fullName || r.tenant?.email || 'Tenant'}`,
       description: `Requested unit ${r.propertyUnit?.unitLabel || ''} • Status: ${r.status}`,
       timestamp: r.createdAt || new Date().toISOString(),
       badge: r.status,
     })),
-    ...payments.slice(0, 3).map((p: any) => ({
+    ...payments.slice(0, 3).map((p: Payment) => ({
       id: `pay-${p.id}`,
       title: `Rent Payment Received: ৳${Number(p.amount).toLocaleString()}`,
-      description: `Tenant payment via ${p.paymentMethod || 'Online Transfer'}`,
+      description: `Tenant payment via ${(p as any).paymentMethod || 'Online Transfer'}`,
       timestamp: p.createdAt || new Date().toISOString(),
       badge: p.status,
     })),

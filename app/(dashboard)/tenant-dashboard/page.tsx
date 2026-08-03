@@ -11,8 +11,10 @@ import { LeaseOverviewClient } from "./lease-overview-client";
 import { StatCard } from "@/components/dashboard/StatCard";
 import { AnalyticsAreaChart } from "@/components/dashboard/AnalyticsAreaChart";
 import { RecentActivityFeed, ActivityItem } from "@/components/dashboard/RecentActivityFeed";
+import type { Metadata } from "next";
+import { Lease, Payment } from "@/types";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Tenant Dashboard & Overview | RentNest",
 };
 
@@ -25,11 +27,11 @@ export default async function TenantOverviewPage() {
 
   const overviewData = overviewRes.data || { isPaymentDue: false, upcomingPayment: null, stats: { pendingApplications: 0, savedProperties: 0 }, recentActivity: [] };
   const { stats, recentActivity } = overviewData;
-  const leases = Array.isArray(leasesRes.data) ? leasesRes.data : [];
-  const payments = Array.isArray(paymentsRes?.data?.statementPayments) ? paymentsRes.data.statementPayments : [];
+  const leases: Lease[] = Array.isArray(leasesRes.data) ? leasesRes.data : [];
+  const payments: Payment[] = Array.isArray(paymentsRes?.data?.statementPayments) ? paymentsRes.data.statementPayments : [];
 
-  const hasActiveLease = leases.some((l: any) => l.status === "ACTIVE" || l.status === "ACTIVE_LEASE");
-  const totalRentPaid = payments.reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
+  const hasActiveLease = leases.some((l: Lease) => (l.status as string) === "ACTIVE" || (l.status as string) === "ACTIVE_LEASE");
+  const totalRentPaid = payments.reduce((sum: number, p: Payment) => sum + (Number(p.amount) || 0), 0);
 
   // 6-Month Tenant Rent Expense Chart Data
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -38,11 +40,11 @@ export default async function TenantOverviewPage() {
     const monthIdx = (currentMonth - 5 + i + 12) % 12;
     const name = monthNames[monthIdx];
     const monthExpense = payments
-      .filter((p: any) => {
+      .filter((p: Payment) => {
         const d = new Date(p.createdAt || Date.now());
-        return d.getMonth() === monthIdx && (p.status === "COMPLETED" || p.status === "SUCCESS");
+        return d.getMonth() === monthIdx && ((p.status as string) === "COMPLETED" || (p as any).status === "SUCCESS");
       })
-      .reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
+      .reduce((sum: number, p: Payment) => sum + (Number(p.amount) || 0), 0);
 
     return {
       name,
@@ -51,7 +53,7 @@ export default async function TenantOverviewPage() {
   });
 
   // Recent Activity Items
-  const activityFeedItems: ActivityItem[] = (recentActivity || []).map((act: any) => ({
+  const activityFeedItems: ActivityItem[] = (recentActivity || []).map((act: { id?: string; title?: string; description?: string; date?: string; type?: string }) => ({
     id: act.id || Math.random().toString(),
     title: act.title || "Rental Activity",
     description: act.description || "Status update on your application or lease",

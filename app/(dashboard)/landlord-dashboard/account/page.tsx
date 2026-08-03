@@ -1,8 +1,8 @@
-import React from "react";
 import { getAccountProfile } from "../../_actions/accountActions";
 import { AccountClient } from "../../_components/account/account-client";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Account | Landlord Dashboard | RentNest",
 };
 

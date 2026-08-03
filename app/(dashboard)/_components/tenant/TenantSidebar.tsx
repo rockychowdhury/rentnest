@@ -19,6 +19,7 @@ import { logout } from "@/service/logout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
+import { User as UserType } from "@/types";
 
 export const tenantNavItems = [
   { name: "Overview", href: "/tenant-dashboard", icon: LayoutDashboard },
@@ -29,10 +30,10 @@ export const tenantNavItems = [
   { name: "Account", href: "/tenant-dashboard/account", icon: User },
 ];
 
-export function TenantSidebar({ user }: { user?: any }) {
+export function TenantSidebar({ user }: { user?: UserType | null }) {
   const pathname = usePathname();
   const router = useRouter();
-  const userName = user?.fullName || user?.profile?.fullName || "Tenant User";
+  const userName = (user as any)?.fullName || user?.profile?.fullName || "Tenant User";
   const userInitials = userName.substring(0, 2).toUpperCase();
   const userEmail = user?.email || "";
 

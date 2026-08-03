@@ -8,8 +8,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { RentalRequest } from "@/types";
 import { RequestActions } from "./request-actions";
+import type { Metadata } from "next";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Rent Requests | Landlord Dashboard | RentNest",
 };
 

@@ -18,6 +18,7 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
+import { User as UserType } from "@/types";
 
 export interface DashboardNavItem {
   name: string;
@@ -26,7 +27,7 @@ export interface DashboardNavItem {
 }
 
 interface MobileDashboardHeaderProps {
-  user?: any;
+  user?: UserType | null;
   navItems: DashboardNavItem[];
   roleTitle: string;
 }
@@ -36,7 +37,7 @@ export function MobileDashboardHeader({ user, navItems, roleTitle }: MobileDashb
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const userName = user?.fullName || user?.profile?.fullName || "User";
+  const userName = (user as any)?.fullName || user?.profile?.fullName || "User";
   const userInitials = userName.substring(0, 2).toUpperCase();
   const userEmail = user?.email || "";
 

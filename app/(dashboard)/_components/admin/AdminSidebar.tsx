@@ -21,6 +21,7 @@ import { Logo } from "@/components/shared/logo";
 import { logout } from "@/service/logout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User as UserType } from "@/types";
 
 export const adminNavItems = [
   { name: "Overview", href: "/admin-dashboard", icon: LayoutDashboard },
@@ -34,7 +35,7 @@ export const adminNavItems = [
   { name: "Reviews", href: "/admin-dashboard/reviews", icon: Star },
 ];
 
-export function AdminSidebar({ user }: { user: any }) {
+export function AdminSidebar({ user }: { user?: UserType | null }) {
   const pathname = usePathname();
   const router = useRouter();
 

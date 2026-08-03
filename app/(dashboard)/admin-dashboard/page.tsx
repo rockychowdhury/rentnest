@@ -8,8 +8,10 @@ import { AnalyticsAreaChart } from "@/components/dashboard/AnalyticsAreaChart";
 import { OccupancyDonutChart } from "@/components/dashboard/OccupancyDonutChart";
 import { RecentActivityFeed, ActivityItem } from "@/components/dashboard/RecentActivityFeed";
 import { getAllUsers, getAllProperties, getAllLeases, getAllPayments } from "../_actions/adminActions";
+import type { Metadata } from "next";
+import { User, Property, Lease, Payment } from "@/types";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Admin Overview & System Analytics | RentNest",
 };
 
@@ -21,27 +23,27 @@ export default async function AdminDashboardPage() {
     getAllPayments().catch(() => ({ success: false, data: [] })),
   ]);
 
-  const users = Array.isArray(usersRes.data) ? usersRes.data : [];
-  const properties = Array.isArray(propertiesRes.data) ? propertiesRes.data : [];
-  const leases = Array.isArray(leasesRes.data) ? leasesRes.data : [];
-  const payments = Array.isArray(paymentsRes.data) ? paymentsRes.data : [];
+  const users: User[] = Array.isArray(usersRes.data) ? usersRes.data : [];
+  const properties: Property[] = Array.isArray(propertiesRes.data) ? propertiesRes.data : [];
+  const leases: Lease[] = Array.isArray(leasesRes.data) ? leasesRes.data : [];
+  const payments: Payment[] = Array.isArray(paymentsRes.data) ? paymentsRes.data : [];
 
   // Calculate Metrics
-  const tenantCount = users.filter((u: any) => u.role === "TENANT").length;
-  const landlordCount = users.filter((u: any) => u.role === "LANDLORD").length;
-  const adminCount = users.filter((u: any) => u.role === "ADMIN").length;
+  const tenantCount = users.filter((u: User) => u.role === "TENANT").length;
+  const landlordCount = users.filter((u: User) => u.role === "LANDLORD").length;
+  const adminCount = users.filter((u: User) => u.role === "ADMIN").length;
   const totalUsers = users.length || 0;
 
-  const publishedProps = properties.filter((p: any) => p.status === "PUBLISHED").length;
-  const draftProps = properties.filter((p: any) => p.status === "DRAFT").length;
-  const inactiveProps = properties.filter((p: any) => p.status === "INACTIVE").length;
+  const publishedProps = properties.filter((p: Property) => p.status === "PUBLISHED").length;
+  const draftProps = properties.filter((p: Property) => p.status === "DRAFT").length;
+  const inactiveProps = properties.filter((p: Property) => p.status === "INACTIVE").length;
   const totalProperties = properties.length || 0;
 
-  const activeLeases = leases.filter((l: any) => l.status === "ACTIVE").length;
+  const activeLeases = leases.filter((l: Lease) => l.status === "ACTIVE").length;
   const totalLeases = leases.length || 0;
 
-  const completedPayments = payments.filter((p: any) => p.status === "COMPLETED");
-  const totalRevenue = completedPayments.reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
+  const completedPayments = payments.filter((p: Payment) => p.status === "COMPLETED" || (p as any).status === "SUCCESS");
+  const totalRevenue = completedPayments.reduce((sum: number, p: Payment) => sum + (Number(p.amount) || 0), 0);
 
   // Generate 6-Month Revenue Data from real backend payments
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -50,11 +52,11 @@ export default async function AdminDashboardPage() {
     const monthIdx = (currentMonth - 5 + i + 12) % 12;
     const name = monthNames[monthIdx];
     const monthRevenue = payments
-      .filter((p: any) => {
+      .filter((p: Payment) => {
         const d = new Date(p.createdAt || Date.now());
-        return d.getMonth() === monthIdx && (p.status === "COMPLETED" || p.status === "SUCCESS");
+        return d.getMonth() === monthIdx && (p.status === "COMPLETED" || (p as any).status === "SUCCESS");
       })
-      .reduce((sum: number, p: any) => sum + (Number(p.amount) || 0), 0);
+      .reduce((sum: number, p: Payment) => sum + (Number(p.amount) || 0), 0);
 
     return {
       name,
@@ -71,17 +73,17 @@ export default async function AdminDashboardPage() {
 
   // Recent System Activity Feed
   const recentActivities: ActivityItem[] = [
-    ...users.slice(0, 3).map((u: any) => ({
+    ...users.slice(0, 3).map((u: User) => ({
       id: `u-${u.id}`,
       title: `New User: ${u.profile?.fullName || u.email}`,
       description: `Registered as ${u.role} (${u.email})`,
       timestamp: u.createdAt || new Date().toISOString(),
       badge: u.role,
     })),
-    ...payments.slice(0, 3).map((p: any) => ({
+    ...payments.slice(0, 3).map((p: Payment) => ({
       id: `p-${p.id}`,
       title: `Payment: ৳${Number(p.amount).toLocaleString()}`,
-      description: `Status: ${p.status} via ${p.paymentMethod || 'SSLCommerz'}`,
+      description: `Status: ${p.status} via ${(p as any).paymentMethod || 'SSLCommerz'}`,
       timestamp: p.createdAt || new Date().toISOString(),
       badge: p.status,
     })),

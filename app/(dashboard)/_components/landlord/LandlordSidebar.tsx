@@ -20,6 +20,7 @@ import { Logo } from "@/components/shared/logo";
 import { logout } from "@/service/logout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { User as UserType } from "@/types";
 
 export const landlordNavItems = [
   { name: "Overview", href: "/landlord-dashboard", icon: LayoutDashboard },
@@ -31,10 +32,10 @@ export const landlordNavItems = [
   { name: "Account", href: "/landlord-dashboard/account", icon: User },
 ];
 
-export function LandlordSidebar({ user }: { user?: any }) {
+export function LandlordSidebar({ user }: { user?: UserType | null }) {
   const pathname = usePathname();
   const router = useRouter();
-  const userName = user?.fullName || user?.profile?.fullName || "Landlord User";
+  const userName = (user as any)?.fullName || user?.profile?.fullName || "Landlord User";
   const userInitials = userName.substring(0, 2).toUpperCase();
   const userEmail = user?.email || "";
 
