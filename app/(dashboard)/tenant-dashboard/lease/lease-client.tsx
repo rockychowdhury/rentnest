@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import { CheckoutButton } from "@/components/payments/CheckoutButton";
 import { ReusableModal } from "@/components/shared/reusable-modal";
 
-export function LeaseClient({ leases }: { leases: any[] }) {
+export function LeaseClient({ leases, reviewedLeaseIds = [] }: { leases: any[], reviewedLeaseIds?: string[] }) {
   const pendingPaymentLeases = leases.filter(l => ["PENDING", "PENDING_PAYMENT"].includes(l.status));
   const activeLeases = leases.filter(l => l.status === "ACTIVE");
   const completedLeases = leases.filter(l => ["COMPLETED", "TERMINATED", "CANCELLED"].includes(l.status));
@@ -37,7 +37,7 @@ export function LeaseClient({ leases }: { leases: any[] }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
-                <div className="md:col-span-2 md:row-span-2 bg-card border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col sm:flex-row relative h-full min-h-[350px] transition-all duration-300">
+                <div className="md:col-span-2 bg-card border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col sm:flex-row relative h-full min-h-[250px] transition-all duration-300">
           {primaryLeases.length > 1 && (
             <div className="absolute top-4 right-4 z-20 flex gap-1">
               <Button variant="secondary" size="icon" className="size-8 rounded-full shadow-sm hover:bg-primary hover:text-primary-foreground transition-colors" onClick={handlePrevPrimary}>
@@ -151,7 +151,7 @@ export function LeaseClient({ leases }: { leases: any[] }) {
           )}
         </div>
 
-                <div className="md:col-span-1 md:row-span-2 bg-card border border-border rounded-2xl p-6 flex flex-col shadow-sm">
+                <div className="md:col-span-1 bg-card border border-border rounded-2xl p-6 flex flex-col shadow-sm">
            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Past Leases</h3>
            
            <div className="flex-1 overflow-y-auto pr-2 space-y-4">
@@ -165,9 +165,11 @@ export function LeaseClient({ leases }: { leases: any[] }) {
                      <span>{lease.rentType ? lease.rentType.charAt(0) + lease.rentType.slice(1).toLowerCase() : "Past Lease"}</span>
                      <Badge variant="outline" className="text-[10px] h-5">{lease.status}</Badge>
                    </div>
-                   <Link href={`/tenant-dashboard/reviews`}>
-                     <Button size="sm" variant="secondary" className="w-full text-xs h-8">Leave a Review</Button>
-                   </Link>
+                   {!reviewedLeaseIds.includes(lease.id) && (
+                     <Link href={`/tenant-dashboard/reviews`}>
+                       <Button size="sm" variant="secondary" className="w-full text-xs h-8 mt-2">Leave a Review</Button>
+                     </Link>
+                   )}
                  </div>
                ))
              ) : (
