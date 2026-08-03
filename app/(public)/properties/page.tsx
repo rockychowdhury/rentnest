@@ -20,10 +20,9 @@ interface PropertiesPageProps {
     amenities?: string;
     bedrooms?: string;
     bathrooms?: string;
-    rentType?: string;
     availableNow?: string;
     isFeatured?: string;
-    sort?: "newest" | "price_asc" | "price_desc" | "rating" | "popular";
+    sort?: "newest" | "oldest" | "price_asc" | "price_desc";
     page?: string;
     limit?: string;
   }>;
@@ -41,7 +40,6 @@ async function AsyncSearchResults({ resolvedParams }: { resolvedParams: any }) {
     maxPrice: resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
     bedrooms: resolvedParams.bedrooms ? Number(resolvedParams.bedrooms) : undefined,
     bathrooms: resolvedParams.bathrooms ? Number(resolvedParams.bathrooms) : undefined,
-    rentType: resolvedParams.rentType,
     availableNow: resolvedParams.availableNow === "true" ? true : undefined,
     isFeatured: resolvedParams.isFeatured === "true" ? true : undefined,
     amenities: resolvedParams.amenities ? resolvedParams.amenities.split(",") : undefined,
@@ -75,7 +73,7 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
 
       {/* Main Content: Streamed in via Suspense */}
       <main className="flex-1">
-        <Suspense fallback={<PropertiesLoadingSkeleton />}>
+        <Suspense key={JSON.stringify(resolvedParams)} fallback={<PropertiesLoadingSkeleton />}>
           {isSearchMode ? (
             <AsyncSearchResults resolvedParams={resolvedParams} />
           ) : (

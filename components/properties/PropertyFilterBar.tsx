@@ -12,6 +12,7 @@ import {
   Check,
   Calendar,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +22,7 @@ import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { getPublicCategories, CategoryItem } from "@/service/getCategories";
 import { getPublicAmenities, AmenityItem } from "@/service/getAmenities";
 import { cn } from "@/lib/utils/shadcnUtils";
+import { toast } from "sonner";
 
 interface PropertyFilterBarProps {
   categories?: CategoryItem[];
@@ -56,7 +58,6 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
   const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
   const [bedrooms, setBedrooms] = useState(searchParams.get("bedrooms") || "");
   const [bathrooms, setBathrooms] = useState(searchParams.get("bathrooms") || "");
-  const [rentType, setRentType] = useState(searchParams.get("rentType") || "");
   const [availableNow, setAvailableNow] = useState(searchParams.get("availableNow") === "true");
   const [isFeatured, setIsFeatured] = useState(searchParams.get("isFeatured") === "true");
   const [sort, setSort] = useState(searchParams.get("sort") || "newest");
@@ -84,7 +85,6 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
     setMaxPrice(searchParams.get("maxPrice") || "");
     setBedrooms(searchParams.get("bedrooms") || "");
     setBathrooms(searchParams.get("bathrooms") || "");
-    setRentType(searchParams.get("rentType") || "");
     setAvailableNow(searchParams.get("availableNow") === "true");
     setIsFeatured(searchParams.get("isFeatured") === "true");
     setSort(searchParams.get("sort") || "newest");
@@ -108,10 +108,9 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
       maxPrice: debouncedMaxPrice,
       bedrooms,
       bathrooms,
-      rentType,
       availableNow,
       isFeatured,
-      sort: sort === "newest" ? undefined : sort,
+      sort,
       amenities: selectedAmenities,
       ...overrides,
     };
@@ -154,7 +153,6 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
     setMaxPrice("");
     setBedrooms("");
     setBathrooms("");
-    setRentType("");
     setAvailableNow(false);
     setIsFeatured(false);
     setSort("newest");
@@ -166,16 +164,68 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
   };
 
   const handleNearMe = () => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
     setGeoLocating(true);
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setGeoLocating(false);
-        updateURL({
-          location: "Near Me",
-        });
+      async (pos) => {
+        try {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+
+          let detectedDistrict = "";
+          try {
+            const res = await fetch(
+              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
+            );
+            const data = await res.json();
+            detectedDistrict =
+              data.city ||
+              data.locality ||
+              data.principalSubdivision ||
+              "";
+          } catch {
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`
+            );
+            const data = await res.json();
+            detectedDistrict =
+              data.address?.district ||
+              data.address?.city ||
+              data.address?.state ||
+              "";
+          }
+
+          let cleanDistrict = detectedDistrict
+            .replace(/\s+District/i, "")
+            .replace(/\s+Division/i, "")
+            .replace(/\s+City/i, "")
+            .trim();
+
+          if (!cleanDistrict) {
+            cleanDistrict = "Dhaka";
+          }
+
+          setDistrict(cleanDistrict);
+          setLocation(cleanDistrict);
+          toast.success(`Near Me: Detected district "${cleanDistrict}"`);
+          updateURL({
+            district: cleanDistrict,
+            location: cleanDistrict,
+          });
+        } catch (error) {
+          toast.error("Could not determine district from current location");
+        } finally {
+          setGeoLocating(false);
+        }
       },
-      () => setGeoLocating(false)
+      (err) => {
+        setGeoLocating(false);
+        toast.error("Geolocation denied or unavailable: " + err.message);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
     );
   };
 
@@ -198,7 +248,11 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           {/* Free-text Search Input */}
           <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            {isPending ? (
+              <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-primary animate-spin" />
+            ) : (
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            )}
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -261,34 +315,10 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
             </Select>
           </div>
 
-          {/* Rent Type Select (Desktop) */}
-          <div className="hidden xl:block w-36 shrink-0">
-            <Select
-              value={rentType || "ALL"}
-              onValueChange={(val) => {
-                const next = !val || val === "ALL" ? "" : val;
-                setRentType(next);
-                updateURL({ rentType: next });
-              }}
-            >
-              <SelectTrigger className="h-10 text-xs">
-                <Calendar className="size-3.5 mr-1.5 text-muted-foreground" />
-                <SelectValue placeholder="Rent Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All Rent Types</SelectItem>
-                <SelectItem value="MONTHLY">Monthly</SelectItem>
-                <SelectItem value="YEARLY">Yearly</SelectItem>
-                <SelectItem value="WEEKLY">Weekly</SelectItem>
-                <SelectItem value="DAILY">Daily</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
           {/* Sort Select */}
-          <div className="w-36 sm:w-40 shrink-0">
+          <div className="w-36 sm:w-44 shrink-0">
             <Select
-              value={sort}
+              value={sort || "newest"}
               onValueChange={(val) => {
                 const next = !val ? "newest" : val;
                 setSort(next);
@@ -296,14 +326,21 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
               }}
             >
               <SelectTrigger className="h-10 text-xs">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder="Sort by">
+                  {sort === "oldest"
+                    ? "Oldest First"
+                    : sort === "price_asc"
+                    ? "Price: Low to High"
+                    : sort === "price_desc"
+                    ? "Price: High to Low"
+                    : "Newest First"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="oldest">Oldest First</SelectItem>
                 <SelectItem value="price_asc">Price: Low to High</SelectItem>
                 <SelectItem value="price_desc">Price: High to Low</SelectItem>
-                <SelectItem value="rating">Highest Rated</SelectItem>
-                <SelectItem value="popular">Most Popular</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -371,30 +408,6 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
                   </Select>
                 </div>
 
-                {/* Rent Type */}
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-foreground">Rent Type</label>
-                  <Select
-                    value={rentType || "ALL"}
-                    onValueChange={(val) => {
-                      const next = !val || val === "ALL" ? "" : val;
-                      setRentType(next);
-                      updateURL({ rentType: next });
-                    }}
-                  >
-                    <SelectTrigger className="w-full h-10 text-xs">
-                      <SelectValue placeholder="All Rent Types" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ALL">All Rent Types</SelectItem>
-                      <SelectItem value="MONTHLY">Monthly</SelectItem>
-                      <SelectItem value="YEARLY">Yearly</SelectItem>
-                      <SelectItem value="WEEKLY">Weekly</SelectItem>
-                      <SelectItem value="DAILY">Daily</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
                 {/* Price Range */}
                 <div className="space-y-2">
                   <label className="text-xs font-semibold text-foreground">Rent Price Range (৳)</label>
@@ -429,7 +442,9 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
                       }}
                     >
                       <SelectTrigger className="w-full h-9 text-xs">
-                        <SelectValue placeholder="Any" />
+                        <SelectValue placeholder="Any">
+                          {bedrooms && bedrooms !== "ALL" ? `${bedrooms}+ Beds` : "Any Beds"}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="ALL">Any Beds</SelectItem>
@@ -452,7 +467,9 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
                       }}
                     >
                       <SelectTrigger className="w-full h-9 text-xs">
-                        <SelectValue placeholder="Any" />
+                        <SelectValue placeholder="Any">
+                          {bathrooms && bathrooms !== "ALL" ? `${bathrooms}+ Baths` : "Any Baths"}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="ALL">Any Baths</SelectItem>

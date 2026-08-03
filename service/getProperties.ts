@@ -71,7 +71,7 @@ export interface GetPropertiesQueryParams {
   rentType?: string;
   availableNow?: boolean;
   isFeatured?: boolean;
-  sort?: "newest" | "price_asc" | "price_desc" | "rating" | "popular";
+  sort?: "newest" | "oldest" | "price_asc" | "price_desc";
   page?: number;
   limit?: number;
 }
@@ -99,7 +99,18 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
   if (params.bathrooms !== undefined) query.append("bathrooms", params.bathrooms.toString());
   if (params.rentType) query.append("rentType", params.rentType);
   if (params.availableNow !== undefined) query.append("availableNow", params.availableNow.toString());
-  if (params.sort) query.append("sort", params.sort);
+  
+  if (params.sort) {
+    query.append("sort", params.sort);
+    if (params.sort === "newest") {
+      query.append("sortBy", "createdAt");
+      query.append("sortOrder", "desc");
+    } else if (params.sort === "oldest") {
+      query.append("sortBy", "createdAt");
+      query.append("sortOrder", "asc");
+    }
+  }
+
   if (params.page !== undefined) query.append("page", params.page.toString());
   if (params.limit !== undefined) query.append("limit", params.limit.toString());
   
@@ -247,12 +258,51 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
       };
     });
 
+    // Perform guaranteed client-side filtering for Bedrooms, Bathrooms, and Price Range
+    let filteredData = mappedData;
+
+    if (params.bedrooms !== undefined && !isNaN(Number(params.bedrooms))) {
+      const minBeds = Number(params.bedrooms);
+      filteredData = filteredData.filter(
+        (p) => p.bedroomsMax >= minBeds || (p.units && p.units.some((u) => u.bedrooms >= minBeds))
+      );
+    }
+
+    if (params.bathrooms !== undefined && !isNaN(Number(params.bathrooms))) {
+      const minBaths = Number(params.bathrooms);
+      filteredData = filteredData.filter(
+        (p) => p.bathroomsMax >= minBaths || (p.units && p.units.some((u) => u.bathrooms >= minBaths))
+      );
+    }
+
+    if (params.minPrice !== undefined && !isNaN(Number(params.minPrice))) {
+      const minP = Number(params.minPrice);
+      filteredData = filteredData.filter((p) => (p.maxPrice || p.minPrice) >= minP);
+    }
+
+    if (params.maxPrice !== undefined && !isNaN(Number(params.maxPrice))) {
+      const maxP = Number(params.maxPrice);
+      filteredData = filteredData.filter((p) => p.minPrice <= maxP);
+    }
+
+    // Perform guaranteed sorting on filteredData
+    if (params.sort === "oldest") {
+      filteredData.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    } else if (params.sort === "price_asc") {
+      filteredData.sort((a, b) => a.minPrice - b.minPrice);
+    } else if (params.sort === "price_desc") {
+      filteredData.sort((a, b) => b.minPrice - a.minPrice);
+    } else if (params.sort === "newest") {
+      filteredData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    }
+
     const limit = meta.limit || 10;
-    const totalPages = Math.ceil(meta.total / limit) || 1;
+    const totalCount = filteredData.length;
+    const totalPages = Math.ceil(totalCount / limit) || 1;
 
     return {
-      data: mappedData,
-      total: meta.total || 0,
+      data: filteredData,
+      total: totalCount,
       page: meta.page || 1,
       totalPages: totalPages,
     };

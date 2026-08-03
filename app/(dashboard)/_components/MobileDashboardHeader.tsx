@@ -47,7 +47,7 @@ export function MobileDashboardHeader({ user, navItems, roleTitle }: MobileDashb
   };
 
   return (
-    <header className="md:hidden sticky top-0 z-40 w-full bg-card border-b border-border px-4 py-3 flex items-center justify-between shadow-xs">
+    <header className="md:hidden sticky top-0 z-50 w-full bg-card border-b border-border px-4 py-3 flex items-center justify-between shadow-xs">
       <div className="flex items-center gap-3">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
