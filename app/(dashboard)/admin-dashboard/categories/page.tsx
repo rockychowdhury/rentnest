@@ -3,23 +3,34 @@
 import React, { useEffect, useState } from "react";
 import { getCategories, createCategory, updateCategory, deleteCategory } from "../../_actions/adminActions";
 import { categorySchema } from "@/lib/validators/forms.validator";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ConfirmModal } from "@/components/shared/confirm-modal";
+import { TableSkeleton } from "@/components/shared/table-skeleton";
+import { CustomPagination } from "@/components/shared/pagination";
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 300);
+  const [page, setPage] = useState(1);
+  const limit = 10;
   
   const [newCategoryName, setNewCategoryName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteName, setDeleteName] = useState("");
 
   const fetchCategories = async () => {
     setLoading(true);
@@ -37,6 +48,7 @@ export default function AdminCategoriesPage() {
   useEffect(() => {
     fetchCategories();
   }, []);
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     const validation = categorySchema.safeParse({ name: newCategoryName });
@@ -74,16 +86,21 @@ export default function AdminCategoriesPage() {
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`Are you sure you want to delete category "${name}"?`)) return;
-    const res = await deleteCategory(id, name);
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    const res = await deleteCategory(deleteId, deleteName);
     if (res.success) {
       toast.success("Category deleted");
       fetchCategories();
     } else {
       toast.error(res.error || "Failed to delete category");
     }
+    setDeleteId(null);
+    setDeleteName("");
   };
+
+  const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
+  const paginatedCategories = filteredCategories.slice((page - 1) * limit, page * limit);
 
   return (
     <div className="space-y-6">
@@ -108,14 +125,34 @@ export default function AdminCategoriesPage() {
         </form>
       </div>
 
+      <div className="flex items-center gap-2 max-w-sm">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search categories..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+      </div>
+
       <Card className="border-border shadow-sm overflow-hidden bg-card/50 backdrop-blur-sm">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-8 text-center text-muted-foreground">Loading categories...</div>
-          ) : categories.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground">No categories found.</div>
+            <div className="p-4">
+              <TableSkeleton columns={2} rows={5} />
+            </div>
+          ) : filteredCategories.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground">
+              {searchQuery ? "No categories found matching your search." : "No categories found."}
+            </div>
           ) : (
-            <div className="overflow-x-auto w-full">
+            <div className="overflow-x-auto w-full p-4 space-y-4">
               <Table className="min-w-[400px] sm:min-w-full">
               <TableHeader>
                 <TableRow>
@@ -124,7 +161,7 @@ export default function AdminCategoriesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {categories.map((cat) => (
+                {paginatedCategories.map((cat) => (
                   <TableRow key={cat.id}>
                     <TableCell>
                       {editingId === cat.id ? (
@@ -156,7 +193,13 @@ export default function AdminCategoriesPage() {
                               <Edit className="mr-2 h-4 w-4" />
                               Edit Name
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDelete(cat.id, cat.name)}>
+                            <DropdownMenuItem 
+                              className="text-destructive focus:text-destructive" 
+                              onClick={() => {
+                                setDeleteId(cat.id);
+                                setDeleteName(cat.name);
+                              }}
+                            >
                               <Trash2 className="mr-2 h-4 w-4" />
                               Delete
                             </DropdownMenuItem>
@@ -168,10 +211,27 @@ export default function AdminCategoriesPage() {
                 ))}
               </TableBody>
             </Table>
+
+            <CustomPagination
+              meta={{ page, limit, total: filteredCategories.length }}
+              onPageChange={(p) => setPage(p)}
+            />
           </div>
           )}
         </CardContent>
       </Card>
+
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => {
+          setDeleteId(null);
+          setDeleteName("");
+        }}
+        onConfirm={handleDelete}
+        title="Delete Category"
+        description={`Are you sure you want to delete "${deleteName}"? This action cannot be undone.`}
+        confirmText="Delete"
+      />
     </div>
   );
 }

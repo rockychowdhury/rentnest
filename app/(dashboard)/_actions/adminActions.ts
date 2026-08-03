@@ -27,16 +27,20 @@ export async function getAllUsers() {
 }
 
 export async function updateUserStatus(userId: string, status: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/users/${userId}/status`, {
-    method: "PATCH",
-    headers,
-    body: { status },
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/users");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/users/${userId}/status`, {
+      method: "PATCH",
+      headers,
+      body: { status },
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/users");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 // ========================
@@ -50,42 +54,54 @@ export async function getAmenities() {
 }
 
 export async function createAmenity(name: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi("/amenities", {
-    method: "POST",
-    headers,
-    body: { name },
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/amenities");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi("/amenities", {
+      method: "POST",
+      headers,
+      body: { name },
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/amenities");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function updateAmenity(id: string, name: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/amenities/${id}`, {
-    method: "PATCH",
-    headers,
-    body: { name },
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/amenities");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/amenities/${id}`, {
+      method: "PATCH",
+      headers,
+      body: { name },
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/amenities");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function deleteAmenity(id: string, name: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/amenities/${id}`, {
-    method: "DELETE",
-    headers,
-    body: { name },
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/amenities");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/amenities/${id}`, {
+      method: "DELETE",
+      headers,
+      body: { name },
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/amenities");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 // ========================
@@ -99,42 +115,54 @@ export async function getCategories() {
 }
 
 export async function createCategory(name: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi("/categories", {
-    method: "POST",
-    headers,
-    body: { name },
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/categories");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi("/categories", {
+      method: "POST",
+      headers,
+      body: { name },
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/categories");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function updateCategory(id: string, name: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/categories/${id}`, {
-    method: "PATCH",
-    headers,
-    body: { name },
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/categories");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/categories/${id}`, {
+      method: "PATCH",
+      headers,
+      body: { name },
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/categories");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function deleteCategory(id: string, name: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/categories/${id}`, {
-    method: "DELETE",
-    headers,
-    body: { name },
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/categories");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/categories/${id}`, {
+      method: "DELETE",
+      headers,
+      body: { name },
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/categories");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 // ========================
@@ -178,46 +206,60 @@ export async function getAllPayments() {
 // ========================
 
 export async function getAllProperties() {
-  return await fetchApi("/properties", {
+  const headers = await getAuthHeaders();
+  return await fetchApi("/properties/admin/all?limit=1000", {
     method: "GET",
+    headers
   });
 }
 
 export async function adminUpdatePropertyStatus(id: string, status: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/properties/${id}/status`, {
-    method: "PATCH",
-    headers,
-    body: { status },
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/properties");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/properties/${id}/status`, {
+      method: "PATCH",
+      headers,
+      body: { status },
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/properties");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function adminDeleteProperty(id: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/properties/${id}`, {
-    method: "DELETE",
-    headers,
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/properties");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/properties/${id}`, {
+      method: "DELETE",
+      headers,
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/properties");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function adminRestoreProperty(id: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/properties/${id}/restore`, {
-    method: "POST",
-    headers,
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/properties");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/properties/${id}/restore`, {
+      method: "POST",
+      headers,
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/properties");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function adminGetUserById(userId: string) {
@@ -229,86 +271,126 @@ export async function adminGetUserById(userId: string) {
 }
 
 export async function adminRestoreUser(identifier: { email?: string; userId?: string; id?: string } | string, emailParam?: string) {
-  const headers = await getAuthHeaders();
-  
-  let payload: Record<string, any> = {};
+  try {
+    const headers = await getAuthHeaders();
+    
+    let payload: Record<string, any> = {};
 
-  if (typeof identifier === "object") {
-    payload = {
-      email: identifier.email,
-      userId: identifier.userId || identifier.id,
-      id: identifier.id || identifier.userId,
-    };
-  } else if (typeof identifier === "string") {
-    if (identifier.includes("@")) {
-      payload = { email: identifier };
-    } else {
+    if (typeof identifier === "object") {
       payload = {
-        email: emailParam,
-        userId: identifier,
-        id: identifier,
+        email: identifier.email,
+        userId: identifier.userId || identifier.id,
+        id: identifier.id || identifier.userId,
       };
+    } else if (typeof identifier === "string") {
+      if (identifier.includes("@")) {
+        payload = { email: identifier };
+      } else {
+        payload = {
+          email: emailParam,
+          userId: identifier,
+          id: identifier,
+        };
+      }
     }
-  }
 
-  const result = await fetchApi("/users/restore", {
-    method: "POST",
-    headers,
-    body: payload,
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/users");
+    const result = await fetchApi("/users/restore", {
+      method: "POST",
+      headers,
+      body: payload,
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/users");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function adminUpdateUserProfile(userId: string, data: any) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/profile/${userId}`, {
-    method: "PATCH",
-    headers,
-    body: data,
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/users");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/profile/${userId}`, {
+      method: "PATCH",
+      headers,
+      body: data,
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/users");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function adminCancelRentalRequest(requestId: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/rental-requests/${requestId}/cancel`, {
-    method: "PATCH",
-    headers,
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/requests");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/rental-requests/${requestId}/cancel`, {
+      method: "PATCH",
+      headers,
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/requests");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function adminUpdateLeaseStatus(leaseId: string, status: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/leases/${leaseId}/status`, {
-    method: "PATCH",
-    headers,
-    body: { status },
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/leases");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/leases/${leaseId}/status`, {
+      method: "PATCH",
+      headers,
+      body: { status },
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/leases");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
 export async function adminDeleteReview(reviewId: string) {
-  const headers = await getAuthHeaders();
-  const result = await fetchApi(`/reviews/${reviewId}`, {
-    method: "DELETE",
-    headers,
-  });
-  if (result.success) {
-    revalidatePath("/admin-dashboard/reviews");
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/reviews/${reviewId}`, {
+      method: "DELETE",
+      headers,
+    });
+    if (result.success) {
+      revalidatePath("/admin-dashboard/reviews");
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
   }
-  return result;
 }
 
+export async function getAllReviews() {
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi("/reviews/admin/all?limit=1000", { method: "GET", headers });
+    
+    // Add propertyTitle mapping for consistency with existing UI
+    let allReviews: any[] = [];
+    if (result.success && result.data) {
+      const revs = Array.isArray(result.data) ? result.data : (result.data?.data || []);
+      allReviews = revs.map((r: any) => ({
+        ...r,
+        propertyTitle: r.property?.title || "Property"
+      }));
+    }
+    
+    return { success: true, data: allReviews };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}

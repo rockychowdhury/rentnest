@@ -3,23 +3,34 @@
 import React, { useEffect, useState } from "react";
 import { getAmenities, createAmenity, updateAmenity, deleteAmenity } from "../../_actions/adminActions";
 import { amenitySchema } from "@/lib/validators/forms.validator";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Edit, Trash2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { ConfirmModal } from "@/components/shared/confirm-modal";
+import { TableSkeleton } from "@/components/shared/table-skeleton";
+import { CustomPagination } from "@/components/shared/pagination";
 
 export default function AdminAmenitiesPage() {
   const [amenities, setAmenities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 300);
+  const [page, setPage] = useState(1);
+  const limit = 10;
   
   const [newAmenityName, setNewAmenityName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
+
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteName, setDeleteName] = useState("");
 
   const fetchAmenities = async () => {
     setLoading(true);
@@ -37,6 +48,7 @@ export default function AdminAmenitiesPage() {
   useEffect(() => {
     fetchAmenities();
   }, []);
+
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     const validation = amenitySchema.safeParse({ name: newAmenityName });
@@ -74,16 +86,21 @@ export default function AdminAmenitiesPage() {
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`Are you sure you want to delete amenity "${name}"?`)) return;
-    const res = await deleteAmenity(id, name);
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    const res = await deleteAmenity(deleteId, deleteName);
     if (res.success) {
       toast.success("Amenity deleted");
       fetchAmenities();
     } else {
       toast.error(res.error || "Failed to delete amenity");
     }
+    setDeleteId(null);
+    setDeleteName("");
   };
+
+  const filteredAmenities = amenities.filter(a => a.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
+  const paginatedAmenities = filteredAmenities.slice((page - 1) * limit, page * limit);
 
   return (
     <div className="space-y-6">
@@ -108,14 +125,34 @@ export default function AdminAmenitiesPage() {
         </form>
       </div>
 
+      <div className="flex items-center gap-2 max-w-sm">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search amenities..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1); // Reset to first page on search
+            }}
+          />
+        </div>
+      </div>
+
       <Card className="border-border shadow-sm overflow-hidden bg-card/50 backdrop-blur-sm">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-8 text-center text-muted-foreground">Loading amenities...</div>
-          ) : amenities.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground">No amenities found.</div>
+            <div className="p-4">
+              <TableSkeleton columns={2} rows={5} />
+            </div>
+          ) : filteredAmenities.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground">
+              {searchQuery ? "No amenities found matching your search." : "No amenities found."}
+            </div>
           ) : (
-            <div className="overflow-x-auto w-full">
+            <div className="overflow-x-auto w-full p-4 space-y-4">
               <Table className="min-w-[400px] sm:min-w-full">
                 <TableHeader>
                   <TableRow>
@@ -124,7 +161,7 @@ export default function AdminAmenitiesPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {amenities.map((amenity) => (
+                  {paginatedAmenities.map((amenity) => (
                     <TableRow key={amenity.id}>
                       <TableCell>
                         {editingId === amenity.id ? (
@@ -156,7 +193,13 @@ export default function AdminAmenitiesPage() {
                                 <Edit className="mr-2 h-4 w-4" />
                                 Edit Name
                               </DropdownMenuItem>
-                              <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={() => handleDelete(amenity.id, amenity.name)}>
+                              <DropdownMenuItem 
+                                className="text-destructive focus:text-destructive" 
+                                onClick={() => {
+                                  setDeleteId(amenity.id);
+                                  setDeleteName(amenity.name);
+                                }}
+                              >
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Delete
                               </DropdownMenuItem>
@@ -168,10 +211,27 @@ export default function AdminAmenitiesPage() {
                   ))}
                 </TableBody>
               </Table>
+              
+              <CustomPagination
+                meta={{ page, limit, total: filteredAmenities.length }}
+                onPageChange={(p) => setPage(p)}
+              />
             </div>
           )}
         </CardContent>
       </Card>
+
+      <ConfirmModal
+        isOpen={!!deleteId}
+        onClose={() => {
+          setDeleteId(null);
+          setDeleteName("");
+        }}
+        onConfirm={handleDelete}
+        title="Delete Amenity"
+        description={`Are you sure you want to delete "${deleteName}"? This action cannot be undone.`}
+        confirmText="Delete"
+      />
     </div>
   );
 }

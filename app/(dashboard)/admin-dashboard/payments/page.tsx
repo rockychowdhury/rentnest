@@ -7,13 +7,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 import { toast } from "sonner";
+import { TableSkeleton } from "@/components/shared/table-skeleton";
 import { CustomPagination } from "@/components/shared/pagination";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
 
 export default function AdminPaymentsPage() {
   const [payments, setPayments] = useState<any[]>([]);
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [loading, setLoading] = useState(true);
+  
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearchQuery = useDebouncedValue(searchQuery, 300);
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [page, setPage] = useState(1);
   const limit = 10;
 
@@ -22,10 +29,7 @@ export default function AdminPaymentsPage() {
       setLoading(true);
       try {
         const result = await getAllPayments();
-        let fetchedPayments = Array.isArray(result.data) ? result.data : (result.data?.data || []);
-        if (statusFilter !== "ALL") {
-          fetchedPayments = fetchedPayments.filter((p: any) => p.status === statusFilter);
-        }
+        const fetchedPayments = Array.isArray(result.data) ? result.data : (result.data?.data || []);
         setPayments(fetchedPayments);
       } catch (error) {
         toast.error("Failed to fetch payments");
@@ -34,7 +38,19 @@ export default function AdminPaymentsPage() {
       }
     };
     fetchPayments();
-  }, [statusFilter]);
+  }, []);
+
+  const filteredPayments = payments.filter((p) => {
+    const transactionId = (p.transactionId || p.id).toLowerCase();
+    const tenantName = (p.lease?.tenant?.profile?.fullName || "").toLowerCase();
+    const matchesSearch = transactionId.includes(debouncedSearchQuery.toLowerCase()) || tenantName.includes(debouncedSearchQuery.toLowerCase());
+    
+    const matchesStatus = statusFilter === "ALL" || p.status === statusFilter;
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const paginatedPayments = filteredPayments.slice((page - 1) * limit, page * limit);
 
   return (
     <div className="space-y-6">
@@ -45,11 +61,26 @@ export default function AdminPaymentsPage() {
             View transaction history and track rent payments globally.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs sm:text-sm font-medium shrink-0">Filter Status:</span>
-          <Select value={statusFilter} onValueChange={(val) => setStatusFilter(val || "ALL")}>
-            <SelectTrigger className="w-[140px] sm:w-[180px]">
-              <SelectValue placeholder="Select Status" />
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+        <div className="relative flex-1 w-full sm:max-w-xs">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search tenant or transaction ID..."
+            className="pl-8 w-full"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <Select value={statusFilter} onValueChange={(val) => { setStatusFilter(val || "ALL"); setPage(1); }}>
+            <SelectTrigger className="w-full sm:w-[150px]">
+              <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="ALL">All Payments</SelectItem>
@@ -65,14 +96,16 @@ export default function AdminPaymentsPage() {
       <Card className="border-border shadow-sm overflow-hidden bg-card/50 backdrop-blur-sm">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-8 text-center text-muted-foreground">Loading payments...</div>
-          ) : payments.length === 0 ? (
-            <div className="p-8 text-center text-muted-foreground">
-              <p>No payments found matching the selected filter.</p>
+            <div className="p-4">
+               <TableSkeleton columns={6} rows={8} />
             </div>
-          ) : (() => {
-            const paginatedPayments = payments.slice((page - 1) * limit, page * limit);
-            return (
+          ) : filteredPayments.length === 0 ? (
+            <div className="p-8 text-center text-muted-foreground">
+              {searchQuery || statusFilter !== "ALL"
+                ? "No payments found matching the selected filters."
+                : "No payments found in the system."}
+            </div>
+          ) : (
             <div className="overflow-x-auto w-full p-4 space-y-4">
               <Table className="min-w-[650px] sm:min-w-full">
                 <TableHeader>
@@ -117,12 +150,11 @@ export default function AdminPaymentsPage() {
               </Table>
 
               <CustomPagination
-                meta={{ page, limit, total: payments.length }}
+                meta={{ page, limit, total: filteredPayments.length }}
                 onPageChange={(p) => setPage(p)}
               />
             </div>
-            );
-          })()}
+          )}
         </CardContent>
       </Card>
     </div>

@@ -72,7 +72,8 @@ This document maps all 14 backend modules and endpoints defined in the RentNest 
 ### 2.7 Property Module (`/api/properties`) - [`src/modules/property`](https://github.com/rockychowdhury/rentnest-api/tree/main/src/modules/property)
 | Method | Route | Description | Auth Requirement | Frontend Action / Service | UI Component / Page |
 |---|---|---|---|---|---|
-| `GET` | `/properties` | Get all listings with filters | Public | `service/getProperties.ts`, `adminActions.ts` -> `getAllProperties()` | `app/(public)/properties/page.tsx`, `app/(dashboard)/admin-dashboard/properties/page.tsx` |
+| `GET` | `/properties` | Get all listings with filters | Public | `service/getProperties.ts` | `app/(public)/properties/page.tsx` |
+| `GET` | `/properties/admin/all` | Get all properties unfiltered | Admin | `adminActions.ts` -> `getAllProperties()` | `app/(dashboard)/admin-dashboard/properties/page.tsx` |
 | `GET` | `/properties/featured` | Get featured property listings | Public | `service/getFeaturedProperties.ts` | Home Page Featured Carousel (`app/(public)/page.tsx`) |
 | `GET` | `/properties/landlord/:landlordId` | Get public properties of a landlord | Public | `propertiesActions.ts` | Public Landlord Profile Page |
 | `GET` | `/properties/my-properties` | Get landlord's owned listings | Landlord | `propertiesActions.ts` -> `getLandlordProperties()` | `app/(dashboard)/landlord-dashboard/properties/page.tsx` |
@@ -136,6 +137,7 @@ This document maps all 14 backend modules and endpoints defined in the RentNest 
 | Method | Route | Description | Auth Requirement | Frontend Action / Service | UI Component / Page |
 |---|---|---|---|---|---|
 | `GET` | `/reviews/property/:propertyId` | Get property reviews & ratings | Public | `tenantReviews.ts`, `reviewActions.ts` | Property Details Review Tab |
+| `GET` | `/reviews/admin/all` | Get all reviews across platform | Admin | `adminActions.ts` -> `getAllReviews()` | `app/(dashboard)/admin-dashboard/reviews/page.tsx` |
 | `GET` | `/reviews/landlord-reviews` | Get reviews received by landlord | Landlord | `reviewActions.ts` -> `getLandlordReviews()` | `app/(dashboard)/landlord-dashboard/reviews/page.tsx` |
 | `GET` | `/reviews/my-reviews` | Get reviews authored by tenant | Tenant | `tenantReviews.ts` -> `getMyReviews()` | `app/(dashboard)/tenant-dashboard/reviews/page.tsx` |
 | `POST` | `/reviews` | Write review for completed rental | Tenant | `tenantReviews.ts` -> `createReview()` | `app/(dashboard)/tenant-dashboard/reviews/page.tsx` |
