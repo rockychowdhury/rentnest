@@ -1,0 +1,2679 @@
+{
+  "info": {
+    "_postman_id": "864dfe0e-33ca-407e-ae3d-0d1fb3333fb5",
+    "name": "RentNestAPI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "39802180"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "create user(public)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"tanent@gmail.com\",\n    \"phone\": \"01633066719\",\n    \"password\": \"password\",\n    \"fullName\": \"Rocky Chowdhury\",\n    \"role\":\"TENANT\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/users/",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login (tenant)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\":\"tenant@gmail.com\",\n    \"password\":\"password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/auth/login",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login (admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\":\"admin@gmail.com\",\n    \"password\":\"password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/auth/login",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login (landlord)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\":\"landloard1@gmail.com\",\n    \"password\":\"password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/auth/login",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout (public)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/auth/logout",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refresh token (public)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/auth/refresh",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "change password (authenticated)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"currentPassword\":\"password\",\n    \"newPassword\":\"password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/auth/change-password",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "auth",
+                "change-password"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "user full profile (authenticated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/users/me",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update account(authenticated)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"phone\":\"01858351708\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/users/me",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete account(authenticated)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/users/me",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "restore account(admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\":\"admin@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/users/restore",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "users",
+                "restore"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "users (admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/users/",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get User (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\":\"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/users/{{userId}}/status",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update status (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\":\"ACTIVE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/users/{{userId}}/status",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "users",
+                "{{userId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "update profile(Authenticated)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"fullName\": \"Shahin Chowdhury\",\n    \"gender\": \"MALE\",\n    \"occupation\":\"Software Engineer\",\n    \"bio\": \"Hi, i'm Shahin Chowdhury Rocky. A software engineer.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/profile/me",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "profile",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update profile (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"fullName\":\"updated by admin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/profile/{{userId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "profile",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "public profile (public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/profile/{{userId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "profile",
+                "{{userId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Amenity",
+      "item": [
+        {
+          "name": "get all amenities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/amenities/",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "amenities",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create amenity(admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\":\"test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/amenities/",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "amenities",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update amenity(admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\":\"testing\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/amenities/{{amenityId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "amenities",
+                "{{amenityId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete amenity(admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\":\"testing\"\n}"
+            },
+            "url": {
+              "raw": "{{rentnest}}/amenities/{{amenityId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "amenities",
+                "{{amenityId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categories",
+      "item": [
+        {
+          "name": "categories all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/categories/",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "categories",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "category create(admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\":\"test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/categories/",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "categories",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "category details",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\":\"test\"\n}"
+            },
+            "url": {
+              "raw": "{{rentnest}}/categories/{{categoryId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "categories",
+                "{{categoryId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "category update(admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\":\"test1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/categories/{{categoryId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "categories",
+                "{{categoryId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete category(Admin)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\":\"test1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/categories/{{categoryId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "categories",
+                "{{categoryId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "GEO",
+      "item": [
+        {
+          "name": "divisions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/divisions",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "divisions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "district of division",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/divisions/{{dvisionId}}/districts",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "divisions",
+                "{{dvisionId}}",
+                "districts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "district by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/districts/{{districtId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "districts",
+                "{{districtId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "upazilas of district",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/districts/{{districtId}}/upazilas",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "districts",
+                "{{districtId}}",
+                "upazilas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "upazila search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/upazilas/search/?q=kasba",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "upazilas",
+                "search",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "kasba"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "upazilas by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/upazilas/{{upazilaId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "upazilas",
+                "{{upazilaId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Property",
+      "item": [
+        {
+          "name": "Get All Properties(public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/properties",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties"
+              ]
+            },
+            "description": "Full endpoint with all query:  \n/api/properties?page=1&limit=20&searchTerm=family&location=dhaka&categoryId=uuid-here&minPrice=15000&maxPrice=30000&amenities=uuid-1,uuid-2"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Featured Properties(public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/properties/featured",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties",
+                "featured"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Properties of a landlord (public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "packages": {},
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/properties/landlord/{{landlordId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties",
+                "landlord",
+                "{{landlordId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Properties (Landlord)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/properties/my-properties",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties",
+                "my-properties"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "property details (public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/properties/{{propertyId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties",
+                "{{propertyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Property (Landlord)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categoryId\": \"d19e8935-9efa-4d3b-a052-0f930e00235c\",\n  \"title\": \"4-Bed Apartment in Mirpur\",\n  \"description\": \"family-friendly apartment close to public transport.\",\n  \"address\": {\n    \"buildingNo\": \"12A\",\n    \"streetAddress\": \"Road 5, Block C\",\n    \"addressLine2\": \"Near City Market\",\n    \"landmark\": \"Mirpur 10 Circle\",\n    \"postalCode\": \"1216\",\n    \"upazilaId\":145,\n    \"latitude\": 23.8069,\n    \"longitude\": 90.3687\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/properties",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Property (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"4-Bed Apartment in Mirpur (Family Only)\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/properties/{{propertyId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties",
+                "{{propertyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Property Status (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PUBLISHED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/properties/{{propertyId}}/status",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties",
+                "{{propertyId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Set Property Amenities (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amenityIds\": [\n    \"{{amenityId}}\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/properties/{{propertyId}}/amenities",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties",
+                "{{propertyId}}",
+                "amenities"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Property (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/properties/{{propertyId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties",
+                "{{propertyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Restore Property (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/properties/{{propertyId}}/restore",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "properties",
+                "{{propertyId}}",
+                "restore"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Property Unit",
+      "item": [
+        {
+          "name": "Property Units(public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/property-units/property/{{propertyId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-units",
+                "property",
+                "{{propertyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unit details (public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/property-units/{{propertyUnitId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-units",
+                "{{propertyUnitId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Property Unit (Landlord)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unitLabel\": \"Unit A1\",\n  \"bedrooms\": 3,\n  \"bathrooms\": 2,\n  \"sizeSqft\": 950\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/property-units/property/{{propertyId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-units",
+                "property",
+                "{{propertyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Unit (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"unitLabel\": \"Unit A4 (Renovated)\",\n  \"bedrooms\": 4,\n  \"bathrooms\": 2,\n  \"sizeSqft\": 1100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/property-units/{{propertyUnitId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-units",
+                "{{propertyUnitId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Unit Status (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"AVAILABLE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/property-units/{{propertyUnitId}}/status",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-units",
+                "{{propertyUnitId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Unit (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/property-units/{{propertyUnitId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-units",
+                "{{propertyUnitId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unit Availability (pubic)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/property-units/{{propertyUnitId}}/availability",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-units",
+                "{{propertyUnitId}}",
+                "availability"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Property Image",
+      "item": [
+        {
+          "name": "Property Images (public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/property-images/property/{{propertyId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-images",
+                "property",
+                "{{propertyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UploadImage (landloard)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"https://example.com/images/property-5.jpg\",\n  \"deleteUrl\": \"https://example.com/images/delete/property-1\",\n  \"caption\": \"Living room\",\n  \"isCover\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/property-images/property/{{propertyId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-images",
+                "property",
+                "{{propertyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update image(landlord)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"caption\": \"Updated caption\",\n  \"isCover\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/property-images/{{propertyImageId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-images",
+                "{{propertyImageId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Image (landlord/admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/property-images/{{propertyImageId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "property-images",
+                "{{propertyImageId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Rental Request",
+      "item": [
+        {
+          "name": "Create Rental Request (Tenant)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyUnitId\": \"{{propertyUnitId}}\",\n  \"pricingId\": \"{{pricingId}}\",\n  \"moveInDate\": \"2026-09-01\",\n  \"duration\": 5,\n  \"message\": \"Interested in moving in early September.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/rental-requests",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "rental-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Rental Requests (Tenant)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/rental-requests/my-requests",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "rental-requests",
+                "my-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Incoming Rental Requests (Landlord)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/rental-requests/incoming-requests",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "rental-requests",
+                "incoming-requests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Request Details (Authenticated)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/rental-requests/{{rentalRequestId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "rental-requests",
+                "{{rentalRequestId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel Rental Request (Tenant/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/rental-requests/{{rentalRequestId}}/cancel",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "rental-requests",
+                "{{rentalRequestId}}",
+                "cancel"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Respond To Rental Request (Landlord)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"APPROVED\",\n  \"landlordResponse\": \"Approved, welcome aboard!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/rental-requests/{{rentalRequestId}}/respond",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "rental-requests",
+                "{{rentalRequestId}}",
+                "respond"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "All Request (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/rental-requests/",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "rental-requests",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pricing",
+      "item": [
+        {
+          "name": "Unit Prices (public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/pricing/unit/{{propertyUnitId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "pricing",
+                "unit",
+                "{{propertyUnitId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Pricing (Landlord)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rentType\": \"MONTHLY\",\n  \"rentAmount\": 18000,\n  \"securityDeposit\": 8000,\n  \"currency\": \"BDT\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/pricing/unit/{{propertyUnitId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "pricing",
+                "unit",
+                "{{propertyUnitId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Pricing (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rentAmount\": 19500,\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/pricing/{{pricingId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "pricing",
+                "{{pricingId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Pricing (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/pricing/{{pricingId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "pricing",
+                "{{pricingId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Lease",
+      "item": [
+        {
+          "name": "All Lease (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/leases/",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "leases",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Leases (Tenant)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/leases/my-leases",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "leases",
+                "my-leases"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Landlord Leases (Landlord)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/leases/landlord-leases",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "leases",
+                "landlord-leases"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Lease Details (authenticated)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/leases/{{leaseId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "leases",
+                "{{leaseId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Lease Status (Landlord/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"COMPLETED\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/leases/{{leaseId}}/status",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "leases",
+                "{{leaseId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Lease Payments (authenticated)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/leases/{{leaseId}}/payments",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "leases",
+                "{{leaseId}}",
+                "payments"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Review",
+      "item": [
+        {
+          "name": "Get Reviews By Property Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/reviews/property/{{propertyId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "reviews",
+                "property",
+                "{{propertyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Review (Tenant)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"propertyId\": \"{{propertyId}}\",\n  \"leaseId\": \"{{leaseId}}\",\n  \"rating\": 5,\n  \"comment\": \"Great place, responsive landlord.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/reviews",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Review (Tenant)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"rating\": 4,\n  \"comment\": \"Updated review after a month of stay.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/reviews/{{reviewId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "reviews",
+                "{{reviewId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Review (Tenant/Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/reviews/{{reviewId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "reviews",
+                "{{reviewId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Respond To Review (Landlord)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"landlordResponse\": \"Thank you for your feedback!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{rentnest}}/reviews/{{reviewId}}/respond",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "reviews",
+                "{{reviewId}}",
+                "respond"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Payment",
+      "item": [
+        {
+          "name": "init payment (Tenant)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\":\"user1@gmail.com\",\n    \"password\":\"password\"\n}"
+            },
+            "url": {
+              "raw": "{{rentnest}}/payments/checkout/lease/{{leaseId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "payments",
+                "checkout",
+                "lease",
+                "{{leaseId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "payment details (Authenticated)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/payments/{{paymentId}}",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "payments",
+                "{{paymentId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Tenant payments",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": ""
+            },
+            "url": {
+              "raw": "{{rentnest}}/payments/my-payments/?status=COMPLETED",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "payments",
+                "my-payments",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "COMPLETED"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "LandlordPayments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/payments/landlord-payments/?status=COMPLETED",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "payments",
+                "landlord-payments",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "COMPLETED"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "All Payments(Admin)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{rentnest}}/payments/",
+              "host": [
+                "{{rentnest}}"
+              ],
+              "path": [
+                "payments",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "rentnest",
+      "value": "https://rentnestapi.vercel.app/api"
+    },
+    {
+      "key": "userId",
+      "value": "281b1e37-7465-48f7-a123-d7f8f7d4f591"
+    },
+    {
+      "key": "amenityId",
+      "value": "42b8a12d-4cc2-4c53-806b-e8112135f38d"
+    },
+    {
+      "key": "categoryId",
+      "value": "d19e8935-9efa-4d3b-a052-0f930e00235c"
+    },
+    {
+      "key": "dvisionId",
+      "value": "3"
+    },
+    {
+      "key": "districtId",
+      "value": "3"
+    },
+    {
+      "key": "upazilaId",
+      "value": "53"
+    },
+    {
+      "key": "landlordId",
+      "value": "2db87410-af1e-4873-805b-7c60f0fc843b"
+    },
+    {
+      "key": "propertyId",
+      "value": "83539e27-3aeb-4606-916b-b9e0925b8619"
+    },
+    {
+      "key": "propertyUnitId",
+      "value": "b66b2870-0537-45d5-86b6-a4d12743460e"
+    },
+    {
+      "key": "propertyImageId",
+      "value": "998405a7-84e0-4620-b398-11fa53aba9dd"
+    },
+    {
+      "key": "rentalRequestId",
+      "value": "f0d5f5ac-5ed7-4b25-a19f-08149f6ab129"
+    },
+    {
+      "key": "pricingId",
+      "value": "fd1d417f-41f0-4ff9-9632-6ed4b0a157f2"
+    },
+    {
+      "key": "leaseId",
+      "value": "640393b6-2de5-459e-a74e-614fe86e59ba"
+    },
+    {
+      "key": "reviewId",
+      "value": "uuid"
+    },
+    {
+      "key": "paymentId",
+      "value": "dbf6eefe-8c90-422e-b2e4-dd1a850c9e62"
+    }
+  ]
+}
