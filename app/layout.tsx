@@ -14,9 +14,9 @@ export default async function RootLayout({
 }>) {
   return (
     <html
-      lang="en" suppressHydrationWarning className={cn("font-sans", inter.variable, spaceGrotesk.variable)}
+      lang="en" suppressHydrationWarning className={cn("min-h-screen font-sans", inter.variable, spaceGrotesk.variable)}
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col bg-background text-foreground antialiased" suppressHydrationWarning>
         {children}
         <Toaster position="bottom-center" richColors />
       </body>

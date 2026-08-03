@@ -7,7 +7,7 @@ import { getNewAccessToken } from "./service/refreshToken";
 import { jwtUtils } from "@/lib/utils/jwt";
 
 const AUTH_ROUTES = ["/login", "/register"];
-const PUBLIC_ROUTES = ["/", "/news"]
+const PUBLIC_ROUTES = ["/", "/properties"]
 
 export async function proxy(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
@@ -96,8 +96,8 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
     matcher: [
-        // '/dashboard/:path*',
-        // '/admin-dashboard/:path*',
-        '/((?!api|_next/static|favicon.ico|properties|login|_next/image|.*\\.png$).*)'
+        '/((?!api|_next/static|_next/image|favicon.ico|assets|login|.*\\.(?:png|jpg|jpeg|svg|webp|gif|ico)$).*)'
     ],
 }
+
+

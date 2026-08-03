@@ -137,3 +137,53 @@
     @apply font-sans;
     }
 }
+
+/* Compact & Minimal Toast Styling */
+[data-sonner-toaster] {
+  --normal-bg: var(--card);
+  --normal-border: var(--border);
+  --normal-text: var(--card-foreground);
+}
+
+[data-sonner-toast] {
+  padding: 0.4rem 0.75rem !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.25rem !important;
+  border-radius: var(--radius) !important;
+  min-height: unset !important;
+  width: fit-content !important;
+  margin-inline: auto !important;
+  gap: 0.5rem !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+[data-sonner-toast] [data-content],
+[data-sonner-toast] [data-title] {
+  width: auto !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+}
+
+[data-sonner-toast][data-type="success"] {
+  background-color: color-mix(in srgb, var(--success) 12%, var(--card)) !important;
+  border-color: color-mix(in srgb, var(--success) 35%, transparent) !important;
+  color: var(--card-foreground) !important;
+}
+
+[data-sonner-toast][data-type="error"] {
+  background-color: color-mix(in srgb, var(--destructive) 12%, var(--card)) !important;
+  border-color: color-mix(in srgb, var(--destructive) 35%, transparent) !important;
+  color: var(--card-foreground) !important;
+}
+
+[data-sonner-toast][data-type="warning"] {
+  background-color: color-mix(in srgb, var(--warning) 12%, var(--card)) !important;
+  border-color: color-mix(in srgb, var(--warning) 35%, transparent) !important;
+  color: var(--card-foreground) !important;
+}
+
+[data-sonner-toast][data-type="info"] {
+  background-color: color-mix(in srgb, var(--primary) 12%, var(--card)) !important;
+  border-color: color-mix(in srgb, var(--primary) 35%, transparent) !important;
+  color: var(--card-foreground) !important;
+}
