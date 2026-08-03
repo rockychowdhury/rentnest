@@ -17,7 +17,6 @@ interface AmenityToggleGridProps {
 }
 
 export function AmenityToggleGrid({ propertyId, initialAmenities }: AmenityToggleGridProps) {
-  // Local state for selected amenities mapping ID -> Name
   const [selectedMap, setSelectedMap] = useState<Record<string, { id: string; name: string }>>(() => {
     const map: Record<string, { id: string; name: string }> = {};
     initialAmenities.forEach(a => map[a.id] = { id: a.id, name: a.name });
@@ -30,7 +29,6 @@ export function AmenityToggleGrid({ propertyId, initialAmenities }: AmenityToggl
   const [isSearching, setIsSearching] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Fetch amenities based on debounced search term
   useEffect(() => {
     const fetchAmenities = async () => {
       setIsSearching(true);
@@ -78,8 +76,7 @@ export function AmenityToggleGrid({ propertyId, initialAmenities }: AmenityToggl
 
   return (
     <div className="space-y-8">
-      {/* Current Amenities Section */}
-      <div>
+            <div>
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <CheckCircle2 className="h-5 w-5 text-primary" />
           Current Amenities
@@ -125,8 +122,7 @@ export function AmenityToggleGrid({ propertyId, initialAmenities }: AmenityToggl
           )}
         </div>
 
-        {/* Search Results */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {searchResults.map((amenity) => {
             const isChecked = !!selectedMap[amenity.id];
             

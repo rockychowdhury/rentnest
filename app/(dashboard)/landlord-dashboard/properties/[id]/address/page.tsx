@@ -8,10 +8,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { fetchApi } from "@/lib/api";
 
-// I'll create a local action or just use fetchApi since address update is part of property update
-// Ah, the API specifies: Property/Update Property (Landlord/Admin): PATCH {{rentnest}}/properties/{{propertyId}}
-// Assuming the backend handles nested address updates via the properties PATCH endpoint.
-
 export default function PropertyAddressPage(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
   const [property, setProperty] = useState<Property | null>(null);
@@ -50,7 +46,6 @@ export default function PropertyAddressPage(props: { params: Promise<{ id: strin
       const result = await updateProperty(params.id, { address: formattedAddress } as any);
       
       if (result.success) {
-        // success handled by form
       } else {
         throw new Error(result.error);
       }
@@ -72,10 +67,8 @@ export default function PropertyAddressPage(props: { params: Promise<{ id: strin
       <AddressForm 
         initialData={{
           ...property.address,
-          // Convert Prisma Decimal strings to actual numbers for full precision
           latitude: property.address?.latitude != null ? Number(property.address.latitude) : undefined,
           longitude: property.address?.longitude != null ? Number(property.address.longitude) : undefined,
-          // Extract cascading IDs from the nested upazila→district→division chain
           divisionId: property.address?.upazila?.district?.divisionId?.toString(),
           districtId: property.address?.upazila?.districtId?.toString(),
         }}

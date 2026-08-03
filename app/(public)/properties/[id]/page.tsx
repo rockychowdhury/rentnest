@@ -12,7 +12,6 @@ import { Separator } from "@/components/ui/separator";
 export default async function PropertyDetailsPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   
-  // Fetch property and user data in parallel
   const [propertyRes, userRes] = await Promise.all([
     getPropertyById(params.id),
     getMe()
@@ -25,7 +24,6 @@ export default async function PropertyDetailsPage(props: { params: Promise<{ id:
     notFound();
   }
 
-  // Formatting Location
   const locParts = [
     property.address?.streetAddress, 
     property.address?.upazila?.name, 
@@ -33,7 +31,6 @@ export default async function PropertyDetailsPage(props: { params: Promise<{ id:
   ].filter(Boolean);
   const fullAddress = locParts.join(", ") || "Location not specified";
 
-  // Calculate overall specs
   let minBeds = 0, maxBeds = 0, minBaths = 0, maxBaths = 0;
   if (property.units && property.units.length > 0) {
     const beds = property.units.map(u => u.bedrooms);
@@ -48,8 +45,7 @@ export default async function PropertyDetailsPage(props: { params: Promise<{ id:
     <div className="w-full bg-background min-h-screen pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
-        {/* Header & Gallery */}
-        <div className="space-y-6">
+                <div className="space-y-6">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2 mb-2">
               <Badge variant="secondary" className="bg-primary/10 text-primary border-none">
@@ -78,14 +74,11 @@ export default async function PropertyDetailsPage(props: { params: Promise<{ id:
           <PropertyDetailsGallery images={property.images || []} />
         </div>
 
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           
-          {/* Left Column - Main Details */}
-          <div className="lg:col-span-2 space-y-10">
+                    <div className="lg:col-span-2 space-y-10">
             
-            {/* Quick Specs */}
-            <div className="flex flex-wrap items-center gap-6 p-6 rounded-2xl border border-border bg-card shadow-sm">
+                        <div className="flex flex-wrap items-center gap-6 p-6 rounded-2xl border border-border bg-card shadow-sm">
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                   <Bed className="size-4" /> Bedrooms
@@ -114,8 +107,7 @@ export default async function PropertyDetailsPage(props: { params: Promise<{ id:
               </div>
             </div>
 
-            {/* Description */}
-            <section className="space-y-4">
+                        <section className="space-y-4">
               <h2 className="text-2xl font-heading font-bold">About this property</h2>
               <div className="prose prose-sm sm:prose-base dark:prose-invert text-muted-foreground max-w-none leading-relaxed whitespace-pre-wrap">
                 {property.description}
@@ -124,8 +116,7 @@ export default async function PropertyDetailsPage(props: { params: Promise<{ id:
 
             <Separator />
 
-            {/* Amenities */}
-            {property.amenities && property.amenities.length > 0 && (
+                        {property.amenities && property.amenities.length > 0 && (
               <section className="space-y-6">
                 <h2 className="text-2xl font-heading font-bold">Amenities</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -143,8 +134,7 @@ export default async function PropertyDetailsPage(props: { params: Promise<{ id:
 
             <Separator />
 
-            {/* Units Info (For reference) */}
-            <section className="space-y-6">
+                        <section className="space-y-6">
               <h2 className="text-2xl font-heading font-bold">Available Units</h2>
               <div className="space-y-4">
                 {property.units?.filter(u => u.status === "AVAILABLE").length === 0 ? (
@@ -171,8 +161,7 @@ export default async function PropertyDetailsPage(props: { params: Promise<{ id:
 
           </div>
 
-          {/* Right Column - Sticky Sidebar */}
-          <div className="lg:col-span-1">
+                    <div className="lg:col-span-1">
             <RentRequestCard property={property} user={user} />
           </div>
 

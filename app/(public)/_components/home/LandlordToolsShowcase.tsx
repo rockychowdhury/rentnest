@@ -37,12 +37,9 @@ export function LandlordToolsShowcase() {
           </p>
         </div>
 
-        {/* Visual Anchor + Overlapping Callout Cards */}
-        <div className="relative max-w-4xl mx-auto my-8 px-4 sm:px-8">
-          {/* Custom Styled Dashboard Interface Preview */}
-          <div className="w-full bg-card rounded-3xl border border-border p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden">
-            {/* Header Mock */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-6">
+                <div className="relative max-w-4xl mx-auto my-8 px-4 sm:px-8">
+                    <div className="w-full bg-card rounded-3xl border border-border p-6 sm:p-8 shadow-2xl space-y-6 relative overflow-hidden">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/60 pb-6">
               <div className="flex items-center gap-3">
                 <div className="size-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center border border-primary/20">
                   <Building className="size-5" />
@@ -60,8 +57,7 @@ export function LandlordToolsShowcase() {
               </div>
             </div>
 
-            {/* Metrics Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-4 rounded-2xl bg-muted/30 border border-border/50 space-y-1">
                 <span className="text-[11px] text-muted-foreground font-medium">Total Rents Collected</span>
                 <p className="text-xl font-heading font-bold text-primary">৳1,45,000</p>
@@ -82,8 +78,7 @@ export function LandlordToolsShowcase() {
             </div>
           </div>
 
-          {/* Overlapping Callout Cards */}
-          {callouts.map((card, idx) => {
+                    {callouts.map((card, idx) => {
             const Icon = card.icon;
             return (
               <div
@@ -101,8 +96,7 @@ export function LandlordToolsShowcase() {
           })}
         </div>
 
-        {/* Mobile Callout Summary List */}
-        <div className="md:hidden grid grid-cols-1 gap-3">
+                <div className="md:hidden grid grid-cols-1 gap-3">
           {callouts.map((card, idx) => {
             const Icon = card.icon;
             return (
@@ -116,8 +110,7 @@ export function LandlordToolsShowcase() {
           })}
         </div>
 
-        {/* CTA Button */}
-        <div className="text-center pt-4">
+                <div className="text-center pt-4">
           <Link href="/register">
             <Button size="lg" className="font-semibold text-xs gap-2 shadow-md">
               <Building className="size-4" />

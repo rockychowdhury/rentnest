@@ -104,7 +104,6 @@ export default function PropertiesListPage() {
     );
   }
 
-  // Global empty state
   if (properties.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-32 border rounded-lg bg-card shadow-sm text-center">

@@ -95,7 +95,6 @@ export function ImageGallery({ propertyId, images, onImagesUpdated }: ImageGalle
   const handleDelete = async (image: PropertyImage) => {
     setDeletingId(image.id);
     try {
-      // 1. Delete from backend
       const res = await deletePropertyImage(image.id);
       if (res.success) {
         toast.success("Image deleted");

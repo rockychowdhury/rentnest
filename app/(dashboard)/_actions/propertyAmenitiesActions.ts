@@ -23,9 +23,6 @@ export async function getAllAmenities(searchTerm?: string, limit: number = 10) {
   }
 }
 
-
-// The endpoint seems to set the amenities in bulk. 
-// The client will pass the updated array of amenity IDs.
 export async function setPropertyAmenities(propertyId: string, amenityIds: string[]) {
   try {
     const headers = await getAuthHeaders();

@@ -9,16 +9,14 @@ export function CurrentLeaseCard({ lease }: { lease: any }) {
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
       <div className="flex flex-col md:flex-row">
-        {/* Left Side: Property Image & Info */}
-        <div className="w-full md:w-1/3 h-48 md:h-auto relative">
+                <div className="w-full md:w-1/3 h-48 md:h-auto relative">
           <img src={property.image} alt={property.title} className="w-full h-full object-cover" />
           <div className="absolute top-4 left-4 bg-background/90 backdrop-blur-md px-3 py-1 rounded-full border border-border text-xs font-semibold flex items-center gap-1.5 shadow-sm">
             <Key className="size-3.5 text-primary" /> Active Lease
           </div>
         </div>
 
-        {/* Right Side: Details */}
-        <div className="flex-1 p-6 md:p-8 flex flex-col justify-between">
+                <div className="flex-1 p-6 md:p-8 flex flex-col justify-between">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <h3 className="text-2xl font-heading font-bold text-foreground">{property.title}</h3>

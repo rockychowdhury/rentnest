@@ -54,8 +54,7 @@ export function TestimonialsSection() {
           </p>
         </div>
 
-        {/* Staggered Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
           {testimonials.map((item, idx) => {
             const isOffset = idx % 2 !== 0;
 

@@ -18,11 +18,6 @@ export default async function PropertyHubLayout(props: {
   
   const isArchived = !!property.deletedAt;
 
-  // We should pass property down via Context if it was deeply nested, but since it's 
-  // server rendered layouts, each tab page can re-fetch or we use a client wrapper.
-  // Actually, Server Components fetch automatically with deduplication in Next.js, 
-  // so child pages can just call getPropertyById(params.id) directly without performance penalty.
-
   const navItems = [
     { label: "Details", href: `/landlord-dashboard/properties/${property.id}/details`, icon: <Building2 className="h-4 w-4" /> },
     { label: "Address", href: `/landlord-dashboard/properties/${property.id}/address`, icon: <MapPin className="h-4 w-4" /> },

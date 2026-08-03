@@ -15,7 +15,6 @@ export async function getTenantOverview() {
   try {
     const headers = await getAuthHeaders();
     
-    // Fetch live Applications, Payments, and Favorites from backend API
     const [appsRes, paymentsRes, favoritesRes] = await Promise.all([
       getTenantApplications().catch(() => ({ success: false, data: [] })),
       getTenantPayments().catch(() => ({ success: false, data: { statementPayments: [] } })),
@@ -29,7 +28,6 @@ export async function getTenantOverview() {
     const pendingApplications = applications.filter((app: any) => app.status === "PENDING").length;
     const savedPropertiesCount = favorites.length; // Real count from backend (0 if none saved)
 
-    // Build real recent activity list from live applications & payments
     const recentActivity = [
       ...applications.slice(0, 3).map((app: any) => ({
         id: `app-${app.id}`,

@@ -33,7 +33,6 @@ export default async function TenantOverviewPage() {
   const hasActiveLease = leases.some((l: Lease) => (l.status as string) === "ACTIVE" || (l.status as string) === "ACTIVE_LEASE");
   const totalRentPaid = payments.reduce((sum: number, p: Payment) => sum + (Number(p.amount) || 0), 0);
 
-  // 6-Month Tenant Rent Expense Chart Data
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const currentMonth = new Date().getMonth();
   const expenseChartData = Array.from({ length: 6 }).map((_, i) => {
@@ -52,7 +51,6 @@ export default async function TenantOverviewPage() {
     };
   });
 
-  // Recent Activity Items
   const activityFeedItems: ActivityItem[] = (recentActivity || []).map((act: { id?: string; title?: string; description?: string; date?: string; type?: string }) => ({
     id: act.id || Math.random().toString(),
     title: act.title || "Rental Activity",
@@ -64,8 +62,7 @@ export default async function TenantOverviewPage() {
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
       
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-heading font-extrabold tracking-tight text-foreground">
             Tenant Overview
@@ -85,13 +82,11 @@ export default async function TenantOverviewPage() {
         </div>
       </div>
 
-      {/* Dominant Lease Overview Card */}
-      <section>
+            <section>
         <LeaseOverviewClient leases={leases} />
       </section>
 
-      {/* Stat Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <StatCard
           title="Rental Lease Status"
           value={hasActiveLease ? "Active" : "No Active Lease"}
@@ -126,8 +121,7 @@ export default async function TenantOverviewPage() {
         />
       </div>
 
-      {/* Expense History Chart & Activity Feed */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <AnalyticsAreaChart
             title="Rent Spending Breakdown"
@@ -137,8 +131,7 @@ export default async function TenantOverviewPage() {
           />
         </div>
 
-        {/* Shortcuts */}
-        <Card className="border border-border/80 shadow-xs bg-card/60 backdrop-blur-md">
+                <Card className="border border-border/80 shadow-xs bg-card/60 backdrop-blur-md">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-heading font-bold text-foreground">
               Tenant Shortcuts
@@ -197,8 +190,7 @@ export default async function TenantOverviewPage() {
         </Card>
       </div>
 
-      {/* Activity Timeline */}
-      <RecentActivityFeed
+            <RecentActivityFeed
         title="Application & Rental Activity Feed"
         description="Updates on lease signatures, rental request approvals, and payments"
         activities={activityFeedItems}

@@ -21,7 +21,6 @@ export interface TenantProfileMock {
 }
 
 export async function getTenantProfile(): Promise<{ success: boolean; data: TenantProfileMock }> {
-  // Mock data for profile
   return {
     success: true,
     data: {

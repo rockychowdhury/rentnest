@@ -12,12 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { toast } from "sonner";
 import { ChevronRight, ChevronLeft, Save, CheckCircle2 } from "lucide-react";
 
-// The full wizard would incorporate AddressForm, UnitForm, etc.
-// For simplicity in this implementation, we will build the Step 1 form and
-// redirect the user to the property hub to complete the rest, as the hub already
-// has all these tabs fully built out and tested, which perfectly aligns with 
-// "save-as-draft-at-any-step" (Step 1 creates the draft).
-
 import { propertyWizardSchema } from "@/lib/validators/forms.validator";
 
 interface PropertyFormWizardProps {
@@ -45,7 +39,6 @@ export function PropertyFormWizard({ categories }: PropertyFormWizardProps) {
 
     setIsLoading(true);
     try {
-      // Step 1: Create draft property
       const res = await createProperty({
         ...validation.data,
         status: PropertyStatus.DRAFT,
@@ -53,7 +46,6 @@ export function PropertyFormWizard({ categories }: PropertyFormWizardProps) {
 
       if (res.success && res.data) {
         toast.success("Draft created! Redirecting to add details...");
-        // Redirect to the property hub (Address tab next)
         router.push(`/landlord-dashboard/properties/${res.data.id}/address`);
       } else {
         toast.error(res.error || "Failed to create property");

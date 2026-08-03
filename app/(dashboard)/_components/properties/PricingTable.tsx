@@ -1,7 +1,5 @@
 "use client";
 
-
-
 import { useState } from "react";
 import { PropertyUnit, Pricing, RentType } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -21,7 +19,6 @@ export function PricingTable({ unit, onPricingUpdated, disabled }: PricingTableP
   const [isAddOpen, setIsAddOpen] = useState(false);
   const existingRentTypes = unit.pricing?.map(p => p.rentType) || [];
   
-  // Available rent types that haven't been used yet for this unit
   const availableRentTypes = Object.values(RentType).filter(
     (rt) => !existingRentTypes.includes(rt as RentType)
   );
@@ -86,8 +83,7 @@ export function PricingTable({ unit, onPricingUpdated, disabled }: PricingTableP
             </Button>
           } />
           <DialogContent>
-            {/* We reuse PricingFormRow in 'create' mode */}
-            <div className="p-4">
+                        <div className="p-4">
               <h3 className="text-lg font-medium mb-4">Add New Pricing Option</h3>
               <PricingFormRow 
                 availableTypes={availableRentTypes}

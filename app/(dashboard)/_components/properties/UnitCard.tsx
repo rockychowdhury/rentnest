@@ -23,7 +23,6 @@ export function UnitCard({ unit, onUnitUpdated }: UnitCardProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
-  // Find lowest active rent amount
   const lowestRent = unit.pricing
     ?.filter(p => p.isActive)
     ?.map(p => p.rentAmount)
@@ -144,7 +143,6 @@ export function UnitCard({ unit, onUnitUpdated }: UnitCardProps) {
           isArchived={isArchived}
           onArchive={handleSoftDelete}
           onRestore={() => {
-            // Implement restore logic if backend provides it, otherwise disabled
             toast.error("Restore functionality not available for units in API yet.");
           }}
           title="Remove Unit"

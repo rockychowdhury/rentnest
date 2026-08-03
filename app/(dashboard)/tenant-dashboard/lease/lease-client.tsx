@@ -14,7 +14,6 @@ export function LeaseClient({ leases }: { leases: any[] }) {
   const activeLeases = leases.filter(l => l.status === "ACTIVE");
   const completedLeases = leases.filter(l => ["COMPLETED", "TERMINATED", "CANCELLED"].includes(l.status));
 
-  // Determine what to show in the main active card
   const primaryLeases = [...pendingPaymentLeases, ...activeLeases];
   
   const [primaryIndex, setPrimaryIndex] = useState(0);
@@ -38,8 +37,7 @@ export function LeaseClient({ leases }: { leases: any[] }) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-min">
-        {/* Active/Pending Lease (Takes up more space in bento grid) */}
-        <div className="md:col-span-2 md:row-span-2 bg-card border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col sm:flex-row relative h-full min-h-[350px] transition-all duration-300">
+                <div className="md:col-span-2 md:row-span-2 bg-card border border-border rounded-2xl overflow-hidden shadow-sm flex flex-col sm:flex-row relative h-full min-h-[350px] transition-all duration-300">
           {primaryLeases.length > 1 && (
             <div className="absolute top-4 right-4 z-20 flex gap-1">
               <Button variant="secondary" size="icon" className="size-8 rounded-full shadow-sm hover:bg-primary hover:text-primary-foreground transition-colors" onClick={handlePrevPrimary}>
@@ -61,8 +59,7 @@ export function LeaseClient({ leases }: { leases: any[] }) {
 
           {primaryLease ? (
             <>
-              {/* Left Side: Mini Statement */}
-              <div className="w-full sm:w-1/3 bg-muted/30 p-6 flex flex-col justify-between border-b sm:border-b-0 sm:border-r border-border">
+                            <div className="w-full sm:w-1/3 bg-muted/30 p-6 flex flex-col justify-between border-b sm:border-b-0 sm:border-r border-border">
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Statement</span>
@@ -98,8 +95,7 @@ export function LeaseClient({ leases }: { leases: any[] }) {
                 )}
               </div>
 
-              {/* Right Side: Property Details */}
-              <div className="w-full sm:w-2/3 p-6 flex flex-col">
+                            <div className="w-full sm:w-2/3 p-6 flex flex-col">
                 <Badge className="w-fit mb-4 shadow-sm" variant={isPrimaryPendingPayment ? "destructive" : primaryLease?.status === "PENDING" ? "secondary" : "default"}>
                   {isPrimaryPendingPayment ? "Payment Required" : primaryLease?.status === "PENDING" ? "Pending Approval" : "Active Lease"}
                 </Badge>
@@ -155,8 +151,7 @@ export function LeaseClient({ leases }: { leases: any[] }) {
           )}
         </div>
 
-        {/* Completed/Terminated Leases Mini Statement */}
-        <div className="md:col-span-1 md:row-span-2 bg-card border border-border rounded-2xl p-6 flex flex-col shadow-sm">
+                <div className="md:col-span-1 md:row-span-2 bg-card border border-border rounded-2xl p-6 flex flex-col shadow-sm">
            <h3 className="text-lg font-heading font-semibold text-foreground mb-4">Past Leases</h3>
            
            <div className="flex-1 overflow-y-auto pr-2 space-y-4">

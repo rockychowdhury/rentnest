@@ -108,8 +108,7 @@ export function AccountClient({ user }: { user: any }) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Profile Update */}
-        <section className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-6">
+                <section className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-6">
           <div className="flex items-center gap-2">
             <User className="size-5 text-primary" />
             <h3 className="text-lg font-heading font-semibold text-foreground">Profile Information</h3>
@@ -146,8 +145,7 @@ export function AccountClient({ user }: { user: any }) {
           </form>
         </section>
 
-        {/* Account Update */}
-        <section className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-6">
+                <section className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-6">
           <div className="flex items-center gap-2">
             <Mail className="size-5 text-primary" />
             <h3 className="text-lg font-heading font-semibold text-foreground">Account Information</h3>
@@ -168,8 +166,7 @@ export function AccountClient({ user }: { user: any }) {
           </form>
         </section>
 
-        {/* Password Change */}
-        <section className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-6">
+                <section className="bg-card border border-border rounded-2xl p-6 sm:p-8 space-y-6">
           <div className="flex items-center gap-2">
             <Lock className="size-5 text-primary" />
             <h3 className="text-lg font-heading font-semibold text-foreground">Change Password</h3>
@@ -189,8 +186,7 @@ export function AccountClient({ user }: { user: any }) {
           </form>
         </section>
 
-        {/* Danger Zone */}
-        <section className="bg-card border border-destructive/20 rounded-2xl p-6 sm:p-8 space-y-6">
+                <section className="bg-card border border-destructive/20 rounded-2xl p-6 sm:p-8 space-y-6">
           <div className="flex items-center gap-2">
             <Trash2 className="size-5 text-destructive" />
             <h3 className="text-lg font-heading font-semibold text-destructive">Danger Zone</h3>

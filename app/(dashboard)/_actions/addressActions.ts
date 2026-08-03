@@ -10,9 +10,6 @@ const getAuthHeaders = async (): Promise<Record<string, string>> => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-// Assuming the update property endpoint handles address updates directly via an `address` object
-// If there's a specific address endpoint in the future, we can add it here.
-
 export async function getDivisions() {
   try {
     const res = await fetchApi<{ data: Division[] }>("/divisions", { next: { revalidate: 600 } });

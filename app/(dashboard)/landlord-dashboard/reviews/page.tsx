@@ -120,8 +120,7 @@ export default function ReviewsPage() {
 
                     <p className="text-foreground/90">{review.comment}</p>
 
-                    {/* Landlord Response Section */}
-                    {review.landlordResponse ? (
+                                        {review.landlordResponse ? (
                       <div className="mt-4 p-4 rounded-lg bg-primary/5 border border-primary/10">
                         <p className="text-xs font-semibold text-primary mb-1">Your Response:</p>
                         <p className="text-sm">{review.landlordResponse}</p>

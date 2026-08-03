@@ -53,8 +53,7 @@ export function PaymentsClient({ paymentsData }: { paymentsData: { statementPaym
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Left Column: Mini Statement (Completed Payments) */}
-        <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2 space-y-6">
           <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">Mini Statement</h3>
           
           <div className="bg-card border border-border rounded-2xl overflow-hidden">
@@ -108,8 +107,7 @@ export function PaymentsClient({ paymentsData }: { paymentsData: { statementPaym
           </div>
         </div>
 
-        {/* Right Column: Pay Current Due */}
-        <div className="lg:col-span-1 space-y-6">
+                <div className="lg:col-span-1 space-y-6">
           <h3 className="text-sm font-semibold text-destructive uppercase tracking-wider">Current Due</h3>
           
           <div className="bg-destructive/5 border border-destructive/20 rounded-2xl p-6 relative overflow-hidden">

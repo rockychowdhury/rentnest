@@ -50,8 +50,7 @@ export function LeaseOverviewClient({ leases }: { leases: any[] }) {
 
   return (
     <div className="relative group bg-card border border-border shadow-sm rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-md">
-      {/* Slider Controls */}
-      {leases.length > 1 && (
+            {leases.length > 1 && (
         <div className="absolute top-4 right-4 flex gap-1 z-20">
           <Button variant="secondary" size="icon" className="size-8 rounded-full shadow-sm hover:bg-primary hover:text-primary-foreground transition-colors" onClick={handlePrev}>
             <ChevronLeft className="size-4" />
@@ -62,8 +61,7 @@ export function LeaseOverviewClient({ leases }: { leases: any[] }) {
         </div>
       )}
 
-      {/* Pagination dots */}
-      {leases.length > 1 && (
+            {leases.length > 1 && (
         <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20">
           {leases.map((_, idx) => (
             <div key={idx} className={`h-1.5 rounded-full transition-all ${idx === currentIndex ? 'w-4 bg-primary' : 'w-1.5 bg-border'}`} />
@@ -72,8 +70,7 @@ export function LeaseOverviewClient({ leases }: { leases: any[] }) {
       )}
 
       <div className="flex flex-col sm:flex-row relative z-10">
-        {/* Left Side: Mini Statement */}
-        <div className="w-full sm:w-1/3 bg-muted/30 p-6 sm:p-8 flex flex-col justify-between border-b sm:border-b-0 sm:border-r border-border">
+                <div className="w-full sm:w-1/3 bg-muted/30 p-6 sm:p-8 flex flex-col justify-between border-b sm:border-b-0 sm:border-r border-border">
           <div>
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Statement</span>
@@ -114,8 +111,7 @@ export function LeaseOverviewClient({ leases }: { leases: any[] }) {
           )}
         </div>
 
-        {/* Right Side: Property Details */}
-        <div className="w-full sm:w-2/3 p-6 sm:p-8 flex flex-col justify-center">
+                <div className="w-full sm:w-2/3 p-6 sm:p-8 flex flex-col justify-center">
           <Badge variant="secondary" className="w-fit mb-3 bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
             <Key className="mr-1.5 size-3.5" /> Active Lease
           </Badge>

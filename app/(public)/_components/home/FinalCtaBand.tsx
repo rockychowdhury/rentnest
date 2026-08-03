@@ -8,8 +8,7 @@ export function FinalCtaBand() {
     <section className="py-20 bg-muted/40 border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Panel 1: Tenants */}
-          <div className="bg-card rounded-3xl border border-border p-8 sm:p-10 space-y-6 shadow-sm flex flex-col justify-between hover:border-primary/40 transition-colors">
+                    <div className="bg-card rounded-3xl border border-border p-8 sm:p-10 space-y-6 shadow-sm flex flex-col justify-between hover:border-primary/40 transition-colors">
             <div className="space-y-3">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
                 <Search className="size-3.5" />
@@ -32,8 +31,7 @@ export function FinalCtaBand() {
             </div>
           </div>
 
-          {/* Panel 2: Landlords */}
-          <div className="bg-card rounded-3xl border border-border p-8 sm:p-10 space-y-6 shadow-sm flex flex-col justify-between hover:border-primary/40 transition-colors">
+                    <div className="bg-card rounded-3xl border border-border p-8 sm:p-10 space-y-6 shadow-sm flex flex-col justify-between hover:border-primary/40 transition-colors">
             <div className="space-y-3">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-secondary/30 text-foreground border border-secondary/50">
                 <Building className="size-3.5" />

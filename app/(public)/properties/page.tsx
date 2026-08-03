@@ -58,7 +58,6 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
     getPublicAmenities(),
   ]);
 
-  // Determine Mode: If any parameter beyond page/limit is passed, enter Search Results Mode B
   const filterKeys = Object.keys(resolvedParams).filter((k) => {
     if (k === "page" || k === "limit") return false;
     if (k === "sort" && resolvedParams[k as keyof typeof resolvedParams] === "newest") return false;
@@ -68,11 +67,9 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
 
   return (
     <div className="w-full min-h-screen bg-background text-foreground flex flex-col">
-      {/* Top Sticky Filter Bar */}
-      <PropertyFilterBar categories={categories} amenities={amenities} />
+            <PropertyFilterBar categories={categories} amenities={amenities} />
 
-      {/* Main Content: Streamed in via Suspense */}
-      <main className="flex-1">
+            <main className="flex-1">
         <Suspense key={JSON.stringify(resolvedParams)} fallback={<PropertiesLoadingSkeleton />}>
           {isSearchMode ? (
             <AsyncSearchResults resolvedParams={resolvedParams} />

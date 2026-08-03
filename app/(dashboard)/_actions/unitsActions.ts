@@ -73,4 +73,3 @@ export async function softDeleteUnit(unitId: string) {
     return { success: false, error: error.message };
   }
 }
-// Note: Restore unit endpoint wasn't in the explicit list, might need to patch or specific endpoint, assuming generic patch for now if not available, but sticking to known endpoints. If backend adds restore, update here.

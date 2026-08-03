@@ -62,10 +62,6 @@ export function Navbar({ user = null }: NavbarProps) {
     setMobileDrawerOpen(false);
   }, [pathname]);
 
-  const navLinks = [
-    { name: "Browse Properties", href: "/properties" },
-  ];
-
   const getDashboardHref = (role: string) => {
     switch (role) {
       case "TENANT":
@@ -78,6 +74,14 @@ export function Navbar({ user = null }: NavbarProps) {
         return "/";
     }
   };
+
+  const navLinks = [
+    { name: "Browse Properties", href: "/properties", icon: Building },
+  ];
+
+  if (user) {
+    navLinks.push({ name: "Dashboard", href: getDashboardHref(user.role), icon: LayoutDashboard });
+  }
 
   return (
     <header
@@ -93,18 +97,20 @@ export function Navbar({ user = null }: NavbarProps) {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+            const isActive = pathname === link.href || (link.href !== "/properties" && pathname.includes("dashboard"));
+            const Icon = link.icon;
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "px-3.5 py-2 rounded-lg text-xs font-medium transition-colors hover:text-primary hover:bg-muted/50",
+                  "flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-medium transition-colors hover:text-primary hover:bg-muted/50",
                   isActive
                     ? "text-primary font-semibold bg-primary/10"
                     : "text-muted-foreground"
                 )}
               >
+                <Icon className="size-3.5" />
                 {link.name}
               </Link>
             );
@@ -124,75 +130,21 @@ export function Navbar({ user = null }: NavbarProps) {
           </button>
 
           {user ? (
-            /* Logged In User Dropdown Menu via Portal */
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                className="flex items-center gap-2 p-1 rounded-full border border-border hover:border-primary/50 transition-all focus:outline-none"
-                aria-label="User Menu"
+            /* Logged In User Controls (Desktop) */
+            <div className="hidden md:flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={async () => {
+                  await logout();
+                }}
+                className="group flex items-center gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all font-medium text-xs px-3"
+                title="Log Out"
               >
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt={displayName} className="size-8 rounded-full object-cover border border-primary/20" />
-                ) : (
-                  <div className="size-8 rounded-full bg-primary/10 text-primary font-semibold text-xs flex items-center justify-center border border-primary/20">
-                    {displayName.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent align="end" className="w-56 p-2 rounded-2xl shadow-xl border border-border bg-card">
-                <div className="px-3 py-2 border-b border-border/60">
-                  <p className="text-xs font-semibold text-foreground truncate">
-                    {displayName}
-                  </p>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-[10px] text-muted-foreground truncate">
-                      {user.email}
-                    </span>
-                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
-                      {user.role}
-                    </span>
-                  </div>
-                </div>
-
-                <DropdownMenuItem
-                  render={
-                    <Link
-                      href={getDashboardHref(user.role)}
-                      className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium rounded-lg text-foreground hover:bg-muted transition-colors cursor-pointer"
-                    >
-                      <LayoutDashboard className="size-3.5 text-muted-foreground" />
-                      Dashboard
-                    </Link>
-                  }
-                  className="mt-1"
-                />
-
-                <DropdownMenuItem
-                  render={
-                    <Link
-                      href="/settings"
-                      className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium rounded-lg text-foreground hover:bg-muted transition-colors cursor-pointer"
-                    >
-                      <Settings className="size-3.5 text-muted-foreground" />
-                      Settings
-                    </Link>
-                  }
-                />
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem
-                  variant="destructive"
-                  onClick={async () => {
-                    await logout();
-                  }}
-                  className="flex items-center gap-2 w-full px-3 py-2 text-xs font-medium rounded-lg text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
-                >
-                  <LogOut className="size-3.5" />
-                  Log Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <LogOut className="size-4 transition-transform group-hover:scale-110 group-hover:-translate-x-0.5" />
+                <span className="hidden lg:inline">Log Out</span>
+              </Button>
+            </div>
           ) : (
             /* Logged Out Desktop CTA Cluster */
             <div className="hidden md:flex items-center gap-2">
@@ -231,45 +183,26 @@ export function Navbar({ user = null }: NavbarProps) {
 
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 <div className="space-y-2">
-                  <Link
-                    href="/properties"
-                    onClick={() => setMobileDrawerOpen(false)}
-                    className={cn(
-                      "block px-4 py-3 rounded-xl text-base font-semibold transition-colors",
-                      pathname === "/properties"
-                        ? "text-primary bg-primary/10"
-                        : "text-foreground hover:bg-muted"
-                    )}
-                  >
-                    Browse Properties
-                  </Link>
-
-                  {user && (
-                    <>
+                  {navLinks.map((link) => {
+                    const isActive = pathname === link.href || (link.href !== "/properties" && pathname.includes("dashboard"));
+                    const Icon = link.icon;
+                    return (
                       <Link
-                        href={getDashboardHref(user.role)}
+                        key={link.href}
+                        href={link.href}
                         onClick={() => setMobileDrawerOpen(false)}
                         className={cn(
                           "flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold transition-colors",
-                          pathname.includes("dashboard")
+                          isActive
                             ? "text-primary bg-primary/10"
                             : "text-foreground hover:bg-muted"
                         )}
                       >
-                        <LayoutDashboard className="size-5 text-primary" />
-                        Dashboard
+                        <Icon className="size-5 text-primary" />
+                        {link.name}
                       </Link>
-
-                      <Link
-                        href="/settings"
-                        onClick={() => setMobileDrawerOpen(false)}
-                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold text-foreground hover:bg-muted transition-colors"
-                      >
-                        <Settings className="size-5 text-primary" />
-                        Settings
-                      </Link>
-                    </>
-                  )}
+                    );
+                  })}
                 </div>
 
                 <div className="pt-6 border-t border-border space-y-4">
@@ -287,27 +220,17 @@ export function Navbar({ user = null }: NavbarProps) {
                   </div>
 
                   {user ? (
-                    <div className="p-3.5 rounded-xl bg-muted/50 border border-border flex items-center justify-between">
-                      <div className="overflow-hidden pr-2">
-                        <p className="text-xs font-semibold text-foreground truncate">
-                          {displayName}
-                        </p>
-                        <p className="text-[10px] text-muted-foreground truncate">
-                          {user.role} • {user.email}
-                        </p>
-                      </div>
-                      <Button 
-                        size="sm" 
-                        variant="destructive" 
-                        onClick={async () => {
-                          setMobileDrawerOpen(false);
-                          await logout();
-                        }}
-                      >
-                        <LogOut className="size-3.5 mr-1" />
-                        Log Out
-                      </Button>
-                    </div>
+                    <Button 
+                      variant="destructive" 
+                      className="w-full h-11 text-sm font-semibold flex items-center justify-center gap-2 group transition-all"
+                      onClick={async () => {
+                        setMobileDrawerOpen(false);
+                        await logout();
+                      }}
+                    >
+                      <LogOut className="size-4 transition-transform group-hover:-translate-x-1" />
+                      Log Out
+                    </Button>
                   ) : (
                     <div className="grid grid-cols-2 gap-3 pt-2">
                       <Link href="/login" onClick={() => setMobileDrawerOpen(false)}>

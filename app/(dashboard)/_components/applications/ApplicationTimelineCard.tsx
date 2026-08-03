@@ -8,7 +8,6 @@ export function ApplicationTimelineCard({ application }: { application: any }) {
   
   const isActionRequired = status === "MORE_INFO_REQUESTED";
   
-  // Status mapping for timeline visual
   const timelineStages = [
     { key: "PENDING", label: "Submitted" },
     { key: "UNDER_REVIEW", label: "Reviewing" },
@@ -42,8 +41,7 @@ export function ApplicationTimelineCard({ application }: { application: any }) {
         </div>
       </div>
 
-      {/* Timeline Strip */}
-      {status !== "REJECTED" && status !== "WITHDRAWN" && (
+            {status !== "REJECTED" && status !== "WITHDRAWN" && (
         <div className="pt-4 pb-2">
           <div className="flex items-center justify-between relative">
             <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-0.5 bg-muted rounded-full overflow-hidden">
@@ -61,8 +59,7 @@ export function ApplicationTimelineCard({ application }: { application: any }) {
         </div>
       )}
 
-      {/* Action Prompt */}
-      {isActionRequired && infoRequestMessage && (
+            {isActionRequired && infoRequestMessage && (
         <div className="mt-6 pt-4 border-t border-amber-500/20">
           <p className="text-sm text-foreground mb-3"><span className="font-semibold">Message from Landlord:</span> {infoRequestMessage}</p>
           <div className="flex flex-wrap gap-2">

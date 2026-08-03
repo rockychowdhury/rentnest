@@ -9,8 +9,6 @@ export const metadata: Metadata = {
 export default async function AdminAccountPage() {
   const result = await getAccountProfile();
   
-  // The backend might return errors if the user doesn't have a profile yet,
-  // or if they are not authenticated.
   const profile = result.data;
 
   return (

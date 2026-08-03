@@ -35,8 +35,7 @@ export function HeroSection() {
 
   return (
     <section className="relative w-full overflow-hidden py-20 lg:py-28 bg-background border-b border-border/40">
-      {/* High Quality Hero Background Image with Gradient Overlay */}
-      <div className="absolute inset-0 z-0 select-none overflow-hidden">
+            <div className="absolute inset-0 z-0 select-none overflow-hidden">
         <Image
           src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1920&q=80"
           alt="RentNest Hero Background"
@@ -48,37 +47,31 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/70 to-background" />
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
+            <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8">
         <div className="space-y-4 max-w-3xl mx-auto">
-          {/* Eyebrow Pill */}
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20 backdrop-blur-md shadow-xs animate-in fade-in slide-in-from-top-4 duration-500">
+                    <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold bg-primary/10 text-primary border border-primary/20 backdrop-blur-md shadow-xs animate-in fade-in slide-in-from-top-4 duration-500">
             <Sparkles className="size-3.5" />
             Seamless Rental Platform across Bangladesh
           </span>
 
-          {/* Main Headline */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight text-foreground leading-[1.15]">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight text-foreground leading-[1.15]">
             Rent with confidence, <br className="hidden sm:inline" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/90 to-amber-500">
               list with ease
             </span>
           </h1>
 
-          {/* Subhead */}
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto font-normal">
+                    <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto font-normal">
             Discover verified apartments, sublets, bachelor messes, and commercial spaces across every division, district, and upazila.
           </p>
         </div>
 
-        {/* Search Bar Form */}
-        <form
+                <form
           onSubmit={handleSearch}
           className="bg-card/85 backdrop-blur-xl border border-border/80 rounded-3xl shadow-[0_12px_40px_rgb(0,0,0,0.08)] p-4 md:p-6 space-y-4 max-w-4xl mx-auto transition-all"
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {/* Division Select */}
-            <Select value={division} onValueChange={(val) => setDivision(val || "")}>
+                        <Select value={division} onValueChange={(val) => setDivision(val || "")}>
               <SelectTrigger className="w-full h-11 text-xs bg-muted/30 border-border/60">
                 <MapPin className="size-3.5 mr-2 text-primary shrink-0" />
                 <SelectValue placeholder="Division" />
@@ -95,8 +88,7 @@ export function HeroSection() {
               </SelectContent>
             </Select>
 
-            {/* District Select */}
-            <Select value={district} onValueChange={(val) => setDistrict(val || "")}>
+                        <Select value={district} onValueChange={(val) => setDistrict(val || "")}>
               <SelectTrigger className="w-full h-11 text-xs bg-muted/30 border-border/60">
                 <SelectValue placeholder="District" />
               </SelectTrigger>
@@ -110,8 +102,7 @@ export function HeroSection() {
               </SelectContent>
             </Select>
 
-            {/* Upazila Select */}
-            <Select value={upazila} onValueChange={(val) => setUpazila(val || "")}>
+                        <Select value={upazila} onValueChange={(val) => setUpazila(val || "")}>
               <SelectTrigger className="w-full h-11 text-xs bg-muted/30 border-border/60">
                 <SelectValue placeholder="Upazila / Thana" />
               </SelectTrigger>
@@ -125,8 +116,7 @@ export function HeroSection() {
               </SelectContent>
             </Select>
 
-            {/* Category Select */}
-            <Select value={category} onValueChange={(val) => setCategory(val || "")}>
+                        <Select value={category} onValueChange={(val) => setCategory(val || "")}>
               <SelectTrigger className="w-full h-11 text-xs bg-muted/30 border-border/60">
                 <Building className="size-3.5 mr-2 text-primary shrink-0" />
                 <SelectValue placeholder="All Categories" />
@@ -148,8 +138,7 @@ export function HeroSection() {
           </Button>
         </form>
 
-        {/* Quick Filter Chips */}
-        <div className="flex items-center justify-center gap-2 flex-wrap text-xs pt-2">
+                <div className="flex items-center justify-center gap-2 flex-wrap text-xs pt-2">
           <span className="text-muted-foreground font-medium">Quick search:</span>
           {quickFilters.map((chip) => (
             <button

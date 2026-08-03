@@ -48,7 +48,6 @@ export default function PropertyAmenitiesPage(props: { params: Promise<{ id: str
 
   if (!property) return null;
 
-  // The backend API returns property.amenities as an array of objects with an 'amenity' property
   const initialAmenities = property.amenities?.map((pa: any) => ({
     id: pa.amenity.id,
     name: pa.amenity.name,

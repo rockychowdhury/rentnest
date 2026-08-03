@@ -23,12 +23,11 @@ export default async function AdminDashboardPage() {
     getAllPayments().catch(() => ({ success: false, data: [] })),
   ]);
 
-  const users: User[] = Array.isArray(usersRes.data) ? usersRes.data : [];
-  const properties: Property[] = Array.isArray(propertiesRes.data) ? propertiesRes.data : [];
-  const leases: Lease[] = Array.isArray(leasesRes.data) ? leasesRes.data : [];
-  const payments: Payment[] = Array.isArray(paymentsRes.data) ? paymentsRes.data : [];
+  const users: User[] = Array.isArray(usersRes.data) ? usersRes.data : (usersRes.data?.users || usersRes.data?.data || []);
+  const properties: Property[] = Array.isArray(propertiesRes.data) ? propertiesRes.data : (propertiesRes.data?.data || []);
+  const leases: Lease[] = Array.isArray(leasesRes.data) ? leasesRes.data : (leasesRes.data?.data || []);
+  const payments: Payment[] = Array.isArray(paymentsRes.data) ? paymentsRes.data : (paymentsRes.data?.data || []);
 
-  // Calculate Metrics
   const tenantCount = users.filter((u: User) => u.role === "TENANT").length;
   const landlordCount = users.filter((u: User) => u.role === "LANDLORD").length;
   const adminCount = users.filter((u: User) => u.role === "ADMIN").length;
@@ -45,7 +44,6 @@ export default async function AdminDashboardPage() {
   const completedPayments = payments.filter((p: Payment) => p.status === "COMPLETED" || (p as any).status === "SUCCESS");
   const totalRevenue = completedPayments.reduce((sum: number, p: Payment) => sum + (Number(p.amount) || 0), 0);
 
-  // Generate 6-Month Revenue Data from real backend payments
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const currentMonth = new Date().getMonth();
   const revenueChartData = Array.from({ length: 6 }).map((_, i) => {
@@ -64,14 +62,12 @@ export default async function AdminDashboardPage() {
     };
   });
 
-  // Real User Distribution Donut Data
   const userDonutData = [
     { name: "Tenants", value: tenantCount, color: "#3b82f6" },
     { name: "Landlords", value: landlordCount, color: "#10b981" },
     { name: "Admins", value: adminCount, color: "#e11d48" },
   ];
 
-  // Recent System Activity Feed
   const recentActivities: ActivityItem[] = [
     ...users.slice(0, 3).map((u: User) => ({
       id: `u-${u.id}`,
@@ -91,8 +87,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-heading font-extrabold tracking-tight text-foreground">
             System Overview
@@ -118,8 +113,7 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Top 4 Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <StatCard
           title="Platform Revenue"
           value={`৳${totalRevenue.toLocaleString()}`}
@@ -154,8 +148,7 @@ export default async function AdminDashboardPage() {
         />
       </div>
 
-      {/* Analytics Section: Area Chart & Donut Chart */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <AnalyticsAreaChart
             title="Revenue & Growth Trajectory"
@@ -175,8 +168,7 @@ export default async function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* Activity Log & Quick Admin Shortcuts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <RecentActivityFeed
             title="Live System Activity Log"
@@ -185,8 +177,7 @@ export default async function AdminDashboardPage() {
           />
         </div>
 
-        {/* Quick System Management Shortcuts */}
-        <Card className="border border-border/80 shadow-xs bg-card/60 backdrop-blur-md">
+                <Card className="border border-border/80 shadow-xs bg-card/60 backdrop-blur-md">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-heading font-bold text-foreground">
               Management Shortcuts

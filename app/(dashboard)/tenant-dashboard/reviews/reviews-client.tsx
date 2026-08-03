@@ -33,14 +33,12 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
   const { written, eligible } = reviewsData;
   const [eligibleIndex, setEligibleIndex] = useState(0);
 
-  // Review Modal State
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [activeReviewId, setActiveReviewId] = useState<string | null>(null);
   const [targetProperty, setTargetProperty] = useState<any>(null);
   const [targetLeaseId, setTargetLeaseId] = useState<string | undefined>(undefined);
 
-  // Form State
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
@@ -55,7 +53,6 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
 
   const eligibleLease = eligible[eligibleIndex];
 
-  // Open modal for new review on an eligible lease
   const handleOpenNewReview = (lease: any) => {
     const prop = lease.property || lease.propertyUnit?.property;
     setTargetProperty(prop);
@@ -67,7 +64,6 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
     setModalOpen(true);
   };
 
-  // Open modal for editing an existing review
   const handleOpenEditReview = (review: any) => {
     setTargetProperty(review.property);
     setTargetLeaseId(review.leaseId);
@@ -78,7 +74,6 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
     setModalOpen(true);
   };
 
-  // Submit review form
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -121,7 +116,6 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
     });
   };
 
-  // Handle Delete Review
   const handleDelete = (reviewId: string) => {
     if (!confirm("Are you sure you want to delete this review?")) return;
 
@@ -153,8 +147,7 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Tenant's Written Reviews */}
-        <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2 space-y-6">
           <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
             Your Written Reviews ({written.length})
           </h3>
@@ -252,8 +245,7 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
           )}
         </div>
 
-        {/* Right Column: Eligible to Review Leases */}
-        <div className="lg:col-span-1 space-y-6">
+                <div className="lg:col-span-1 space-y-6">
           <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
             Eligible to Review ({eligible.length})
           </h3>
@@ -341,8 +333,7 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
         </div>
       </div>
 
-      {/* Review Dialog / Modal */}
-      <Dialog open={modalOpen} onOpenChange={setModalOpen}>
+            <Dialog open={modalOpen} onOpenChange={setModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-base font-heading font-bold">
@@ -354,8 +345,7 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-5 py-2">
-            {/* Interactive Star Rating */}
-            <div className="space-y-2 text-center bg-muted/30 p-4 rounded-xl border border-border/40">
+                        <div className="space-y-2 text-center bg-muted/30 p-4 rounded-xl border border-border/40">
               <label className="text-xs font-semibold text-foreground block">
                 Overall Rating
               </label>
@@ -390,8 +380,7 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
               </span>
             </div>
 
-            {/* Comment Text Area */}
-            <div className="space-y-2">
+                        <div className="space-y-2">
               <label className="text-xs font-semibold text-foreground">
                 Your Review / Comment (Optional)
               </label>

@@ -32,8 +32,7 @@ export async function FeaturedProperties() {
           </Link>
         </div>
 
-        {/* Carousel / Scroll Container */}
-        <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory transform-gpu">
+                <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory transform-gpu">
           {properties.map((item) => (
             <PropertyCard key={item.id} property={item} layout="rail" />
           ))}

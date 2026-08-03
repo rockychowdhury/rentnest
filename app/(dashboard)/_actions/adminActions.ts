@@ -13,13 +13,9 @@ const getAuthHeaders = async (): Promise<Record<string, string>> => {
   } : {};
 };
 
-// ========================
-// USERS
-// ========================
-
 export async function getAllUsers() {
   const headers = await getAuthHeaders();
-  const result = await fetchApi("/users", {
+  const result = await fetchApi("/users?limit=1000", {
     method: "GET",
     headers,
   });
@@ -43,12 +39,8 @@ export async function updateUserStatus(userId: string, status: string) {
   }
 }
 
-// ========================
-// AMENITIES
-// ========================
-
 export async function getAmenities() {
-  return await fetchApi("/amenities", {
+  return await fetchApi("/amenities?limit=1000", {
     method: "GET",
   });
 }
@@ -104,12 +96,8 @@ export async function deleteAmenity(id: string, name: string) {
   }
 }
 
-// ========================
-// CATEGORIES
-// ========================
-
 export async function getCategories() {
-  return await fetchApi("/categories", {
+  return await fetchApi("/categories?limit=1000", {
     method: "GET",
   });
 }
@@ -165,45 +153,29 @@ export async function deleteCategory(id: string, name: string) {
   }
 }
 
-// ========================
-// REQUESTS
-// ========================
-
 export async function getAllRequests() {
   const headers = await getAuthHeaders();
-  return await fetchApi("/rental-requests", {
+  return await fetchApi("/rental-requests?limit=1000", {
     method: "GET",
     headers,
   });
 }
-
-// ========================
-// LEASES
-// ========================
 
 export async function getAllLeases() {
   const headers = await getAuthHeaders();
-  return await fetchApi("/leases", {
+  return await fetchApi("/leases?limit=1000", {
     method: "GET",
     headers,
   });
 }
-
-// ========================
-// PAYMENTS
-// ========================
 
 export async function getAllPayments() {
   const headers = await getAuthHeaders();
-  return await fetchApi("/payments", {
+  return await fetchApi("/payments?limit=1000", {
     method: "GET",
     headers,
   });
 }
-
-// ========================
-// PROPERTIES (Admin Actions)
-// ========================
 
 export async function getAllProperties() {
   const headers = await getAuthHeaders();
@@ -379,7 +351,6 @@ export async function getAllReviews() {
     const headers = await getAuthHeaders();
     const result = await fetchApi("/reviews/admin/all?limit=1000", { method: "GET", headers });
     
-    // Add propertyTitle mapping for consistency with existing UI
     let allReviews: any[] = [];
     if (result.success && result.data) {
       const revs = Array.isArray(result.data) ? result.data : (result.data?.data || []);

@@ -146,8 +146,7 @@ export function ApplicationsClient({ applications }: { applications: any[] }) {
         </div>
       )}
 
-      {/* Details Modal */}
-      <ReusableModal
+            <ReusableModal
         isOpen={modalOpen}
         onOpenChange={setModalOpen}
         title="Request Details"

@@ -46,7 +46,6 @@ export function LandlordSidebar({ user }: { user?: UserType | null }) {
       </div>
       <div className="flex-1 p-4 space-y-1">
         {landlordNavItems.map((item) => {
-          // Exact match for overview, startsWith for others to keep active state when on subpages
           const isActive = item.href === "/landlord-dashboard" 
             ? pathname === item.href 
             : pathname.startsWith(item.href);
@@ -72,8 +71,7 @@ export function LandlordSidebar({ user }: { user?: UserType | null }) {
         })}
       </div>
       
-      {/* User Info & Logout */}
-      <div className="p-4 border-t border-border/40 mt-auto">
+            <div className="p-4 border-t border-border/40 mt-auto">
         <div className="flex items-center gap-3 mb-4 px-2">
           <Avatar className="size-10 border border-border">
             <AvatarImage src={user?.profile?.avatarUrl || undefined} />

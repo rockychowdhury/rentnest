@@ -31,8 +31,7 @@ export function HowItWorksTimeline() {
   return (
     <section className="py-20 bg-muted/20 border-t border-border/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
-        {/* Header & Tabs */}
-        <div className="flex flex-col items-center text-center space-y-4 max-w-2xl mx-auto">
+                <div className="flex flex-col items-center text-center space-y-4 max-w-2xl mx-auto">
           <span className="text-xs font-semibold text-primary uppercase tracking-wider">
             Step-by-Step Guide
           </span>
@@ -52,10 +51,8 @@ export function HowItWorksTimeline() {
           </Tabs>
         </div>
 
-        {/* Layout: Timeline (left 2/3) + Visual Preview Card (right 1/3) */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start pt-6">
-          {/* Vertical Stepped Timeline */}
-          <div className="lg:col-span-2 relative space-y-8 before:absolute before:inset-0 before:left-4 md:before:left-1/2 before:w-0.5 before:-ml-px before:bg-border/80">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start pt-6">
+                    <div className="lg:col-span-2 relative space-y-8 before:absolute before:inset-0 before:left-4 md:before:left-1/2 before:w-0.5 before:-ml-px before:bg-border/80">
             {steps.map((step, idx) => {
               const isEven = idx % 2 === 0;
 
@@ -66,13 +63,11 @@ export function HowItWorksTimeline() {
                     isEven ? "md:flex-row-reverse" : "md:flex-row"
                   }`}
                 >
-                  {/* Step Badge / Number */}
-                  <div className="absolute left-4 md:left-1/2 -translate-x-1/2 size-8 rounded-full bg-primary text-primary-foreground font-heading font-bold text-xs flex items-center justify-center shadow-md z-10 border-4 border-background">
+                                    <div className="absolute left-4 md:left-1/2 -translate-x-1/2 size-8 rounded-full bg-primary text-primary-foreground font-heading font-bold text-xs flex items-center justify-center shadow-md z-10 border-4 border-background">
                     {idx + 1}
                   </div>
 
-                  {/* Step Card Content */}
-                  <div className="w-full md:w-[calc(50%-2rem)] pl-12 md:pl-0">
+                                    <div className="w-full md:w-[calc(50%-2rem)] pl-12 md:pl-0">
                     <div className="bg-card rounded-2xl border border-border/80 p-5 space-y-2 shadow-xs hover:border-primary/40 transition-all hover:shadow-sm">
                       <div className="flex items-center gap-2">
                         <CheckCircle2 className="size-4 text-primary shrink-0" />
@@ -90,8 +85,7 @@ export function HowItWorksTimeline() {
             })}
           </div>
 
-          {/* Feature Showcase Box */}
-          <div className="lg:col-span-1 sticky top-24 space-y-4">
+                    <div className="lg:col-span-1 sticky top-24 space-y-4">
             <div className="bg-gradient-to-br from-card to-muted/40 rounded-3xl border border-border/80 p-6 space-y-6 shadow-xl relative overflow-hidden">
               <div className="flex items-center gap-3 border-b border-border/60 pb-4">
                 <div className="size-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center border border-primary/20">

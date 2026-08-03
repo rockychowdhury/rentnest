@@ -28,7 +28,6 @@ export default async function LandlordDashboardPage() {
   const requests: RentalRequest[] = Array.isArray(requestsRes.data) ? requestsRes.data : [];
   const payments: Payment[] = Array.isArray(paymentsRes.data) ? paymentsRes.data : [];
 
-  // Calculate Unit Counts & Occupancy
   let totalUnits = 0;
   let occupiedUnits = 0;
   let availableUnits = 0;
@@ -44,14 +43,11 @@ export default async function LandlordDashboardPage() {
 
   const occupancyRate = totalUnits > 0 ? Math.round((occupiedUnits / totalUnits) * 100) : 0;
 
-  // Requests Summary
   const pendingRequests = requests.filter((r: RentalRequest) => (r.status as string) === "PENDING");
 
-  // Income Metrics
   const completedPayments = payments.filter((p: Payment) => (p.status as string) === "COMPLETED" || (p as any).status === "SUCCESS");
   const totalIncome = completedPayments.reduce((sum: number, p: Payment) => sum + (Number(p.amount) || 0), 0);
 
-  // Income Chart Data (6 Months)
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const currentMonth = new Date().getMonth();
   const incomeChartData = Array.from({ length: 6 }).map((_, i) => {
@@ -70,13 +66,11 @@ export default async function LandlordDashboardPage() {
     };
   });
 
-  // Real Occupancy Donut Data
   const occupancyDonutData = [
     { name: "Occupied Units", value: occupiedUnits, color: "#10b981" },
     { name: "Available Units", value: availableUnits, color: "#3b82f6" },
   ];
 
-  // Activity Feed
   const recentActivities: ActivityItem[] = [
     ...requests.slice(0, 3).map((r: RentalRequest) => ({
       id: `req-${r.id}`,
@@ -96,8 +90,7 @@ export default async function LandlordDashboardPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
-      {/* Header & Quick Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-heading font-extrabold tracking-tight text-foreground">
             Landlord Overview
@@ -123,8 +116,7 @@ export default async function LandlordDashboardPage() {
         </div>
       </div>
 
-      {/* Top 4 Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <StatCard
           title="Total Rental Income"
           value={`৳${totalIncome.toLocaleString()}`}
@@ -159,8 +151,7 @@ export default async function LandlordDashboardPage() {
         />
       </div>
 
-      {/* Analytics Section: Income Area Chart & Occupancy Donut */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <AnalyticsAreaChart
             title="Rental Income Breakdown"
@@ -180,8 +171,7 @@ export default async function LandlordDashboardPage() {
         </div>
       </div>
 
-      {/* Activity Log & Action Items */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
           <RecentActivityFeed
             title="Recent Rental Activity & Requests"
@@ -190,8 +180,7 @@ export default async function LandlordDashboardPage() {
           />
         </div>
 
-        {/* Action Shortcuts */}
-        <Card className="border border-border/80 shadow-xs bg-card/60 backdrop-blur-md">
+                <Card className="border border-border/80 shadow-xs bg-card/60 backdrop-blur-md">
           <CardHeader className="pb-3">
             <CardTitle className="text-base font-heading font-bold text-foreground">
               Landlord Shortcuts

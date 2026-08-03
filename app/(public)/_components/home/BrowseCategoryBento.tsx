@@ -69,8 +69,7 @@ export function BrowseCategoryBento() {
           </Link>
         </div>
 
-        {/* Bento Grid (Desktop/Tablet) + Horizontal Scroll (Mobile) */}
-        <div className="flex md:grid md:grid-cols-3 lg:grid-cols-4 gap-5 overflow-x-auto pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory">
+                <div className="flex md:grid md:grid-cols-3 lg:grid-cols-4 gap-5 overflow-x-auto pb-4 md:pb-0 scrollbar-none snap-x snap-mandatory">
           {categories.map((cat) => {
             const Icon = cat.icon;
             const isLarge = cat.size === "large";
@@ -86,8 +85,7 @@ export function BrowseCategoryBento() {
                     : "md:col-span-1 min-h-[180px]"
                 )}
               >
-                {/* Background Image with Dark Gradient Overlay */}
-                <div className="absolute inset-0 z-0 overflow-hidden">
+                                <div className="absolute inset-0 z-0 overflow-hidden">
                   <Image
                     src={cat.imageUrl}
                     alt={cat.title}
