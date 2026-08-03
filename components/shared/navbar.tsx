@@ -2,18 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
-  Building2,
   Globe,
-  ChevronDown,
-  Menu,
-  X,
-  User,
   LogOut,
   Settings,
   LayoutDashboard,
   Building,
+  Menu,
+  X,
 } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils/shadcnUtils";
@@ -30,10 +27,8 @@ export function Navbar({ user = null }: NavbarProps) {
   const avatarUrl = user?.profile?.avatarUrl || null;
 
   const pathname = usePathname();
-  const router = useRouter();
   const [scrolled, setScrolled] = useState(false);
   const [lang, setLang] = useState<"EN" | "BN">("EN");
-  const [companyOpen, setCompanyOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
@@ -47,21 +42,12 @@ export function Navbar({ user = null }: NavbarProps) {
 
   // Close dropdowns on route change
   useEffect(() => {
-    setCompanyOpen(false);
     setUserMenuOpen(false);
     setMobileDrawerOpen(false);
   }, [pathname]);
 
   const navLinks = [
     { name: "Browse Properties", href: "/properties" },
-    { name: "For Landlords", href: "/for-landlords" },
-    { name: "How It Works", href: "/how-it-works" },
-  ];
-
-  const companyLinks = [
-    { name: "About Us", href: "/about" },
-    { name: "Contact", href: "/contact" },
-    { name: "FAQ", href: "/faq" },
   ];
 
   const getDashboardHref = (role: string) => {
@@ -107,52 +93,6 @@ export function Navbar({ user = null }: NavbarProps) {
               </Link>
             );
           })}
-
-          {/* Company Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setCompanyOpen(!companyOpen)}
-              className={cn(
-                "px-3.5 py-2 rounded-lg text-xs font-medium transition-colors flex items-center gap-1 hover:text-primary hover:bg-muted/50",
-                companyLinks.some((l) => pathname === l.href)
-                  ? "text-primary font-semibold bg-primary/10"
-                  : "text-muted-foreground"
-              )}
-            >
-              Company
-              <ChevronDown
-                className={cn(
-                  "size-3.5 transition-transform duration-200",
-                  companyOpen ? "rotate-180" : ""
-                )}
-              />
-            </button>
-
-            {companyOpen && (
-              <>
-                <div
-                  className="fixed inset-0 z-10"
-                  onClick={() => setCompanyOpen(false)}
-                />
-                <div className="absolute top-full left-0 mt-1 w-44 rounded-xl border border-border bg-card p-1.5 shadow-lg z-20 space-y-0.5 animate-in fade-in duration-150">
-                  {companyLinks.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "block px-3 py-2 rounded-lg text-xs font-medium transition-colors hover:bg-muted hover:text-foreground",
-                        pathname === item.href
-                          ? "text-primary font-semibold bg-primary/10"
-                          : "text-muted-foreground"
-                      )}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
         </nav>
 
         {/* Right Cluster */}
@@ -283,21 +223,6 @@ export function Navbar({ user = null }: NavbarProps) {
                   )}
                 >
                   {link.name}
-                </Link>
-              ))}
-            </div>
-
-            <div className="pt-4 border-t border-border/60 space-y-1">
-              <p className="px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
-                Company
-              </p>
-              {companyLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block px-4 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors"
-                >
-                  {item.name}
                 </Link>
               ))}
             </div>
