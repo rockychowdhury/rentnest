@@ -43,13 +43,16 @@ export function TenantSidebar({ user }: { user?: any }) {
       </div>
       <div className="flex-1 p-4 space-y-1">
         {tenantNavItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = item.href === "/tenant-dashboard"
+            ? pathname === item.href
+            : pathname?.startsWith(item.href);
           const Icon = item.icon;
           
           return (
             <Link
               key={item.href}
               href={item.href}
+              suppressHydrationWarning
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                 isActive 

@@ -231,52 +231,43 @@ export function Navbar({ user = null }: NavbarProps) {
 
               <div className="flex-1 overflow-y-auto p-6 space-y-4">
                 <div className="space-y-2">
-                  <SheetClose
-                    render={
+                  <Link
+                    href="/properties"
+                    onClick={() => setMobileDrawerOpen(false)}
+                    className={cn(
+                      "block px-4 py-3 rounded-xl text-base font-semibold transition-colors",
+                      pathname === "/properties"
+                        ? "text-primary bg-primary/10"
+                        : "text-foreground hover:bg-muted"
+                    )}
+                  >
+                    Browse Properties
+                  </Link>
+
+                  {user && (
+                    <>
                       <Link
-                        href="/properties"
+                        href={getDashboardHref(user.role)}
+                        onClick={() => setMobileDrawerOpen(false)}
                         className={cn(
-                          "block px-4 py-3 rounded-xl text-base font-semibold transition-colors",
-                          pathname === "/properties"
+                          "flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold transition-colors",
+                          pathname.includes("dashboard")
                             ? "text-primary bg-primary/10"
                             : "text-foreground hover:bg-muted"
                         )}
                       >
-                        Browse Properties
+                        <LayoutDashboard className="size-5 text-primary" />
+                        Dashboard
                       </Link>
-                    }
-                  />
 
-                  {user && (
-                    <>
-                      <SheetClose
-                        render={
-                          <Link
-                            href={getDashboardHref(user.role)}
-                            className={cn(
-                              "flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold transition-colors",
-                              pathname.includes("dashboard")
-                                ? "text-primary bg-primary/10"
-                                : "text-foreground hover:bg-muted"
-                            )}
-                          >
-                            <LayoutDashboard className="size-5 text-primary" />
-                            Dashboard
-                          </Link>
-                        }
-                      />
-
-                      <SheetClose
-                        render={
-                          <Link
-                            href="/settings"
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold text-foreground hover:bg-muted transition-colors"
-                          >
-                            <Settings className="size-5 text-primary" />
-                            Settings
-                          </Link>
-                        }
-                      />
+                      <Link
+                        href="/settings"
+                        onClick={() => setMobileDrawerOpen(false)}
+                        className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold text-foreground hover:bg-muted transition-colors"
+                      >
+                        <Settings className="size-5 text-primary" />
+                        Settings
+                      </Link>
                     </>
                   )}
                 </div>
@@ -305,37 +296,26 @@ export function Navbar({ user = null }: NavbarProps) {
                           {user.role} • {user.email}
                         </p>
                       </div>
-                      <SheetClose
-                        render={
-                          <Button 
-                            size="sm" 
-                            variant="destructive" 
-                            onClick={async () => {
-                              await logout();
-                            }}
-                          >
-                            <LogOut className="size-3.5 mr-1" />
-                            Log Out
-                          </Button>
-                        }
-                      />
+                      <Button 
+                        size="sm" 
+                        variant="destructive" 
+                        onClick={async () => {
+                          setMobileDrawerOpen(false);
+                          await logout();
+                        }}
+                      >
+                        <LogOut className="size-3.5 mr-1" />
+                        Log Out
+                      </Button>
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-3 pt-2">
-                      <SheetClose
-                        render={
-                          <Link href="/login">
-                            <Button variant="outline" className="w-full h-11 text-sm font-semibold">Log in</Button>
-                          </Link>
-                        }
-                      />
-                      <SheetClose
-                        render={
-                          <Link href="/register">
-                            <Button className="w-full h-11 text-sm font-semibold">List Property</Button>
-                          </Link>
-                        }
-                      />
+                      <Link href="/login" onClick={() => setMobileDrawerOpen(false)}>
+                        <Button variant="outline" className="w-full h-11 text-sm font-semibold">Log in</Button>
+                      </Link>
+                      <Link href="/register" onClick={() => setMobileDrawerOpen(false)}>
+                        <Button className="w-full h-11 text-sm font-semibold">List Property</Button>
+                      </Link>
                     </div>
                   )}
                 </div>

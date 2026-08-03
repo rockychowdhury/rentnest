@@ -51,11 +51,14 @@ export function AdminSidebar({ user }: { user: any }) {
 
       <div className="flex-1 py-6 px-4 space-y-1">
         {adminNavItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = item.href === "/admin-dashboard"
+            ? pathname === item.href
+            : pathname?.startsWith(item.href);
           return (
             <Link
               key={item.name}
               href={item.href}
+              suppressHydrationWarning
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
                 isActive 

@@ -77,23 +77,20 @@ export function MobileDashboardHeader({ user, navItems, roleTitle }: MobileDashb
                 const Icon = item.icon;
 
                 return (
-                  <SheetClose
+                  <Link
                     key={item.href}
-                    render={
-                      <Link
-                        href={item.href}
-                        className={cn(
-                          "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                          isActive
-                            ? "bg-primary/10 text-primary font-semibold"
-                            : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                        )}
-                      />
-                    }
+                    href={item.href}
+                    onClick={() => setOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-primary/10 text-primary font-semibold"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
                   >
                     <Icon className="size-4 shrink-0" />
                     <span>{item.name}</span>
-                  </SheetClose>
+                  </Link>
                 );
               })}
             </div>

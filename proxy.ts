@@ -54,50 +54,46 @@ export async function proxy(request: NextRequest) {
         userRole = (decodedAccessToken.data as JwtPayload).role;
     }
 
-    //user is logged in and trying to access login or register page, redirect to dashboard or root home page
-    if(accessToken && AUTH_ROUTES.includes(pathname)){
-        if(userRole === "TENANT"){
+    const isAuthRoute = AUTH_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
+
+    // User is logged in with valid token and trying to access login or register page -> redirect to dashboard
+    if (decodedAccessToken?.success && userRole && isAuthRoute) {
+        if (userRole === "TENANT") {
             return NextResponse.redirect(new URL('/tenant-dashboard', request.url));
-        }else if(userRole === "ADMIN"){
-            return NextResponse.redirect(new URL('/admin-dashboard', request.url));
-        }else if(userRole === "LANDLORD"){
+        } else if (userRole === "LANDLORD") {
             return NextResponse.redirect(new URL('/landlord-dashboard', request.url));
-        }else{
+        } else if (userRole === "ADMIN") {
+            return NextResponse.redirect(new URL('/admin-dashboard', request.url));
+        } else {
             return NextResponse.redirect(new URL('/', request.url));
         }
     }
 
     const isPublicRoute = PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
 
-    const isAuthRoute = AUTH_ROUTES.some((route) => pathname === route || pathname.startsWith(route + "/"));
-
-    // Authenticated Pages Protection : Authorization is not handled yet
-    if(!accessToken && !isPublicRoute && !isAuthRoute){
-        const loginUrl = new URL('/login', request.url)
-
-        loginUrl.searchParams.set("redirectTo", pathname)
-
+    // Authenticated Pages Protection
+    if ((!accessToken || !decodedAccessToken?.success) && !isPublicRoute && !isAuthRoute) {
+        const loginUrl = new URL('/login', request.url);
+        loginUrl.searchParams.set("redirectTo", pathname);
         return NextResponse.redirect(loginUrl);
     }
 
-    // Authorization : Role based access control
-    if(pathname.includes("tenant") && userRole !== "TENANT"){
+    // Authorization: Role based access control
+    if (pathname.includes("tenant") && userRole !== "TENANT") {
         return NextResponse.redirect(new URL('/not-found', request.url));
-    }else if(pathname.includes("admin") && userRole !== "ADMIN"){
+    } else if (pathname.includes("admin") && userRole !== "ADMIN") {
         return NextResponse.redirect(new URL('/not-found', request.url));
-    }else if(pathname.includes("landlord") && userRole !== "LANDLORD"){
+    } else if (pathname.includes("landlord") && userRole !== "LANDLORD") {
         return NextResponse.redirect(new URL('/not-found', request.url));
     }
 
-    
-    // return NextResponse.redirect(new URL('/', request.url))
-    return NextResponse.next()
+    return NextResponse.next();
 }
 
 export const config = {
     matcher: [
-        '/((?!api|_next/static|_next/image|favicon.ico|assets|login|.*\\.(?:png|jpg|jpeg|svg|webp|gif|ico)$).*)'
+        '/((?!api|_next/static|_next/image|favicon.ico|assets|.*\\.(?:png|jpg|jpeg|svg|webp|gif|ico)$).*)'
     ],
-}
+};
 
 

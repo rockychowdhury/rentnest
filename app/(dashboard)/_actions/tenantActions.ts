@@ -1,43 +1,78 @@
 "use server";
 
-// Mock data for Tenant Dashboard
+import { fetchApi } from "@/lib/api";
+import { cookies } from "next/headers";
+import { getTenantApplications } from "./tenantApplications";
+import { getTenantPayments } from "./tenantPayments";
+
+const getAuthHeaders = async (): Promise<Record<string, string>> => {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 export async function getTenantOverview() {
-  // Mocking the scenario where the tenant has no active lease and no payment due
-  // Change these booleans to test different UI states
-  const hasActiveLease = false;
-  const isPaymentDue = false;
+  try {
+    const headers = await getAuthHeaders();
+    
+    // Fetch live Applications, Payments, and Favorites from backend API
+    const [appsRes, paymentsRes, favoritesRes] = await Promise.all([
+      getTenantApplications().catch(() => ({ success: false, data: [] })),
+      getTenantPayments().catch(() => ({ success: false, data: { statementPayments: [] } })),
+      fetchApi<any>("/favorites/my-favorites", { headers }).catch(() => ({ data: [] })),
+    ]);
 
-  return {
-    success: true,
-    data: {
-      hasActiveLease,
-      isPaymentDue,
-      upcomingPayment: isPaymentDue ? {
-        amount: 25000,
-        dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days from now
-        leaseId: "mock-lease-1"
-      } : null,
-      stats: {
-        pendingApplications: 1,
-        savedProperties: 4,
-      },
-      recentActivity: [
-        {
-          id: "act-1",
-          type: "APPLICATION_UPDATE",
-          title: "Application Under Review",
-          description: "Your application for 4-Bed Apartment in Mirpur is being reviewed.",
-          date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+    const applications = Array.isArray(appsRes.data) ? appsRes.data : [];
+    const statementPayments = paymentsRes?.data?.statementPayments || [];
+    const favorites = Array.isArray(favoritesRes?.data) ? favoritesRes.data : [];
+
+    const pendingApplications = applications.filter((app: any) => app.status === "PENDING").length;
+    const savedPropertiesCount = favorites.length; // Real count from backend (0 if none saved)
+
+    // Build real recent activity list from live applications & payments
+    const recentActivity = [
+      ...applications.slice(0, 3).map((app: any) => ({
+        id: `app-${app.id}`,
+        type: "APPLICATION_UPDATE",
+        title: `Rental Request: ${app.propertyUnit?.property?.title || app.propertyUnit?.unitLabel || 'Property'}`,
+        description: `Status: ${app.status} • Move-in Date: ${app.moveInDate || 'TBD'}`,
+        date: app.createdAt || new Date().toISOString(),
+      })),
+      ...statementPayments.slice(0, 3).map((p: any) => ({
+        id: `pay-${p.id}`,
+        type: "PAYMENT",
+        title: `Rent Payment: ৳${Number(p.amount).toLocaleString()}`,
+        description: `Payment status: ${p.status} via ${p.paymentMethod || 'Online'}`,
+        date: p.createdAt || new Date().toISOString(),
+      })),
+    ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0, 5);
+
+    return {
+      success: true,
+      data: {
+        hasActiveLease: false,
+        isPaymentDue: false,
+        upcomingPayment: null,
+        stats: {
+          pendingApplications,
+          savedProperties: savedPropertiesCount,
         },
-        {
-          id: "act-2",
-          type: "FAVORITE_ADDED",
-          title: "Saved Property",
-          description: "You saved Cozy 2-Bed Apartment.",
-          date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
-        }
-      ]
-    }
-  };
+        recentActivity,
+      },
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      data: {
+        hasActiveLease: false,
+        isPaymentDue: false,
+        upcomingPayment: null,
+        stats: {
+          pendingApplications: 0,
+          savedProperties: 0,
+        },
+        recentActivity: [],
+      },
+    };
+  }
 }
