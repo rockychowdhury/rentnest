@@ -10,20 +10,42 @@ import {
   RotateCcw,
   Navigation,
   Check,
+  Calendar,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { getPublicCategories, CategoryItem } from "@/service/getCategories";
+import { getPublicAmenities, AmenityItem } from "@/service/getAmenities";
 import { cn } from "@/lib/utils/shadcnUtils";
 
-export function PropertyFilterBar() {
+interface PropertyFilterBarProps {
+  categories?: CategoryItem[];
+  amenities?: AmenityItem[];
+}
+
+export function PropertyFilterBar({ categories: initialCategories, amenities: initialAmenities }: PropertyFilterBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
-  // Local Input States for Instant Typing & Dragging Feedback
+  const [categoriesList, setCategoriesList] = useState<CategoryItem[]>(initialCategories || []);
+  const [amenitiesList, setAmenitiesList] = useState<AmenityItem[]>(initialAmenities || []);
+
+  // Fetch Categories & Amenities dynamically if not provided as props
+  useEffect(() => {
+    if (!initialCategories || initialCategories.length === 0) {
+      getPublicCategories().then(setCategoriesList);
+    }
+    if (!initialAmenities || initialAmenities.length === 0) {
+      getPublicAmenities().then(setAmenitiesList);
+    }
+  }, [initialCategories, initialAmenities]);
+
+  // Local Input States
   const [searchTerm, setSearchTerm] = useState(searchParams.get("searchTerm") || "");
   const [location, setLocation] = useState(searchParams.get("location") || "");
   const [division, setDivision] = useState(searchParams.get("division") || "");
@@ -36,12 +58,13 @@ export function PropertyFilterBar() {
   const [bathrooms, setBathrooms] = useState(searchParams.get("bathrooms") || "");
   const [rentType, setRentType] = useState(searchParams.get("rentType") || "");
   const [availableNow, setAvailableNow] = useState(searchParams.get("availableNow") === "true");
+  const [isFeatured, setIsFeatured] = useState(searchParams.get("isFeatured") === "true");
   const [sort, setSort] = useState(searchParams.get("sort") || "newest");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
     searchParams.get("amenities") ? searchParams.get("amenities")!.split(",") : []
   );
 
-  // Debounced inputs
+  // Debounced inputs for price & search
   const debouncedSearchTerm = useDebouncedValue(searchTerm, 400);
   const debouncedMinPrice = useDebouncedValue(minPrice, 400);
   const debouncedMaxPrice = useDebouncedValue(maxPrice, 400);
@@ -63,6 +86,7 @@ export function PropertyFilterBar() {
     setBathrooms(searchParams.get("bathrooms") || "");
     setRentType(searchParams.get("rentType") || "");
     setAvailableNow(searchParams.get("availableNow") === "true");
+    setIsFeatured(searchParams.get("isFeatured") === "true");
     setSort(searchParams.get("sort") || "newest");
     setSelectedAmenities(
       searchParams.get("amenities") ? searchParams.get("amenities")!.split(",") : []
@@ -86,6 +110,7 @@ export function PropertyFilterBar() {
       bathrooms,
       rentType,
       availableNow,
+      isFeatured,
       sort: sort === "newest" ? undefined : sort,
       amenities: selectedAmenities,
       ...overrides,
@@ -107,8 +132,14 @@ export function PropertyFilterBar() {
     });
   };
 
-  // Trigger URL update on debounced input change
+  const isFirstRender = React.useRef(true);
+
+  // Trigger URL update on debounced input change only when user types/changes inputs
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     updateURL({});
   }, [debouncedSearchTerm, debouncedMinPrice, debouncedMaxPrice]);
 
@@ -125,6 +156,7 @@ export function PropertyFilterBar() {
     setBathrooms("");
     setRentType("");
     setAvailableNow(false);
+    setIsFeatured(false);
     setSort("newest");
     setSelectedAmenities([]);
 
@@ -141,9 +173,6 @@ export function PropertyFilterBar() {
         setGeoLocating(false);
         updateURL({
           location: "Near Me",
-          lat: pos.coords.latitude.toFixed(4),
-          lng: pos.coords.longitude.toFixed(4),
-          radius: "5",
         });
       },
       () => setGeoLocating(false)
@@ -162,19 +191,10 @@ export function PropertyFilterBar() {
     (k) => k !== "page" && k !== "limit"
   );
 
-  const amenitiesList = [
-    { id: "generator-backup", label: "Generator Backup" },
-    { id: "wasa-water", label: "WASA Water" },
-    { id: "lift", label: "Elevator/Lift" },
-    { id: "parking", label: "Parking" },
-    { id: "security", label: "24/7 Security" },
-    { id: "wifi", label: "WiFi" },
-  ];
-
   return (
     <div className="w-full bg-card border-b border-border shadow-xs sticky top-16 z-30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 space-y-3">
-        {/* Main Bar: Search Input + Location + Category + Mobile Filter Trigger + Sort */}
+        {/* Main Search Controls */}
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           {/* Free-text Search Input */}
           <div className="relative flex-1 min-w-[200px]">
@@ -182,11 +202,12 @@ export function PropertyFilterBar() {
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by area, title, or keywords..."
+              placeholder="Search by area, title, or keyword..."
               className="pl-9 h-10 text-xs bg-muted/30"
             />
             {searchTerm && (
               <button
+                type="button"
                 onClick={() => {
                   setSearchTerm("");
                   updateURL({ searchTerm: "" });
@@ -216,32 +237,60 @@ export function PropertyFilterBar() {
           {/* Category Select (Desktop) */}
           <div className="hidden lg:block w-44 shrink-0">
             <Select
-              value={category}
+              value={category || "ALL"}
               onValueChange={(val) => {
-                const next = val || "";
+                const next = !val || val === "ALL" ? "" : val;
                 setCategory(next);
                 updateURL({ categoryId: next });
               }}
             >
               <SelectTrigger className="h-10 text-xs">
-                <Building className="size-3.5 mr-1.5 text-muted-foreground" />
-                <SelectValue placeholder="All Categories" />
+                <Building className="size-3.5 mr-1.5 text-muted-foreground shrink-0" />
+                <SelectValue placeholder="All Categories">
+                  {categoriesList.find((c) => c.id === category || c.slug === category)?.name || (!category || category === "ALL" ? "All Categories" : category)}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="family-apartment">Family Apartment</SelectItem>
-                <SelectItem value="bachelor-mess">Bachelor Mess</SelectItem>
-                <SelectItem value="sublet">Sublet</SelectItem>
-                <SelectItem value="hostel">Hostel</SelectItem>
+                <SelectItem value="ALL">All Categories</SelectItem>
+                {categoriesList.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Rent Type Select (Desktop) */}
+          <div className="hidden xl:block w-36 shrink-0">
+            <Select
+              value={rentType || "ALL"}
+              onValueChange={(val) => {
+                const next = !val || val === "ALL" ? "" : val;
+                setRentType(next);
+                updateURL({ rentType: next });
+              }}
+            >
+              <SelectTrigger className="h-10 text-xs">
+                <Calendar className="size-3.5 mr-1.5 text-muted-foreground" />
+                <SelectValue placeholder="Rent Type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All Rent Types</SelectItem>
+                <SelectItem value="MONTHLY">Monthly</SelectItem>
+                <SelectItem value="YEARLY">Yearly</SelectItem>
+                <SelectItem value="WEEKLY">Weekly</SelectItem>
+                <SelectItem value="DAILY">Daily</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Sort Select */}
-          <div className="w-36 sm:w-44 shrink-0">
+          <div className="w-36 sm:w-40 shrink-0">
             <Select
               value={sort}
               onValueChange={(val) => {
-                const next = val || "newest";
+                const next = !val ? "newest" : val;
                 setSort(next);
                 updateURL({ sort: next });
               }}
@@ -259,7 +308,7 @@ export function PropertyFilterBar() {
             </Select>
           </div>
 
-          {/* Mobile Sheet Trigger Button */}
+          {/* Mobile & Drawer Filter Trigger Button */}
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger
               render={
@@ -297,30 +346,58 @@ export function PropertyFilterBar() {
 
                 {/* Category Select */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-foreground">Category</label>
+                  <label className="text-xs font-semibold text-foreground">Property Category</label>
                   <Select
-                    value={category}
+                    value={category || "ALL"}
                     onValueChange={(val) => {
-                      const next = val || "";
+                      const next = !val || val === "ALL" ? "" : val;
                       setCategory(next);
                       updateURL({ categoryId: next });
                     }}
                   >
                     <SelectTrigger className="w-full h-10 text-xs">
-                      <SelectValue placeholder="All Categories" />
+                      <SelectValue placeholder="All Categories">
+                        {categoriesList.find((c) => c.id === category || c.slug === category)?.name || (!category || category === "ALL" ? "All Categories" : category)}
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="family-apartment">Family Apartment</SelectItem>
-                      <SelectItem value="bachelor-mess">Bachelor Mess</SelectItem>
-                      <SelectItem value="sublet">Sublet</SelectItem>
-                      <SelectItem value="hostel">Hostel</SelectItem>
+                      <SelectItem value="ALL">All Categories</SelectItem>
+                      {categoriesList.map((cat) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Rent Type */}
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-foreground">Rent Type</label>
+                  <Select
+                    value={rentType || "ALL"}
+                    onValueChange={(val) => {
+                      const next = !val || val === "ALL" ? "" : val;
+                      setRentType(next);
+                      updateURL({ rentType: next });
+                    }}
+                  >
+                    <SelectTrigger className="w-full h-10 text-xs">
+                      <SelectValue placeholder="All Rent Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALL">All Rent Types</SelectItem>
+                      <SelectItem value="MONTHLY">Monthly</SelectItem>
+                      <SelectItem value="YEARLY">Yearly</SelectItem>
+                      <SelectItem value="WEEKLY">Weekly</SelectItem>
+                      <SelectItem value="DAILY">Daily</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Price Range */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-foreground">Price Range (৳)</label>
+                  <label className="text-xs font-semibold text-foreground">Rent Price Range (৳)</label>
                   <div className="grid grid-cols-2 gap-2">
                     <Input
                       type="number"
@@ -344,9 +421,9 @@ export function PropertyFilterBar() {
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-foreground">Bedrooms</label>
                     <Select
-                      value={bedrooms}
+                      value={bedrooms || "ALL"}
                       onValueChange={(val) => {
-                        const next = val || "";
+                        const next = !val || val === "ALL" ? "" : val;
                         setBedrooms(next);
                         updateURL({ bedrooms: next });
                       }}
@@ -355,6 +432,7 @@ export function PropertyFilterBar() {
                         <SelectValue placeholder="Any" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="ALL">Any Beds</SelectItem>
                         <SelectItem value="1">1+ Bed</SelectItem>
                         <SelectItem value="2">2+ Beds</SelectItem>
                         <SelectItem value="3">3+ Beds</SelectItem>
@@ -366,9 +444,9 @@ export function PropertyFilterBar() {
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-foreground">Bathrooms</label>
                     <Select
-                      value={bathrooms}
+                      value={bathrooms || "ALL"}
                       onValueChange={(val) => {
-                        const next = val || "";
+                        const next = !val || val === "ALL" ? "" : val;
                         setBathrooms(next);
                         updateURL({ bathrooms: next });
                       }}
@@ -377,6 +455,7 @@ export function PropertyFilterBar() {
                         <SelectValue placeholder="Any" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="ALL">Any Baths</SelectItem>
                         <SelectItem value="1">1+ Bath</SelectItem>
                         <SelectItem value="2">2+ Baths</SelectItem>
                         <SelectItem value="3">3+ Baths</SelectItem>
@@ -386,43 +465,62 @@ export function PropertyFilterBar() {
                 </div>
 
                 {/* Amenities Multi-Select */}
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold text-foreground">Popular Amenities</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {amenitiesList.map((a) => {
-                      const active = selectedAmenities.includes(a.id);
-                      return (
-                        <button
-                          key={a.id}
-                          onClick={() => toggleAmenity(a.id)}
-                          className={cn(
-                            "flex items-center justify-between p-2.5 rounded-lg border text-xs font-medium transition-colors text-left",
-                            active
-                              ? "border-primary bg-primary/10 text-primary"
-                              : "border-border bg-card hover:bg-muted"
-                          )}
-                        >
-                          <span>{a.label}</span>
-                          {active && <Check className="size-3 text-primary shrink-0" />}
-                        </button>
-                      );
-                    })}
+                {amenitiesList.length > 0 && (
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-foreground">Amenities</label>
+                    <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-1">
+                      {amenitiesList.map((a) => {
+                        const active = selectedAmenities.includes(a.id);
+                        return (
+                          <button
+                            key={a.id}
+                            type="button"
+                            onClick={() => toggleAmenity(a.id)}
+                            className={cn(
+                              "flex items-center justify-between p-2.5 rounded-lg border text-xs font-medium transition-colors text-left",
+                              active
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border bg-card hover:bg-muted"
+                            )}
+                          >
+                            <span className="truncate">{a.name}</span>
+                            {active && <Check className="size-3 text-primary shrink-0 ml-1" />}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
+                )}
 
-                {/* Available Now Toggle */}
-                <div className="pt-2 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-foreground">Available Now Only</span>
-                  <input
-                    type="checkbox"
-                    checked={availableNow}
-                    onChange={(e) => {
-                      const next = e.target.checked;
-                      setAvailableNow(next);
-                      updateURL({ availableNow: next });
-                    }}
-                    className="size-4 rounded border-border text-primary focus:ring-primary"
-                  />
+                {/* Toggles */}
+                <div className="space-y-3 pt-2 border-t border-border">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-foreground">Available Now Only</span>
+                    <input
+                      type="checkbox"
+                      checked={availableNow}
+                      onChange={(e) => {
+                        const next = e.target.checked;
+                        setAvailableNow(next);
+                        updateURL({ availableNow: next });
+                      }}
+                      className="size-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-foreground">Featured Properties Only</span>
+                    <input
+                      type="checkbox"
+                      checked={isFeatured}
+                      onChange={(e) => {
+                        const next = e.target.checked;
+                        setIsFeatured(next);
+                        updateURL({ isFeatured: next });
+                      }}
+                      className="size-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+                    />
+                  </div>
                 </div>
               </div>
 

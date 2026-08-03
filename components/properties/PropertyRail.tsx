@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -36,8 +34,8 @@ export function PropertyRail({ rail }: PropertyRailProps) {
         </Link>
       </div>
 
-      {/* Horizontal Scroll-Snap Row */}
-      <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory">
+      {/* Horizontal Scroll-Snap Row with Smooth Scroll Hardware Acceleration */}
+      <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory transform-gpu">
         {rail.items.map((item) => (
           <PropertyCard key={item.id} property={item} layout="rail" />
         ))}
