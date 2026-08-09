@@ -3,20 +3,24 @@
 import { useEffect, useState, use } from "react";
 import { Property } from "@/types";
 import { getPropertyById } from "@/app/(dashboard)/_actions/propertiesActions";
+import { setPropertyAmenities } from "@/app/(dashboard)/_actions/propertyAmenitiesActions";
 import { AmenityToggleGrid } from "@/app/(dashboard)/_components/properties/AmenityToggleGrid";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 export default function PropertyAmenitiesPage(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
   const [property, setProperty] = useState<Property | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefetching, setIsRefetching] = useState(false);
 
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      const propRes = await getPropertyById(params.id);
+  const loadData = async (silent = false) => {
+    if (!silent) setIsLoading(true);
+    else setIsRefetching(true);
+    
+    const propRes = await getPropertyById(params.id);
       
       if (propRes.success && propRes.data) {
         setProperty(propRes.data);
@@ -24,9 +28,11 @@ export default function PropertyAmenitiesPage(props: { params: Promise<{ id: str
         toast.error("Failed to load property");
       }
       
-      setIsLoading(false);
-    };
-    
+    if (!silent) setIsLoading(false);
+    else setIsRefetching(false);
+  };
+
+  useEffect(() => {
     loadData();
   }, [params.id]);
 
@@ -58,13 +64,23 @@ export default function PropertyAmenitiesPage(props: { params: Promise<{ id: str
     <div className="animate-in fade-in-50 duration-300">
       <Card>
         <CardHeader>
-          <CardTitle>Amenities</CardTitle>
+          <div className="flex items-center gap-2">
+            <CardTitle>Amenities</CardTitle>
+            {isRefetching && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+          </div>
           <CardDescription>Select the amenities available at this property.</CardDescription>
         </CardHeader>
         <CardContent>
           <AmenityToggleGrid 
-            propertyId={property.id} 
             initialAmenities={initialAmenities} 
+            amenityType="PROPERTY,COMMON"
+            onSave={async (amenityIds) => {
+              const res = await setPropertyAmenities(property.id, amenityIds);
+              if (res.success) {
+                loadData(true);
+              }
+              return res as any;
+            }}
           />
         </CardContent>
       </Card>

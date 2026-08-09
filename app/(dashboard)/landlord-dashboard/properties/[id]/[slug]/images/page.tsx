@@ -11,16 +11,19 @@ export default function PropertyImagesPage(props: { params: Promise<{ id: string
   const params = use(props.params);
   const [images, setImages] = useState<PropertyImage[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefetching, setIsRefetching] = useState(false);
 
-  const loadImages = async () => {
-    setIsLoading(true);
+  const loadImages = async (silent = false) => {
+    if (!silent) setIsLoading(true);
+    else setIsRefetching(true);
     const res = await getPropertyImages(params.id);
     if (res.success && res.data) {
       setImages(res.data);
-    } else {
+    } else if (!silent) {
       toast.error("Failed to load property images");
     }
-    setIsLoading(false);
+    if (!silent) setIsLoading(false);
+    else setIsRefetching(false);
   };
 
   useEffect(() => {
@@ -48,7 +51,8 @@ export default function PropertyImagesPage(props: { params: Promise<{ id: string
       <ImageGallery 
         propertyId={params.id} 
         images={images} 
-        onImagesUpdated={loadImages}
+        isRefetching={isRefetching}
+        onImagesUpdated={() => loadImages(true)}
       />
     </div>
   );

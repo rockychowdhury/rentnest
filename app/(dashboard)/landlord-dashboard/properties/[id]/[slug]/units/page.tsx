@@ -9,7 +9,7 @@ import { UnitForm } from "@/app/(dashboard)/_components/properties/UnitForm";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Accordion } from "@/components/ui/accordion";
-import { Plus, Layers } from "lucide-react";
+import { Plus, Layers, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
@@ -19,13 +19,16 @@ export default function PropertyUnitsPage(props: { params: Promise<{ id: string 
   const params = use(props.params);
   const [units, setUnits] = useState<PropertyUnit[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefetching, setIsRefetching] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
   const [isPropertyArchived, setIsPropertyArchived] = useState(false);
 
-  const loadData = async () => {
-    setIsLoading(true);
+  const loadData = async (silent = false) => {
+    if (!silent) setIsLoading(true);
+    else setIsRefetching(true);
+    
     const [unitsRes, propRes] = await Promise.all([
       getPropertyUnits(params.id),
       getPropertyById(params.id)
@@ -33,7 +36,7 @@ export default function PropertyUnitsPage(props: { params: Promise<{ id: string 
     
     if (unitsRes.success) {
       setUnits(unitsRes.data);
-    } else {
+    } else if (!silent) {
       toast.error("Failed to load units");
     }
     
@@ -41,7 +44,8 @@ export default function PropertyUnitsPage(props: { params: Promise<{ id: string 
       setIsPropertyArchived(!!propRes.data.deletedAt);
     }
     
-    setIsLoading(false);
+    if (!silent) setIsLoading(false);
+    else setIsRefetching(false);
   };
 
   useEffect(() => {
@@ -54,7 +58,7 @@ export default function PropertyUnitsPage(props: { params: Promise<{ id: string 
     if (res.success) {
       toast.success("Unit created successfully");
       setIsAddOpen(false);
-      loadData();
+      loadData(true);
     } else {
       toast.error(res.error || "Failed to create unit");
     }
@@ -81,7 +85,10 @@ export default function PropertyUnitsPage(props: { params: Promise<{ id: string 
     <div className="space-y-6 animate-in fade-in-50 duration-300">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight">Units & Pricing</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-semibold tracking-tight">Units & Pricing</h2>
+            {isRefetching && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+          </div>
           <p className="text-sm text-muted-foreground">Manage individual units and their rental rates.</p>
         </div>
         
@@ -126,7 +133,7 @@ export default function PropertyUnitsPage(props: { params: Promise<{ id: string 
             <UnitCard 
               key={unit.id} 
               unit={unit} 
-              onUnitUpdated={loadData} 
+              onUnitUpdated={() => loadData(true)} 
             />
           ))}
         </Accordion>

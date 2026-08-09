@@ -91,8 +91,8 @@ export default function AdminPropertiesPage() {
   const filteredProperties = properties.filter((prop) => {
     const matchesSearch = 
       prop.title?.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) || 
-      prop.address?.upazila?.district?.name?.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-      prop.address?.upazila?.district?.division?.name?.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
+      prop.address?.area?.district?.name?.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      prop.address?.area?.district?.division?.name?.toLowerCase().includes(debouncedSearchQuery.toLowerCase());
       
     const matchesStatus = statusFilter === "ALL" 
       ? true 
@@ -142,7 +142,7 @@ export default function AdminPropertiesPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">All Statuses</SelectItem>
-            <SelectItem value="PUBLISHED">Published</SelectItem>
+            <SelectItem value={PropertyStatus.ACTIVE}>Active</SelectItem>
             <SelectItem value="INACTIVE">Inactive</SelectItem>
             <SelectItem value="DRAFT">Draft</SelectItem>
             <SelectItem value="DELETED">Deleted</SelectItem>
@@ -183,7 +183,7 @@ export default function AdminPropertiesPage() {
                         {property.landlord?.profile?.fullName || property.landlord?.email || "Unknown"}
                       </TableCell>
                       <TableCell>
-                        {property.address?.upazila?.district?.name}, {property.address?.upazila?.district?.division?.name}
+                        {property.address?.area?.district?.name}, {property.address?.area?.district?.division?.name}
                       </TableCell>
                       <TableCell>
                         {property.createdAt ? format(new Date(property.createdAt), "MMM dd, yyyy") : "-"}
@@ -192,7 +192,7 @@ export default function AdminPropertiesPage() {
                         {property.deletedAt ? (
                           <Badge variant="destructive">Deleted</Badge>
                         ) : (
-                          <Badge variant={property.status === PropertyStatus.PUBLISHED ? "default" : "secondary"}>
+                          <Badge variant={property.status === PropertyStatus.ACTIVE ? "default" : "secondary"}>
                             {property.status}
                           </Badge>
                         )}
@@ -205,7 +205,7 @@ export default function AdminPropertiesPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <Link href={`/properties/${property.id}`} target="_blank" className="flex items-center w-full cursor-pointer relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
+                            <Link href={`/properties/${property.id}/${property.slug}`} target="_blank" className="flex items-center w-full cursor-pointer relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50">
                               <ExternalLink className="mr-2 h-4 w-4" />
                               View Details
                             </Link>
@@ -213,9 +213,9 @@ export default function AdminPropertiesPage() {
                             {!property.deletedAt && (
                               <>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => handleUpdateStatus(property.id, PropertyStatus.PUBLISHED)}>
+                                <DropdownMenuItem onClick={() => handleUpdateStatus(property.id, PropertyStatus.ACTIVE)}>
                                   <Activity className="mr-2 h-4 w-4" />
-                                  Mark Published
+                                  Mark Active
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleUpdateStatus(property.id, PropertyStatus.INACTIVE)}>
                                   <Activity className="mr-2 h-4 w-4" />

@@ -52,7 +52,7 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
   const [location, setLocation] = useState(searchParams.get("location") || "");
   const [division, setDivision] = useState(searchParams.get("division") || "");
   const [district, setDistrict] = useState(searchParams.get("district") || "");
-  const [upazila, setUpazila] = useState(searchParams.get("upazila") || "");
+  const [area, setArea] = useState(searchParams.get("area") || "");
   const [category, setCategory] = useState(searchParams.get("categoryId") || "");
   const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
@@ -79,7 +79,7 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
     setLocation(searchParams.get("location") || "");
     setDivision(searchParams.get("division") || "");
     setDistrict(searchParams.get("district") || "");
-    setUpazila(searchParams.get("upazila") || "");
+    setArea(searchParams.get("area") || "");
     setCategory(searchParams.get("categoryId") || "");
     setMinPrice(searchParams.get("minPrice") || "");
     setMaxPrice(searchParams.get("maxPrice") || "");
@@ -102,7 +102,7 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
       location,
       division,
       district,
-      upazila,
+      area,
       categoryId: category,
       minPrice: debouncedMinPrice,
       maxPrice: debouncedMaxPrice,
@@ -147,7 +147,7 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
     setLocation("");
     setDivision("");
     setDistrict("");
-    setUpazila("");
+    setArea("");
     setCategory("");
     setMinPrice("");
     setMaxPrice("");

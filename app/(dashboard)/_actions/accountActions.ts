@@ -13,7 +13,7 @@ const getAuthHeaders = async (): Promise<Record<string, string>> => {
 export async function getAccountProfile() {
   try {
     const headers = await getAuthHeaders();
-    const result = await fetchApi<any>("/users/me", { headers, next: { revalidate: 600 } });
+    const result = await fetchApi<any>("/users/me", { headers, cache: "no-store" });
     return { success: true, data: result.data || result };
   } catch (error: any) {
     return { success: false, error: error.message };

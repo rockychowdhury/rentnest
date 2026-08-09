@@ -2,7 +2,7 @@
 
 import { fetchApi } from "@/lib/api";
 import { cookies } from "next/headers";
-import { Division, District, Upazila } from "@/types";
+import { Division, District, Area } from "@/types";
 
 const getAuthHeaders = async (): Promise<Record<string, string>> => {
   const cookieStore = await cookies();
@@ -28,9 +28,9 @@ export async function getDistricts(divisionId: string) {
   }
 }
 
-export async function getUpazilas(districtId: string) {
+export async function getAreas(districtId: string) {
   try {
-    const res = await fetchApi<{ data: Upazila[] }>(`/districts/${districtId}/upazilas`, { next: { revalidate: 600 } });
+    const res = await fetchApi<{ data: Area[] }>(`/districts/${districtId}/areas`, { next: { revalidate: 600 } });
     return { success: true, data: res.data || [] };
   } catch (error: any) {
     return { success: false, data: [], error: error.message };

@@ -2,7 +2,7 @@
 
 import { fetchApi } from "@/lib/api";
 import { cookies } from "next/headers";
-import { Property, PropertyStatus, Category } from "@/types";
+import { Property, PropertyStatus, Category, ApiResponse } from "@/types";
 
 const getAuthHeaders = async (): Promise<Record<string, string>> => {
   const cookieStore = await cookies();
@@ -61,12 +61,12 @@ export async function updateProperty(propertyId: string, data: Partial<Property>
 export async function updatePropertyStatus(propertyId: string, status: PropertyStatus) {
   try {
     const headers = await getAuthHeaders();
-    const res = await fetchApi<{ data: Property }>(`/properties/${propertyId}/status`, {
+    const res = await fetchApi<ApiResponse<Property>>(`/properties/${propertyId}/status`, {
       method: "PATCH",
       headers,
       body: { status },
     });
-    return { success: true, data: res.data };
+    return { success: true, data: res.data, message: res.message };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -88,11 +88,37 @@ export async function archiveProperty(propertyId: string) {
 export async function restoreProperty(propertyId: string) {
   try {
     const headers = await getAuthHeaders();
-    const res = await fetchApi(`/properties/${propertyId}/restore`, {
+    const res = await fetchApi<ApiResponse>(`/properties/${propertyId}/restore`, {
       method: "POST",
       headers,
     });
-    return { success: true };
+    return { success: true, message: res.message };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function requestPropertyVerification(propertyId: string) {
+  try {
+    const headers = await getAuthHeaders();
+    const res = await fetchApi<ApiResponse>(`/properties/${propertyId}/request-verification`, {
+      method: "POST",
+      headers,
+    });
+    return { success: true, message: res.message };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deactivateProperty(propertyId: string) {
+  try {
+    const headers = await getAuthHeaders();
+    const res = await fetchApi<ApiResponse>(`/properties/${propertyId}/inactive`, {
+      method: "PATCH",
+      headers,
+    });
+    return { success: true, message: res.message };
   } catch (error: any) {
     return { success: false, error: error.message };
   }

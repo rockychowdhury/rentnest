@@ -73,3 +73,17 @@ export async function softDeleteUnit(unitId: string) {
     return { success: false, error: error.message };
   }
 }
+
+export async function setUnitAmenities(unitId: string, amenityIds: string[]) {
+  try {
+    const headers = await getAuthHeaders();
+    await fetchApi(`/property-units/${unitId}/amenities`, {
+      method: "PATCH",
+      headers,
+      body: { amenityIds },
+    });
+    return { success: true };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}

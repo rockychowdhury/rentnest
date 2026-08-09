@@ -7,7 +7,7 @@ import { ArchivedIndicator } from "@/app/(dashboard)/_components/properties/Arch
 
 export default async function PropertyHubLayout(props: {
   children: React.ReactNode;
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string, slug: string }>;
 }) {
   const params = await props.params;
   const { data: property, success } = await getPropertyById(params.id);
@@ -19,11 +19,11 @@ export default async function PropertyHubLayout(props: {
   const isArchived = !!property.deletedAt;
 
   const navItems = [
-    { label: "Details", href: `/landlord-dashboard/properties/${property.id}/details`, icon: <Building2 className="h-4 w-4" /> },
-    { label: "Address", href: `/landlord-dashboard/properties/${property.id}/address`, icon: <MapPin className="h-4 w-4" /> },
-    { label: "Units", href: `/landlord-dashboard/properties/${property.id}/units`, icon: <Layers className="h-4 w-4" /> },
-    { label: "Images", href: `/landlord-dashboard/properties/${property.id}/images`, icon: <ImageIcon className="h-4 w-4" /> },
-    { label: "Amenities", href: `/landlord-dashboard/properties/${property.id}/amenities`, icon: <CheckSquare className="h-4 w-4" /> },
+    { label: "Details", href: `/landlord-dashboard/properties/${params.id}/${params.slug}/details`, icon: <Building2 className="h-4 w-4" /> },
+    { label: "Address", href: `/landlord-dashboard/properties/${params.id}/${params.slug}/address`, icon: <MapPin className="h-4 w-4" /> },
+    { label: "Units", href: `/landlord-dashboard/properties/${params.id}/${params.slug}/units`, icon: <Layers className="h-4 w-4" /> },
+    { label: "Images", href: `/landlord-dashboard/properties/${params.id}/${params.slug}/images`, icon: <ImageIcon className="h-4 w-4" /> },
+    { label: "Amenities", href: `/landlord-dashboard/properties/${params.id}/${params.slug}/amenities`, icon: <CheckSquare className="h-4 w-4" /> },
   ];
 
   return (

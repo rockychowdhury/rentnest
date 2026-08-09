@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus, Home } from "lucide-react";
 import { Property, PropertyStatus } from "@/types";
-import { getMyProperties, updatePropertyStatus, archiveProperty, restoreProperty } from "@/app/(dashboard)/_actions/propertiesActions";
+import { getMyProperties, archiveProperty, restoreProperty, requestPropertyVerification, deactivateProperty } from "@/app/(dashboard)/_actions/propertiesActions";
 import { PropertyManageCard } from "@/app/(dashboard)/_components/properties/PropertyManageCard";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -30,30 +30,40 @@ export default function PropertiesListPage() {
     fetchProperties();
   }, []);
 
-  const handleStatusChange = async (id: string, status: PropertyStatus) => {
-    const res = await updatePropertyStatus(id, status);
+  const handleRequestVerification = async (id: string) => {
+    const res = await requestPropertyVerification(id);
     if (res.success) {
-      toast.success("Status updated");
+      toast.success(res.message || "Verification requested successfully");
       fetchProperties();
     } else {
-      toast.error(res.error || "Failed to update status");
+      toast.error(res.error || "Failed to request verification");
+    }
+  };
+
+  const handleDeactivate = async (id: string) => {
+    const res = await deactivateProperty(id);
+    if (res.success) {
+      toast.success(res.message || "Property deactivated successfully");
+      fetchProperties();
+    } else {
+      toast.error(res.error || "Failed to deactivate property");
     }
   };
 
   const handleArchive = async (id: string) => {
     const res = await archiveProperty(id);
     if (res.success) {
-      toast.success("Property archived");
+      toast.success("Property deleted successfully");
       fetchProperties();
     } else {
-      toast.error(res.error || "Failed to archive property");
+      toast.error(res.error || "Failed to delete property");
     }
   };
 
   const handleRestore = async (id: string) => {
     const res = await restoreProperty(id);
     if (res.success) {
-      toast.success("Property restored");
+      toast.success(res.message || "Property restored");
       fetchProperties();
     } else {
       toast.error(res.error || "Failed to restore property");
@@ -78,9 +88,10 @@ export default function PropertiesListPage() {
           <PropertyManageCard
             key={property.id}
             property={property}
-            onStatusChange={handleStatusChange}
             onArchive={handleArchive}
             onRestore={handleRestore}
+            onRequestVerification={handleRequestVerification}
+            onDeactivate={handleDeactivate}
           />
         ))}
       </div>
@@ -123,11 +134,12 @@ export default function PropertiesListPage() {
   }
 
   const activeProperties = properties.filter((p) => !p.deletedAt);
-  const archivedProperties = properties.filter((p) => !!p.deletedAt);
-
+  
   const draftProperties = activeProperties.filter((p) => p.status === PropertyStatus.DRAFT);
-  const publishedProperties = activeProperties.filter((p) => p.status === PropertyStatus.PUBLISHED);
+  const activeStatusProperties = activeProperties.filter((p) => p.status === PropertyStatus.ACTIVE);
   const inactiveProperties = activeProperties.filter((p) => p.status === PropertyStatus.INACTIVE);
+  const pendingProperties = activeProperties.filter((p) => p.status === PropertyStatus.PENDING_VERIFICATION);
+  const rejectedProperties = activeProperties.filter((p) => p.status === PropertyStatus.REJECTED);
 
   return (
     <div className="space-y-6">
@@ -145,17 +157,21 @@ export default function PropertiesListPage() {
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="mb-4 flex overflow-x-auto max-w-full justify-start h-auto p-1 gap-1">
           <TabsTrigger value="all" className="text-xs sm:text-sm shrink-0">All ({activeProperties.length})</TabsTrigger>
-          <TabsTrigger value="published" className="text-xs sm:text-sm shrink-0">Published ({publishedProperties.length})</TabsTrigger>
+          <TabsTrigger value="active" className="text-xs sm:text-sm shrink-0">Active ({activeStatusProperties.length})</TabsTrigger>
+          <TabsTrigger value="pending" className="text-xs sm:text-sm shrink-0">Pending ({pendingProperties.length})</TabsTrigger>
           <TabsTrigger value="draft" className="text-xs sm:text-sm shrink-0">Drafts ({draftProperties.length})</TabsTrigger>
           <TabsTrigger value="inactive" className="text-xs sm:text-sm shrink-0">Inactive ({inactiveProperties.length})</TabsTrigger>
-          <TabsTrigger value="archived" className="text-xs sm:text-sm shrink-0">Archived ({archivedProperties.length})</TabsTrigger>
+          <TabsTrigger value="rejected" className="text-xs sm:text-sm shrink-0">Rejected ({rejectedProperties.length})</TabsTrigger>
         </TabsList>
 
         <TabsContent value="all" className="mt-0">
           {renderPropertyList(activeProperties)}
         </TabsContent>
-        <TabsContent value="published" className="mt-0">
-          {renderPropertyList(publishedProperties)}
+        <TabsContent value="active" className="mt-0">
+          {renderPropertyList(activeStatusProperties)}
+        </TabsContent>
+        <TabsContent value="pending" className="mt-0">
+          {renderPropertyList(pendingProperties)}
         </TabsContent>
         <TabsContent value="draft" className="mt-0">
           {renderPropertyList(draftProperties)}
@@ -163,8 +179,8 @@ export default function PropertiesListPage() {
         <TabsContent value="inactive" className="mt-0">
           {renderPropertyList(inactiveProperties)}
         </TabsContent>
-        <TabsContent value="archived" className="mt-0">
-          {renderPropertyList(archivedProperties)}
+        <TabsContent value="rejected" className="mt-0">
+          {renderPropertyList(rejectedProperties)}
         </TabsContent>
       </Tabs>
     </div>

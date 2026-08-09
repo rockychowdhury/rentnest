@@ -2,7 +2,6 @@
 
 import { Amenity } from "@/types";
 import { Checkbox } from "@/components/ui/checkbox";
-import { setPropertyAmenities } from "@/app/(dashboard)/_actions/propertyAmenitiesActions";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { Loader2, Search, CheckCircle2 } from "lucide-react";
@@ -12,11 +11,12 @@ import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { getAllAmenities } from "@/app/(dashboard)/_actions/propertyAmenitiesActions";
 
 interface AmenityToggleGridProps {
-  propertyId: string;
   initialAmenities: { id: string; name: string; description?: string }[];
+  amenityType?: string;
+  onSave: (amenityIds: string[]) => Promise<{ success: boolean; error?: string }>;
 }
 
-export function AmenityToggleGrid({ propertyId, initialAmenities }: AmenityToggleGridProps) {
+export function AmenityToggleGrid({ initialAmenities, amenityType, onSave }: AmenityToggleGridProps) {
   const [selectedMap, setSelectedMap] = useState<Record<string, { id: string; name: string }>>(() => {
     const map: Record<string, { id: string; name: string }> = {};
     initialAmenities.forEach(a => map[a.id] = { id: a.id, name: a.name });
@@ -32,7 +32,7 @@ export function AmenityToggleGrid({ propertyId, initialAmenities }: AmenityToggl
   useEffect(() => {
     const fetchAmenities = async () => {
       setIsSearching(true);
-      const res = await getAllAmenities(debouncedSearchTerm, 10);
+      const res = await getAllAmenities(debouncedSearchTerm, 10, amenityType);
       if (res.success) {
         setSearchResults(res.data);
       }
@@ -40,7 +40,7 @@ export function AmenityToggleGrid({ propertyId, initialAmenities }: AmenityToggl
     };
 
     fetchAmenities();
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, amenityType]);
 
   const handleToggle = (amenity: { id: string; name: string }, checked: boolean) => {
     setSelectedMap(prev => {
@@ -59,7 +59,7 @@ export function AmenityToggleGrid({ propertyId, initialAmenities }: AmenityToggl
     const amenityIdsArray = Object.keys(selectedMap);
     
     try {
-      const res = await setPropertyAmenities(propertyId, amenityIdsArray);
+      const res = await onSave(amenityIdsArray);
       if (res.success) {
         toast.success("Amenities updated successfully");
       } else {

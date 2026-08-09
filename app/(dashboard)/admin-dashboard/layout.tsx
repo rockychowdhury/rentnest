@@ -2,6 +2,7 @@ import React from "react";
 import { AdminSidebar, adminNavItems } from "../_components/admin/AdminSidebar";
 import { MobileDashboardHeader } from "../_components/MobileDashboardHeader";
 import { getAccountProfile } from "../_actions/accountActions";
+import { LogoutTrigger } from "@/components/auth/LogoutTrigger";
 
 export default async function AdminDashboardLayout({
   children,
@@ -9,6 +10,11 @@ export default async function AdminDashboardLayout({
   children: React.ReactNode;
 }) {
   const profileRes = await getAccountProfile();
+  
+  if (!profileRes?.success) {
+    return <LogoutTrigger />;
+  }
+
   const user = profileRes?.data;
 
   return (

@@ -124,7 +124,7 @@ export function LeaseClient({ leases, reviewedLeaseIds = [] }: { leases: any[], 
                   <Button variant="outline" className="flex-1 w-full sm:w-auto shadow-sm" onClick={() => setIsLeaseModalOpen(true)}>
                     <FileCheck className="mr-2 size-4" /> Lease Details
                   </Button>
-                  <Link href={`/properties/${primaryLease.propertyUnit?.property?.id || ''}`} className="w-full sm:w-auto">
+                  <Link href={`/properties/${primaryLease.propertyUnit?.property?.id || ''}/${primaryLease.propertyUnit?.property?.slug || ''}`} className="w-full sm:w-auto">
                     <Button variant="ghost" className="w-full text-muted-foreground hover:text-foreground">
                       View Property
                     </Button>

@@ -49,10 +49,56 @@ export function DangerZone({
   const actionName = isArchived ? "Restore" : "Archive";
   const actionDescription = isArchived ? restoreDescription : archiveDescription;
 
+  const content = (
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-md gap-4">
+      <div>
+        <h4 className="font-medium text-sm text-foreground">{actionName} this {isUnit ? "unit" : "property"}</h4>
+        <p className="text-sm text-muted-foreground mt-1 leading-relaxed max-w-[80%]">{actionDescription}</p>
+      </div>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogTrigger render={
+          <Button variant={isArchived ? "outline" : "destructive"} size={isUnit ? "sm" : "default"}>
+            {isArchived ? <Undo2 className="mr-2 h-4 w-4" /> : <Archive className="mr-2 h-4 w-4" />}
+            {actionName}
+          </Button>
+        } />
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {actionDescription}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleAction} 
+              className={isArchived ? "bg-primary text-primary-foreground hover:bg-primary-hover" : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"}
+            >
+              Confirm {actionName}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+
+  if (isUnit) {
+    return (
+      <div className="mt-4 pt-4 border-t border-destructive/20">
+        <h5 className="font-medium text-sm text-destructive mb-3 flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4" />
+          {title}
+        </h5>
+        {content}
+      </div>
+    );
+  }
+
   return (
-    <Card className="border-destructive/50 shadow-sm mt-8">
+    <Card className="border-destructive/30 shadow-sm mt-8">
       <CardHeader>
-        <CardTitle className="text-destructive flex items-center gap-2">
+        <CardTitle className="text-destructive flex items-center gap-2 text-lg">
           <AlertTriangle className="h-5 w-5" />
           {title}
         </CardTitle>
@@ -61,37 +107,7 @@ export function DangerZone({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-md gap-4">
-          <div>
-            <h4 className="font-medium text-sm">{actionName} this {isUnit ? "unit" : "property"}</h4>
-            <p className="text-sm text-muted-foreground mt-1">{actionDescription}</p>
-          </div>
-          <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogTrigger render={
-              <Button variant={isArchived ? "outline" : "destructive"}>
-                {isArchived ? <Undo2 className="mr-2 h-4 w-4" /> : <Archive className="mr-2 h-4 w-4" />}
-                {actionName}
-              </Button>
-            } />
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {actionDescription}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction 
-                  onClick={handleAction} 
-                  className={isArchived ? "bg-primary" : "bg-destructive hover:bg-destructive/90"}
-                >
-                  Confirm {actionName}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+        {content}
       </CardContent>
     </Card>
   );

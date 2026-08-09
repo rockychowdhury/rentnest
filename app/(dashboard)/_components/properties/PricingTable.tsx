@@ -69,12 +69,33 @@ export function PricingTable({ unit, onPricingUpdated, disabled }: PricingTableP
           ))}
         </div>
       ) : (
-        <div className="text-center py-6 border rounded-md border-dashed text-muted-foreground bg-muted/20">
-          <p className="text-sm mb-4">No pricing set for this unit yet</p>
+        <div className="flex flex-col items-center justify-center p-6 border rounded-md border-dashed text-muted-foreground bg-muted/10">
+          <p className="text-sm mb-3">No pricing set for this unit yet</p>
+          {!disabled && (
+            <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+              <DialogTrigger render={
+                <Button variant="outline" size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Pricing
+                </Button>
+              } />
+              <DialogContent>
+                <div className="p-4">
+                  <h3 className="text-lg font-medium mb-4">Add New Pricing Option</h3>
+                  <PricingFormRow 
+                    availableTypes={availableRentTypes}
+                    onSave={handleAddSubmit}
+                    onCancel={() => setIsAddOpen(false)}
+                    isCreate
+                  />
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       )}
 
-      {availableRentTypes.length > 0 && !disabled && (
+      {unit.pricing && unit.pricing.length > 0 && availableRentTypes.length > 0 && !disabled && (
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger render={
             <Button variant="outline" size="sm" className="w-full border-dashed">
@@ -83,7 +104,7 @@ export function PricingTable({ unit, onPricingUpdated, disabled }: PricingTableP
             </Button>
           } />
           <DialogContent>
-                        <div className="p-4">
+            <div className="p-4">
               <h3 className="text-lg font-medium mb-4">Add New Pricing Option</h3>
               <PricingFormRow 
                 availableTypes={availableRentTypes}

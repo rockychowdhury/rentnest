@@ -43,10 +43,11 @@ function CaptionInput({ image, onUpdate, disabled }: { image: PropertyImage, onU
 interface ImageGalleryProps {
   propertyId: string;
   images: PropertyImage[];
+  isRefetching?: boolean;
   onImagesUpdated: () => void;
 }
 
-export function ImageGallery({ propertyId, images, onImagesUpdated }: ImageGalleryProps) {
+export function ImageGallery({ propertyId, images, isRefetching, onImagesUpdated }: ImageGalleryProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -137,7 +138,10 @@ export function ImageGallery({ propertyId, images, onImagesUpdated }: ImageGalle
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-medium">Property Images</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-medium">Property Images</h3>
+            {isRefetching && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+          </div>
           <p className="text-sm text-muted-foreground">Manage the photos for your listing. The cover image will be displayed first.</p>
         </div>
         <div>

@@ -10,11 +10,14 @@ const getAuthHeaders = async (): Promise<Record<string, string>> => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-export async function getAllAmenities(searchTerm?: string, limit: number = 10) {
+export async function getAllAmenities(searchTerm?: string, limit: number = 10, type?: string) {
   try {
     let query = `/amenities?limit=${limit}`;
     if (searchTerm) {
       query += `&searchTerm=${encodeURIComponent(searchTerm)}`;
+    }
+    if (type) {
+      query += `&type=${encodeURIComponent(type)}`;
     }
     const res = await fetchApi<{ data: any[] }>(query, { next: { revalidate: 600 } });
     return { success: true, data: res.data || [] };

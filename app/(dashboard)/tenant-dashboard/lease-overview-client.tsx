@@ -131,7 +131,7 @@ export function LeaseOverviewClient({ leases }: { leases: any[] }) {
                 <FileText className="mr-2 size-4" /> View Details
               </Button>
             </Link>
-            <Link href={`/properties/${lease.propertyUnit?.property?.id}`}>
+            <Link href={`/properties/${lease.propertyUnit?.property?.id}/${lease.propertyUnit?.property?.slug}`}>
               <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                 View Property
               </Button>

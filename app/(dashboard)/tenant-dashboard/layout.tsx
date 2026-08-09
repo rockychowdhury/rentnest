@@ -2,6 +2,7 @@ import React from "react";
 import { TenantSidebar, tenantNavItems } from "../_components/tenant/TenantSidebar";
 import { MobileDashboardHeader } from "../_components/MobileDashboardHeader";
 import { getMe } from "@/service/getMe";
+import { LogoutTrigger } from "@/components/auth/LogoutTrigger";
 
 export default async function TenantDashboardLayout({
   children,
@@ -9,6 +10,11 @@ export default async function TenantDashboardLayout({
   children: React.ReactNode;
 }) {
   const profileRes = await getMe();
+  
+  if (!profileRes?.success) {
+    return <LogoutTrigger />;
+  }
+
   const user = profileRes?.data || null;
 
   return (

@@ -10,9 +10,11 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { UnitForm } from "./UnitForm";
 import { DangerZone } from "./DangerZone";
 import { PricingTable } from "./PricingTable";
-import { updatePropertyUnit, updateUnitStatus, softDeleteUnit } from "@/app/(dashboard)/_actions/unitsActions";
+import { setUnitAmenities, updatePropertyUnit, updateUnitStatus, softDeleteUnit } from "@/app/(dashboard)/_actions/unitsActions";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AmenityToggleGrid } from "./AmenityToggleGrid";
+import { CheckSquare } from "lucide-react";
 
 interface UnitCardProps {
   unit: PropertyUnit;
@@ -21,6 +23,7 @@ interface UnitCardProps {
 
 export function UnitCard({ unit, onUnitUpdated }: UnitCardProps) {
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isAmenitiesOpen, setIsAmenitiesOpen] = useState(false);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
 
   const lowestRent = unit.pricing
@@ -67,9 +70,9 @@ export function UnitCard({ unit, onUnitUpdated }: UnitCardProps) {
     <AccordionItem value={unit.id} className="border rounded-md px-4 bg-card mb-4 shadow-sm">
       <AccordionTrigger className="hover:no-underline py-4">
         <div className="flex flex-1 items-center justify-between pr-4">
-          <div className="flex items-center gap-6">
-            <h4 className="font-semibold text-primary bg-primary/10 px-3 py-1 rounded-md">{unit.unitLabel}</h4>
-            <div className="hidden md:flex items-center gap-4 text-sm text-muted-foreground font-medium">
+          <div className="flex items-center gap-4">
+            <h4 className="font-semibold text-foreground text-base tracking-tight">{unit.unitLabel}</h4>
+            <div className="hidden md:flex items-center gap-3 text-sm text-muted-foreground font-medium">
               <div className="flex items-center gap-1.5"><Bed className="w-4 h-4" /> {unit.bedrooms} Bed</div>
               <div className="flex items-center gap-1.5"><Bath className="w-4 h-4" /> {unit.bathrooms} Bath</div>
               {unit.sizeSqft && <div className="flex items-center gap-1.5"><Maximize className="w-4 h-4" /> {unit.sizeSqft} Sqft</div>}
@@ -112,29 +115,55 @@ export function UnitCard({ unit, onUnitUpdated }: UnitCardProps) {
       </AccordionTrigger>
       <AccordionContent className="pt-2 pb-6 space-y-6 border-t mt-2">
         <div className="flex justify-between items-start">
-          <div className="space-y-1">
-            <h5 className="font-medium text-sm">Unit Details</h5>
-            <p className="text-sm text-muted-foreground">{unit.description || "No description provided."}</p>
+          <div className="space-y-1 max-w-[60%]">
+            <h5 className="font-medium text-sm text-foreground">Unit Description</h5>
+            <p className="text-sm text-muted-foreground leading-relaxed">{unit.description || "No description provided."}</p>
           </div>
-          <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-            <DialogTrigger render={
-              <Button variant="outline" size="sm" disabled={isArchived}>
-                <Edit className="h-4 w-4 mr-2" />
-                Edit Info
-              </Button>
-            } />
-            <DialogContent className="sm:max-w-[500px]">
-              <UnitForm 
-                initialData={unit} 
-                onSubmit={handleEditSubmit} 
-                onCancel={() => setIsEditOpen(false)} 
-              />
-            </DialogContent>
-          </Dialog>
+          <div className="flex gap-2">
+            <Dialog open={isAmenitiesOpen} onOpenChange={setIsAmenitiesOpen}>
+              <DialogTrigger render={
+                <Button variant="outline" size="sm" disabled={isArchived}>
+                  <CheckSquare className="h-4 w-4 mr-2" />
+                  Amenities
+                </Button>
+              } />
+              <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
+                <div className="pt-4">
+                  <AmenityToggleGrid 
+                    initialAmenities={unit.amenities?.map(a => ({ id: a.amenity.id, name: a.amenity.name })) || []}
+                    amenityType="UNIT,COMMON"
+                    onSave={async (amenityIds) => {
+                      const res = await setUnitAmenities(unit.id, amenityIds);
+                      if (res.success) {
+                        onUnitUpdated();
+                      }
+                      return res as any;
+                    }}
+                  />
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+              <DialogTrigger render={
+                <Button variant="outline" size="sm" disabled={isArchived}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Info
+                </Button>
+              } />
+              <DialogContent className="sm:max-w-[500px]">
+                <UnitForm 
+                  initialData={unit} 
+                  onSubmit={handleEditSubmit} 
+                  onCancel={() => setIsEditOpen(false)} 
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
-        <div>
-          <h5 className="font-medium text-sm mb-3">Pricing Configurations</h5>
+        <div className="pt-2">
+          <h5 className="font-medium text-sm text-foreground mb-3">Pricing Configurations</h5>
           <PricingTable unit={unit} onPricingUpdated={onUnitUpdated} disabled={isArchived} />
         </div>
 

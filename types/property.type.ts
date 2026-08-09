@@ -1,7 +1,10 @@
 export enum PropertyStatus {
   DRAFT = "DRAFT",
-  PUBLISHED = "PUBLISHED",
+  ACTIVE = "ACTIVE",
   INACTIVE = "INACTIVE",
+  ARCHIVED = "ARCHIVED",
+  PENDING_VERIFICATION = "PENDING_VERIFICATION",
+  REJECTED = "REJECTED",
 }
 
 export enum UnitStatus {
@@ -35,8 +38,8 @@ export interface District {
   division?: Division;
 }
 
-export interface Upazila {
-  id: string;
+export interface Area {
+  id: number;
   name: string;
   districtId: string;
   district?: District;
@@ -61,10 +64,17 @@ export interface PropertyAmenity {
   amenity: Amenity;
 }
 
+export interface PropertyUnitAmenity {
+  id: string;
+  propertyUnitId: string;
+  amenityId: string;
+  amenity: Amenity;
+}
+
 export interface Address {
   id: string;
   propertyId?: string;
-  upazilaId: string;
+  areaId: number;
   buildingNo?: string;
   streetAddress: string;
   addressLine2?: string;
@@ -72,7 +82,7 @@ export interface Address {
   postalCode: string;
   latitude?: number;
   longitude?: number;
-  upazila?: Upazila;
+  area?: Area;
 }
 
 export interface Pricing {
@@ -97,6 +107,7 @@ export interface PropertyUnit {
   status: UnitStatus;
   deletedAt?: Date | string | null;
   pricing?: Pricing[];
+  amenities?: PropertyUnitAmenity[];
 }
 
 export interface PropertyImage {
@@ -110,11 +121,13 @@ export interface PropertyImage {
 
 export interface Property {
   id: string;
+  slug: string;
   title: string;
   description: string;
   categoryId: string;
   landlordId: string;
   status: PropertyStatus;
+  isVerified?: boolean;
   isFeatured?: boolean;
   createdAt?: string;
   deletedAt?: Date | string | null;

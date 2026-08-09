@@ -9,7 +9,7 @@ import { OccupancyDonutChart } from "@/components/dashboard/OccupancyDonutChart"
 import { RecentActivityFeed, ActivityItem } from "@/components/dashboard/RecentActivityFeed";
 import { getAllUsers, getAllProperties, getAllLeases, getAllPayments } from "../_actions/adminActions";
 import type { Metadata } from "next";
-import { User, Property, Lease, Payment } from "@/types";
+import { User, Property, Lease, Payment, PropertyStatus } from "@/types";
 
 export const metadata: Metadata = {
   title: "Admin Overview & System Analytics | RentNest",
@@ -33,9 +33,9 @@ export default async function AdminDashboardPage() {
   const adminCount = users.filter((u: User) => u.role === "ADMIN").length;
   const totalUsers = users.length || 0;
 
-  const publishedProps = properties.filter((p: Property) => p.status === "PUBLISHED").length;
-  const draftProps = properties.filter((p: Property) => p.status === "DRAFT").length;
-  const inactiveProps = properties.filter((p: Property) => p.status === "INACTIVE").length;
+  const publishedProps = properties.filter((p: Property) => p.status === PropertyStatus.ACTIVE).length;
+  const draftProps = properties.filter((p: Property) => p.status === PropertyStatus.DRAFT).length;
+  const inactiveProps = properties.filter((p: Property) => p.status === PropertyStatus.INACTIVE).length;
   const totalProperties = properties.length || 0;
 
   const activeLeases = leases.filter((l: Lease) => l.status === "ACTIVE").length;

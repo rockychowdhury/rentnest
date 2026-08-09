@@ -17,6 +17,7 @@ export interface PropertyUnitSummary {
 
 export interface PropertyItem {
   id: string;
+  slug: string;
   title: string;
   description: string;
   minPrice: number;
@@ -25,7 +26,7 @@ export interface PropertyItem {
   location: string;
   division: string;
   district: string;
-  upazila: string;
+  area: string;
   streetAddress?: string;
   categoryId: string;
   categoryName: string;
@@ -61,7 +62,7 @@ export interface GetPropertiesQueryParams {
   location?: string;
   division?: string;
   district?: string;
-  upazila?: string;
+  area?: string;
   categoryId?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -91,7 +92,7 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
   if (params.location) query.append("location", params.location);
   if (params.division) query.append("division", params.division);
   if (params.district) query.append("district", params.district);
-  if (params.upazila) query.append("upazila", params.upazila);
+  if (params.area) query.append("area", params.area);
   if (params.categoryId) query.append("categoryId", params.categoryId);
   if (params.minPrice !== undefined) query.append("minPrice", params.minPrice.toString());
   if (params.maxPrice !== undefined) query.append("maxPrice", params.maxPrice.toString());
@@ -140,12 +141,12 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
     const meta = responseData.meta || { total: 0, page: 1, limit: 10 };
 
     const mappedData: PropertyItem[] = backendProperties.map((p: any) => {
-      const upazila = p.address?.upazila?.name || "";
-      const district = p.address?.upazila?.district?.name || "";
-      const division = p.address?.upazila?.district?.division?.name || "";
+      const area = p.address?.area?.name || "";
+      const district = p.address?.area?.district?.name || "";
+      const division = p.address?.area?.district?.division?.name || "";
       const streetAddress = p.address?.streetAddress || "";
       
-      const locationParts = [streetAddress, upazila, district].filter(Boolean);
+      const locationParts = [streetAddress, area, district].filter(Boolean);
       const locationStr = locationParts.join(", ") || "Location not specified";
 
       const units = p.units || [];
@@ -215,6 +216,7 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
 
       return {
         id: p.id,
+        slug: p.slug,
         title: p.title,
         description: p.description,
         minPrice,
@@ -223,7 +225,7 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
         location: locationStr,
         division,
         district,
-        upazila,
+        area,
         streetAddress,
         categoryId: p.category?.id || p.categoryId || "",
         categoryName: p.category?.name || "Property",

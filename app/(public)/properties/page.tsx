@@ -6,6 +6,7 @@ import { PropertyFilterBar } from "@/components/properties/PropertyFilterBar";
 import { DiscoveryMode } from "@/components/properties/DiscoveryMode";
 import { SearchResultsMode } from "@/components/properties/SearchResultsMode";
 import { PropertiesLoadingSkeleton } from "@/components/properties/PropertiesLoadingSkeleton";
+import { SearchResultsSkeleton } from "@/components/properties/SearchResultsSkeleton";
 
 interface PropertiesPageProps {
   searchParams: Promise<{
@@ -13,7 +14,7 @@ interface PropertiesPageProps {
     location?: string;
     division?: string;
     district?: string;
-    upazila?: string;
+    area?: string;
     categoryId?: string;
     minPrice?: string;
     maxPrice?: string;
@@ -34,7 +35,7 @@ async function AsyncSearchResults({ resolvedParams }: { resolvedParams: any }) {
     location: resolvedParams.location,
     division: resolvedParams.division,
     district: resolvedParams.district,
-    upazila: resolvedParams.upazila,
+    area: resolvedParams.area,
     categoryId: resolvedParams.categoryId,
     minPrice: resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
     maxPrice: resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
@@ -60,7 +61,6 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
 
   const filterKeys = Object.keys(resolvedParams).filter((k) => {
     if (k === "page" || k === "limit") return false;
-    if (k === "sort" && resolvedParams[k as keyof typeof resolvedParams] === "newest") return false;
     return true;
   });
   const isSearchMode = filterKeys.length > 0;
@@ -70,13 +70,15 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
             <PropertyFilterBar categories={categories} amenities={amenities} />
 
             <main className="flex-1">
-        <Suspense key={JSON.stringify(resolvedParams)} fallback={<PropertiesLoadingSkeleton />}>
-          {isSearchMode ? (
+        {isSearchMode ? (
+          <Suspense key={JSON.stringify(resolvedParams)} fallback={<SearchResultsSkeleton />}>
             <AsyncSearchResults resolvedParams={resolvedParams} />
-          ) : (
+          </Suspense>
+        ) : (
+          <Suspense key="discovery" fallback={<PropertiesLoadingSkeleton />}>
             <DiscoveryMode />
-          )}
-        </Suspense>
+          </Suspense>
+        )}
       </main>
     </div>
   );

@@ -41,12 +41,11 @@ export function PropertyFormWizard({ categories }: PropertyFormWizardProps) {
     try {
       const res = await createProperty({
         ...validation.data,
-        status: PropertyStatus.DRAFT,
       });
 
       if (res.success && res.data) {
         toast.success("Draft created! Redirecting to add details...");
-        router.push(`/landlord-dashboard/properties/${res.data.id}/address`);
+        router.push(`/landlord-dashboard/properties/${res.data.id}/${res.data.slug}/address`);
       } else {
         toast.error(res.error || "Failed to create property");
       }

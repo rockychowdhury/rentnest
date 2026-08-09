@@ -140,7 +140,7 @@ export function PricingFormRow({
         <div className="space-y-2">
           <Label>Rent Amount</Label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center border-r border-input bg-muted rounded-l-md w-[72px]">
+            <div className="absolute inset-y-0 left-0 flex items-center border-r border-input bg-muted rounded-l-md w-[60px]">
               <Select value={watch("currency")} onValueChange={(val) => setValue("currency", val as Currency)}>
                 <SelectTrigger className="h-full border-none bg-transparent shadow-none focus:ring-0 focus:ring-offset-0 px-2 rounded-r-none rounded-l-md text-sm font-medium hover:bg-muted/80">
                   <SelectValue />
@@ -154,7 +154,7 @@ export function PricingFormRow({
             </div>
             <Input 
               type="number" 
-              className="pl-[80px]"
+              className="pl-[68px]"
               {...register("rentAmount")} 
             />
           </div>
@@ -164,12 +164,12 @@ export function PricingFormRow({
         <div className="space-y-2">
           <Label>Deposit (Optional)</Label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center justify-center bg-muted border-r border-input rounded-l-md w-[72px]">
+            <div className="absolute inset-y-0 left-0 flex items-center justify-center bg-muted border-r border-input rounded-l-md w-[60px]">
               <span className="text-sm text-muted-foreground font-medium">{watch("currency")}</span>
             </div>
             <Input 
               type="number" 
-              className="pl-[80px]"
+              className="pl-[68px]"
               {...register("securityDeposit")} 
             />
           </div>

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { MoreVertical, Edit, Archive, Undo2, Building2, MapPin } from "lucide-react";
+import { MoreVertical, Edit, Archive, Undo2, Building2, MapPin, CheckCircle, EyeOff } from "lucide-react";
 import { Property, PropertyStatus } from "@/types";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,14 +12,15 @@ import { ArchivedIndicator } from "./ArchivedIndicator";
 
 interface PropertyManageCardProps {
   property: Property;
-  onStatusChange: (id: string, status: PropertyStatus) => void;
   onArchive: (id: string) => void;
   onRestore: (id: string) => void;
+  onRequestVerification: (id: string) => void;
+  onDeactivate: (id: string) => void;
 }
 
-export function PropertyManageCard({ property, onStatusChange, onArchive, onRestore }: PropertyManageCardProps) {
+export function PropertyManageCard({ property, onArchive, onRestore, onRequestVerification, onDeactivate }: PropertyManageCardProps) {
   const coverImage = property.images?.find((img) => img.isCover)?.url || property.images?.[0]?.url || "/placeholder.svg";
-  const addressParts = [property.address?.upazila?.name, property.address?.streetAddress].filter(Boolean);
+  const addressParts = [property.address?.area?.name, property.address?.streetAddress].filter(Boolean);
   const shortAddress = addressParts.join(", ") || "No address provided";
   
   const isArchived = !!property.deletedAt;
@@ -64,7 +65,7 @@ export function PropertyManageCard({ property, onStatusChange, onArchive, onRest
               </Button>
             } />
             <DropdownMenuContent align="end">
-              <Link href={`/landlord-dashboard/properties/${property.id}/details`} className="w-full">
+              <Link href={`/landlord-dashboard/properties/${property.id}/${property.slug}/details`} className="w-full">
                 <DropdownMenuItem>
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Property
@@ -74,36 +75,31 @@ export function PropertyManageCard({ property, onStatusChange, onArchive, onRest
               {!isArchived && (
                 <>
                   <DropdownMenuSeparator />
-                  <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>Change Status</DropdownMenuSubTrigger>
-                    <DropdownMenuSubContent>
-                      <DropdownMenuRadioGroup 
-                        value={property.status} 
-                        onValueChange={(value) => onStatusChange(property.id, value as PropertyStatus)}
-                      >
-                        <DropdownMenuRadioItem value={PropertyStatus.DRAFT}>Draft</DropdownMenuRadioItem>
-                        <DropdownMenuRadioItem value={PropertyStatus.PUBLISHED}>Published</DropdownMenuRadioItem>
-                        <DropdownMenuRadioItem value={PropertyStatus.INACTIVE}>Inactive</DropdownMenuRadioItem>
-                      </DropdownMenuRadioGroup>
-                    </DropdownMenuSubContent>
-                  </DropdownMenuSub>
+                  {(property.status === PropertyStatus.DRAFT || property.status === PropertyStatus.REJECTED) && (
+                    <DropdownMenuItem onClick={() => onRequestVerification(property.id)}>
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Request Verification
+                    </DropdownMenuItem>
+                  )}
+                  {property.status === PropertyStatus.ACTIVE && property.isVerified && (
+                    <DropdownMenuItem onClick={() => onDeactivate(property.id)}>
+                      <EyeOff className="mr-2 h-4 w-4" />
+                      Make Inactive
+                    </DropdownMenuItem>
+                  )}
+                  {property.status === PropertyStatus.INACTIVE && property.isVerified && (
+                    <DropdownMenuItem onClick={() => onRestore(property.id)}>
+                      <Undo2 className="mr-2 h-4 w-4" />
+                      Restore Listing
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem 
                     className="text-destructive focus:text-destructive" 
                     onClick={() => onArchive(property.id)}
                   >
                     <Archive className="mr-2 h-4 w-4" />
-                    Archive
-                  </DropdownMenuItem>
-                </>
-              )}
-              
-              {isArchived && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => onRestore(property.id)}>
-                    <Undo2 className="mr-2 h-4 w-4" />
-                    Restore Property
+                    Delete
                   </DropdownMenuItem>
                 </>
               )}

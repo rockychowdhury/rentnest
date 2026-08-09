@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { Property } from "@/types";
-import { getPropertyById } from "@/app/(dashboard)/_actions/propertiesActions";
+import { getPropertyById, updateProperty } from "@/app/(dashboard)/_actions/propertiesActions";
 import { AddressForm } from "@/app/(dashboard)/_components/properties/AddressForm";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -37,20 +37,21 @@ export default function PropertyAddressPage(props: { params: Promise<{ id: strin
         addressLine2: addressData.addressLine2,
         landmark: addressData.landmark,
         postalCode: addressData.postalCode,
-        upazilaId: parseInt(addressData.upazilaId, 10),
+        areaId: parseInt(addressData.areaId, 10),
         latitude: addressData.latitude !== undefined ? parseFloat(Number(addressData.latitude).toFixed(8)) : undefined,
         longitude: addressData.longitude !== undefined ? parseFloat(Number(addressData.longitude).toFixed(8)) : undefined
       };
 
-      const { updateProperty } = await import("@/app/(dashboard)/_actions/propertiesActions");
       const result = await updateProperty(params.id, { address: formattedAddress } as any);
       
       if (result.success) {
+        toast.success("Address saved successfully");
       } else {
-        throw new Error(result.error);
+        throw new Error(result.error || "Unknown error");
       }
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      console.error(error);
+      toast.error(error.message || "Failed to save address");
     } finally {
       setIsSaving(false);
     }
@@ -69,8 +70,8 @@ export default function PropertyAddressPage(props: { params: Promise<{ id: strin
           ...property.address,
           latitude: property.address?.latitude != null ? Number(property.address.latitude) : undefined,
           longitude: property.address?.longitude != null ? Number(property.address.longitude) : undefined,
-          divisionId: property.address?.upazila?.district?.divisionId?.toString(),
-          districtId: property.address?.upazila?.districtId?.toString(),
+          divisionId: property.address?.area?.district?.divisionId?.toString(),
+          districtId: property.address?.area?.districtId?.toString(),
         }}
         onSubmit={handleAddressSubmit} 
         isLoading={isSaving}
