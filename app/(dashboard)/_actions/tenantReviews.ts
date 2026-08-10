@@ -2,7 +2,8 @@
 
 import { fetchApi } from "@/lib/api";
 import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import { CACHE_TAG_PROPERTIES } from "@/service/cache-tags";
 
 const getAuthHeaders = async (): Promise<Record<string, string>> => {
   const cookieStore = await cookies();
@@ -48,6 +49,7 @@ export async function createReview(data: { propertyId: string; leaseId?: string;
       body: data,
     });
     revalidatePath("/tenant-dashboard/reviews");
+    updateTag(CACHE_TAG_PROPERTIES);
     return { success: true, data: result };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -63,6 +65,7 @@ export async function updateReview(reviewId: string, data: { rating?: number; co
       body: data,
     });
     revalidatePath("/tenant-dashboard/reviews");
+    updateTag(CACHE_TAG_PROPERTIES);
     return { success: true, data: result };
   } catch (error: any) {
     return { success: false, error: error.message };

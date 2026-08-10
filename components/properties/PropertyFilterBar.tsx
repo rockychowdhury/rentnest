@@ -8,7 +8,6 @@ import {
   X,
   Building,
   RotateCcw,
-  Navigation,
   Check,
   Calendar,
   Sparkles,
@@ -23,6 +22,7 @@ import { getPublicCategories, CategoryItem } from "@/service/getCategories";
 import { getPublicAmenities, AmenityItem } from "@/service/getAmenities";
 import { cn } from "@/lib/utils/shadcnUtils";
 import { toast } from "sonner";
+import { AreaSearchCombobox } from "./AreaSearchCombobox";
 
 interface PropertyFilterBarProps {
   categories?: CategoryItem[];
@@ -49,16 +49,14 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
 
   // Local Input States
   const [searchTerm, setSearchTerm] = useState(searchParams.get("searchTerm") || "");
-  const [location, setLocation] = useState(searchParams.get("location") || "");
-  const [division, setDivision] = useState(searchParams.get("division") || "");
-  const [district, setDistrict] = useState(searchParams.get("district") || "");
-  const [area, setArea] = useState(searchParams.get("area") || "");
+  const [areaId, setAreaId] = useState(searchParams.get("areaId") || "");
+  const [areaName, setAreaName] = useState(searchParams.get("areaName") || "");
   const [category, setCategory] = useState(searchParams.get("categoryId") || "");
   const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") || "");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") || "");
   const [bedrooms, setBedrooms] = useState(searchParams.get("bedrooms") || "");
   const [bathrooms, setBathrooms] = useState(searchParams.get("bathrooms") || "");
-  const [availableNow, setAvailableNow] = useState(searchParams.get("availableNow") === "true");
+
   const [isFeatured, setIsFeatured] = useState(searchParams.get("isFeatured") === "true");
   const [sort, setSort] = useState(searchParams.get("sort") || "newest");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
@@ -76,16 +74,14 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
   // Sync controls with URL searchParams change
   useEffect(() => {
     setSearchTerm(searchParams.get("searchTerm") || "");
-    setLocation(searchParams.get("location") || "");
-    setDivision(searchParams.get("division") || "");
-    setDistrict(searchParams.get("district") || "");
-    setArea(searchParams.get("area") || "");
+    setAreaId(searchParams.get("areaId") || "");
+    setAreaName(searchParams.get("areaName") || "");
     setCategory(searchParams.get("categoryId") || "");
     setMinPrice(searchParams.get("minPrice") || "");
     setMaxPrice(searchParams.get("maxPrice") || "");
     setBedrooms(searchParams.get("bedrooms") || "");
     setBathrooms(searchParams.get("bathrooms") || "");
-    setAvailableNow(searchParams.get("availableNow") === "true");
+
     setIsFeatured(searchParams.get("isFeatured") === "true");
     setSort(searchParams.get("sort") || "newest");
     setSelectedAmenities(
@@ -99,16 +95,13 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
 
     const nextState = {
       searchTerm: debouncedSearchTerm,
-      location,
-      division,
-      district,
-      area,
+      areaId,
+      areaName,
       categoryId: category,
       minPrice: debouncedMinPrice,
       maxPrice: debouncedMaxPrice,
       bedrooms,
-      bathrooms,
-      availableNow,
+
       isFeatured,
       sort,
       amenities: selectedAmenities,
@@ -144,16 +137,14 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
 
   const handleClearAll = () => {
     setSearchTerm("");
-    setLocation("");
-    setDivision("");
-    setDistrict("");
-    setArea("");
+    setAreaId("");
+    setAreaName("");
     setCategory("");
     setMinPrice("");
     setMaxPrice("");
     setBedrooms("");
     setBathrooms("");
-    setAvailableNow(false);
+
     setIsFeatured(false);
     setSort("newest");
     setSelectedAmenities([]);
@@ -163,71 +154,7 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
     });
   };
 
-  const handleNearMe = () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser");
-      return;
-    }
-    setGeoLocating(true);
-    navigator.geolocation.getCurrentPosition(
-      async (pos) => {
-        try {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
 
-          let detectedDistrict = "";
-          try {
-            const res = await fetch(
-              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
-            );
-            const data = await res.json();
-            detectedDistrict =
-              data.city ||
-              data.locality ||
-              data.principalSubdivision ||
-              "";
-          } catch {
-            const res = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=10`
-            );
-            const data = await res.json();
-            detectedDistrict =
-              data.address?.district ||
-              data.address?.city ||
-              data.address?.state ||
-              "";
-          }
-
-          let cleanDistrict = detectedDistrict
-            .replace(/\s+District/i, "")
-            .replace(/\s+Division/i, "")
-            .replace(/\s+City/i, "")
-            .trim();
-
-          if (!cleanDistrict) {
-            cleanDistrict = "Dhaka";
-          }
-
-          setDistrict(cleanDistrict);
-          setLocation(cleanDistrict);
-          toast.success(`Near Me: Detected district "${cleanDistrict}"`);
-          updateURL({
-            district: cleanDistrict,
-            location: cleanDistrict,
-          });
-        } catch (error) {
-          toast.error("Could not determine district from current location");
-        } finally {
-          setGeoLocating(false);
-        }
-      },
-      (err) => {
-        setGeoLocating(false);
-        toast.error("Geolocation denied or unavailable: " + err.message);
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  };
 
   const toggleAmenity = (amenityId: string) => {
     const next = selectedAmenities.includes(amenityId)
@@ -247,17 +174,17 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
         {/* Main Search Controls */}
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           {/* Free-text Search Input */}
-          <div className="relative flex-1 min-w-[200px]">
+          <div className="relative flex-1 min-w-[150px] max-w-sm">
             {isPending ? (
-              <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-primary animate-spin" />
+              <Loader2 className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-primary animate-spin" />
             ) : (
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
             )}
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search by area, title, or keyword..."
-              className="pl-9 h-10 text-xs bg-muted/30"
+              placeholder="Search keyword..."
+              className="pl-8 h-9 text-xs bg-muted/20 border-border shadow-sm rounded-md transition-colors focus-visible:bg-background"
             />
             {searchTerm && (
               <button
@@ -266,27 +193,26 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
                   setSearchTerm("");
                   updateURL({ searchTerm: "" });
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                <X className="size-3.5" />
+                <X className="size-3" />
               </button>
             )}
           </div>
 
-          {/* Near Me Button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleNearMe}
-            disabled={geoLocating}
-            className={cn(
-              "h-10 text-xs gap-1.5 shrink-0 hidden md:flex",
-              location === "Near Me" ? "border-primary text-primary bg-primary/10" : ""
-            )}
-          >
-            <Navigation className={cn("size-3.5 text-primary", geoLocating ? "animate-spin" : "")} />
-            Near me
-          </Button>
+          {/* Location Combobox */}
+          <div className="w-[180px] sm:w-[220px] shrink-0">
+            <AreaSearchCombobox
+              value={areaId}
+              defaultAreaName={areaName}
+              onChange={(id, name) => {
+                setAreaId(id);
+                setAreaName(name);
+                updateURL({ areaId: id, areaName: name });
+              }}
+              className="h-9"
+            />
+          </div>
 
           {/* Category Select (Desktop) */}
           <div className="hidden lg:block w-44 shrink-0">
@@ -349,7 +275,7 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger
               render={
-                <Button variant="outline" size="sm" className="h-10 text-xs gap-1.5 shrink-0 relative" />
+                <Button variant="outline" size="sm" className="h-9 px-3 text-xs gap-1.5 shrink-0 relative shadow-sm" />
               }
             >
               <SlidersHorizontal className="size-3.5 text-primary" />
@@ -369,17 +295,20 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
 
               {/* Filter Sheet Body */}
               <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
-                {/* Near Me Quick Trigger */}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleNearMe}
-                  disabled={geoLocating}
-                  className="w-full h-10 text-xs gap-2 justify-center"
-                >
-                  <Navigation className="size-3.5 text-primary" />
-                  Use Current Location ("Near Me")
-                </Button>
+                {/* Location Combobox (Mobile Drawer) */}
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-foreground">Location</label>
+                  <AreaSearchCombobox
+                    value={areaId}
+                    defaultAreaName={areaName}
+                    onChange={(id, name) => {
+                      setAreaId(id);
+                      setAreaName(name);
+                      updateURL({ areaId: id, areaName: name });
+                    }}
+                    className="w-full h-10"
+                  />
+                </div>
 
                 {/* Category Select */}
                 <div className="space-y-2">
@@ -512,20 +441,6 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
                 {/* Toggles */}
                 <div className="space-y-3 pt-2 border-t border-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-foreground">Available Now Only</span>
-                    <input
-                      type="checkbox"
-                      checked={availableNow}
-                      onChange={(e) => {
-                        const next = e.target.checked;
-                        setAvailableNow(next);
-                        updateURL({ availableNow: next });
-                      }}
-                      className="size-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold text-foreground">Featured Properties Only</span>
                     <input
                       type="checkbox"
@@ -559,7 +474,7 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
               variant="ghost"
               size="sm"
               onClick={handleClearAll}
-              className="h-10 text-xs text-muted-foreground hover:text-destructive gap-1 shrink-0"
+              className="h-9 text-xs text-muted-foreground hover:text-destructive gap-1 shrink-0"
             >
               <RotateCcw className="size-3.5" />
               Clear

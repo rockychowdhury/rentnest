@@ -8,20 +8,19 @@ import { SearchResultsMode } from "@/components/properties/SearchResultsMode";
 import { PropertiesLoadingSkeleton } from "@/components/properties/PropertiesLoadingSkeleton";
 import { SearchResultsSkeleton } from "@/components/properties/SearchResultsSkeleton";
 
+export const revalidate = 300; // Cache for 5 minutes
+
 interface PropertiesPageProps {
   searchParams: Promise<{
     searchTerm?: string;
-    location?: string;
-    division?: string;
-    district?: string;
-    area?: string;
+    areaId?: string;
+    areaName?: string;
     categoryId?: string;
     minPrice?: string;
     maxPrice?: string;
     amenities?: string;
     bedrooms?: string;
     bathrooms?: string;
-    availableNow?: string;
     isFeatured?: string;
     sort?: "newest" | "oldest" | "price_asc" | "price_desc";
     page?: string;
@@ -32,16 +31,12 @@ interface PropertiesPageProps {
 async function AsyncSearchResults({ resolvedParams }: { resolvedParams: any }) {
   const searchResults = await getProperties({
     searchTerm: resolvedParams.searchTerm,
-    location: resolvedParams.location,
-    division: resolvedParams.division,
-    district: resolvedParams.district,
-    area: resolvedParams.area,
+    areaId: resolvedParams.areaId,
     categoryId: resolvedParams.categoryId,
     minPrice: resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
     maxPrice: resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
     bedrooms: resolvedParams.bedrooms ? Number(resolvedParams.bedrooms) : undefined,
     bathrooms: resolvedParams.bathrooms ? Number(resolvedParams.bathrooms) : undefined,
-    availableNow: resolvedParams.availableNow === "true" ? true : undefined,
     isFeatured: resolvedParams.isFeatured === "true" ? true : undefined,
     amenities: resolvedParams.amenities ? resolvedParams.amenities.split(",") : undefined,
     sort: resolvedParams.sort,
@@ -60,7 +55,7 @@ export default async function PropertiesPage({ searchParams }: PropertiesPagePro
   ]);
 
   const filterKeys = Object.keys(resolvedParams).filter((k) => {
-    if (k === "page" || k === "limit") return false;
+    if (k === "page" || k === "limit" || k === "areaName") return false;
     return true;
   });
   const isSearchMode = filterKeys.length > 0;

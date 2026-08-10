@@ -127,7 +127,7 @@ export function UnitCard({ unit, onUnitUpdated }: UnitCardProps) {
                   Amenities
                 </Button>
               } />
-              <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
+              <DialogContent className="sm:max-w-[700px] max-h-[85vh] overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 <div className="pt-4">
                   <AmenityToggleGrid 
                     initialAmenities={unit.amenities?.map(a => ({ id: a.amenity.id, name: a.amenity.name })) || []}
@@ -135,6 +135,7 @@ export function UnitCard({ unit, onUnitUpdated }: UnitCardProps) {
                     onSave={async (amenityIds) => {
                       const res = await setUnitAmenities(unit.id, amenityIds);
                       if (res.success) {
+                        setIsAmenitiesOpen(false);
                         onUnitUpdated();
                       }
                       return res as any;

@@ -15,7 +15,8 @@ import {
   GitPullRequest,
   Tags,
   Sparkles,
-  Star
+  Star,
+  ShieldCheck
 } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { logout } from "@/service/logout";
@@ -28,6 +29,7 @@ export const adminNavItems = [
   { name: "Users", href: "/admin-dashboard/users", icon: Users },
   { name: "Properties", href: "/admin-dashboard/properties", icon: Building },
   { name: "Requests", href: "/admin-dashboard/requests", icon: GitPullRequest },
+  { name: "Verification Queue", href: "/admin-dashboard/verification-queue", icon: ShieldCheck },
   { name: "Leases", href: "/admin-dashboard/leases", icon: ScrollText },
   { name: "Payments", href: "/admin-dashboard/payments", icon: CreditCard },
   { name: "Amenities", href: "/admin-dashboard/amenities", icon: Sparkles },

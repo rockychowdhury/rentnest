@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import React, { useEffect, useState, use } from "react";
 import { PropertyUnit } from "@/types";
 import { getPropertyUnits, createPropertyUnit } from "@/app/(dashboard)/_actions/unitsActions";
-import { getPropertyById } from "@/app/(dashboard)/_actions/propertiesActions";
+import { usePropertyContext } from "@/app/(dashboard)/_components/properties/PropertyProvider";
 import { UnitCard } from "@/app/(dashboard)/_components/properties/UnitCard";
 import { UnitForm } from "@/app/(dashboard)/_components/properties/UnitForm";
 import { Button } from "@/components/ui/button";
@@ -17,39 +17,37 @@ import { Label } from "@/components/ui/label";
 
 export default function PropertyUnitsPage(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
-  const [units, setUnits] = useState<PropertyUnit[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { property, setProperty } = usePropertyContext();
+  const [units, setUnits] = useState<PropertyUnit[]>(property.units || []);
   const [isRefetching, setIsRefetching] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
-  const [isPropertyArchived, setIsPropertyArchived] = useState(false);
+  
+  const isPropertyArchived = !!property.deletedAt;
 
-  const loadData = async (silent = false) => {
-    if (!silent) setIsLoading(true);
-    else setIsRefetching(true);
+  const loadData = async () => {
+    setIsRefetching(true);
     
-    const [unitsRes, propRes] = await Promise.all([
-      getPropertyUnits(params.id),
-      getPropertyById(params.id)
-    ]);
+    const unitsRes = await getPropertyUnits(params.id);
     
     if (unitsRes.success) {
       setUnits(unitsRes.data);
-    } else if (!silent) {
+      setProperty({ ...property, units: unitsRes.data });
+    } else {
       toast.error("Failed to load units");
     }
     
-    if (propRes.success && propRes.data) {
-      setIsPropertyArchived(!!propRes.data.deletedAt);
-    }
-    
-    if (!silent) setIsLoading(false);
-    else setIsRefetching(false);
+    setIsRefetching(false);
   };
 
+  const hasFetched = React.useRef(false);
+
   useEffect(() => {
-    loadData();
+    if (!hasFetched.current && (!property.units || property.units.length === 0)) {
+      hasFetched.current = true;
+      loadData();
+    }
   }, [params.id]);
 
   const handleAddUnit = async (data: Partial<PropertyUnit>) => {
@@ -58,24 +56,14 @@ export default function PropertyUnitsPage(props: { params: Promise<{ id: string 
     if (res.success) {
       toast.success("Unit created successfully");
       setIsAddOpen(false);
-      loadData(true);
+      loadData();
     } else {
       toast.error(res.error || "Failed to create unit");
     }
     setIsAdding(false);
   };
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4">
-        <div className="flex justify-between mb-6">
-          <Skeleton className="h-8 w-40" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        {[1, 2, 3].map(i => <Skeleton key={i} className="h-20 w-full rounded-md" />)}
-      </div>
-    );
-  }
+  if (!property) return null;
 
   const activeUnits = units.filter(u => !u.deletedAt);
   const archivedUnits = units.filter(u => !!u.deletedAt);
@@ -133,7 +121,7 @@ export default function PropertyUnitsPage(props: { params: Promise<{ id: string 
             <UnitCard 
               key={unit.id} 
               unit={unit} 
-              onUnitUpdated={() => loadData(true)} 
+              onUnitUpdated={loadData} 
             />
           ))}
         </Accordion>

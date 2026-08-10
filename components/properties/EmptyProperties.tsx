@@ -1,26 +1,30 @@
 import React from "react";
-import { SearchX, Home } from "lucide-react";
+import { SearchX, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export function EmptyProperties() {
   return (
-    <div className="flex flex-col items-center justify-center py-32 px-4 text-center max-w-lg mx-auto">
-      <div className="size-20 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
-        <Home className="size-10" />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-4">
+      <div className="size-16 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground">
+        <SearchX className="size-8" />
       </div>
-      <h2 className="text-2xl font-bold font-heading text-foreground mb-3">
-        No properties available yet
-      </h2>
-      <p className="text-muted-foreground mb-8 leading-relaxed">
-        We're currently expanding our listings. Check back soon for new places, or adjust your filters if you're searching for something specific.
-      </p>
-      <Link href="/properties">
-        <Button variant="default" size="lg" className="gap-2">
-          <SearchX className="size-4" />
-          Clear all filters
-        </Button>
-      </Link>
+      <div className="space-y-1 max-w-md mx-auto">
+        <h2 className="text-xl font-heading font-bold text-foreground">
+          No matching properties found
+        </h2>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          We couldn't find any listings matching your active search criteria. Try clearing or relaxing some filters.
+        </p>
+      </div>
+      <div>
+        <Link href="/properties">
+          <Button variant="default" size="sm" className="gap-1.5 text-xs">
+            <SearchX className="size-3.5" />
+            Clear all filters
+          </Button>
+        </Link>
+      </div>
     </div>
   );
 }

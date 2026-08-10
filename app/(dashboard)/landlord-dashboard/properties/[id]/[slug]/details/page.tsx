@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { Property, PropertyStatus, Category } from "@/types";
-import { getPropertyById, updateProperty, archiveProperty, restoreProperty, getCategories, requestPropertyVerification, deactivateProperty } from "@/app/(dashboard)/_actions/propertiesActions";
+import { updateProperty, archiveProperty, restoreProperty, getCategories, requestPropertyVerification, deactivateProperty } from "@/app/(dashboard)/_actions/propertiesActions";
 import { DangerZone } from "@/app/(dashboard)/_components/properties/DangerZone";
 import { PropertyStatusBadge } from "@/app/(dashboard)/_components/properties/PropertyStatusBadge";
 import { Button } from "@/components/ui/button";
@@ -15,49 +15,44 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
 
+import { usePropertyContext } from "@/app/(dashboard)/_components/properties/PropertyProvider";
+import { useRouter } from "next/navigation";
+
 export default function PropertyDetailsPage(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
-  const [property, setProperty] = useState<Property | null>(null);
+  const router = useRouter();
+  const { property, setProperty } = usePropertyContext();
+  
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isRefetching, setIsRefetching] = useState(false);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isStatusChanging, setIsStatusChanging] = useState(false);
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    categoryId: "",
+    title: property.title || "",
+    description: property.description || "",
+    categoryId: property.categoryId || "",
   });
 
-  const loadData = async (silent = false) => {
-    if (!silent) setIsLoading(true);
-    else setIsRefetching(true);
-    const [propRes, catRes] = await Promise.all([
-      getPropertyById(params.id),
-      getCategories()
-    ]);
-    
+  const loadCategories = async () => {
+    setIsLoadingCategories(true);
+    const catRes = await getCategories();
     if (catRes.success) setCategories(catRes.data);
-    if (propRes.success && propRes.data) {
-      setProperty(propRes.data);
-      if (!silent) {
-        setFormData({
-          title: propRes.data.title || "",
-          description: propRes.data.description || "",
-          categoryId: propRes.data.categoryId || "",
-        });
-      }
-    } else if (!silent) {
-      toast.error("Failed to load property details");
-    }
-    if (!silent) setIsLoading(false);
-    else setIsRefetching(false);
+    setIsLoadingCategories(false);
   };
 
   useEffect(() => {
-    loadData();
-  }, [params.id]);
+    loadCategories();
+  }, []);
+
+  // Sync form data if context property changes externally
+  useEffect(() => {
+    setFormData({
+      title: property.title || "",
+      description: property.description || "",
+      categoryId: property.categoryId || "",
+    });
+  }, [property.id]);
 
   const handleSaveDetails = async () => {
     setIsSaving(true);
@@ -76,7 +71,7 @@ export default function PropertyDetailsPage(props: { params: Promise<{ id: strin
     const res = await requestPropertyVerification(params.id);
     if (res.success) {
       toast.success(res.message || "Verification requested successfully");
-      loadData(true);
+      router.refresh();
     } else {
       toast.error(res.error || "Failed to request verification");
     }
@@ -88,7 +83,7 @@ export default function PropertyDetailsPage(props: { params: Promise<{ id: strin
     const res = await deactivateProperty(params.id);
     if (res.success) {
       toast.success(res.message || "Property deactivated");
-      loadData(true);
+      router.refresh();
     } else {
       toast.error(res.error || "Failed to deactivate property");
     }
@@ -100,7 +95,7 @@ export default function PropertyDetailsPage(props: { params: Promise<{ id: strin
     const res = await restoreProperty(params.id);
     if (res.success) {
       toast.success(res.message || "Property restored");
-      loadData(true);
+      router.refresh();
     } else {
       toast.error(res.error || "Failed to restore property");
     }
@@ -111,7 +106,7 @@ export default function PropertyDetailsPage(props: { params: Promise<{ id: strin
     const res = await archiveProperty(params.id);
     if (res.success) {
       toast.success("Property archived");
-      loadData(true); // reload to get the deletedAt date silently
+      router.refresh();
     }
   };
 
@@ -119,13 +114,9 @@ export default function PropertyDetailsPage(props: { params: Promise<{ id: strin
     const res = await restoreProperty(params.id);
     if (res.success) {
       toast.success("Property restored");
-      loadData(true);
+      router.refresh();
     }
   };
-
-  if (isLoading) {
-    return <Skeleton className="h-[600px] w-full rounded-lg" />;
-  }
 
   if (!property) return null;
 
@@ -137,7 +128,6 @@ export default function PropertyDetailsPage(props: { params: Promise<{ id: strin
         <CardHeader>
           <div className="flex items-center gap-2">
             <CardTitle>Basic Details</CardTitle>
-            {isRefetching && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
           </div>
           <CardDescription>Update the core information about this property.</CardDescription>
         </CardHeader>

@@ -2,12 +2,19 @@
 
 import { fetchApi } from "@/lib/api";
 import { cookies } from "next/headers";
+import { updateTag } from "next/cache";
 import { PropertyImage } from "@/types";
+import { CACHE_TAG_PROPERTIES, propertyDetailTag } from "@/service/cache-tags";
 
 const getAuthHeaders = async (): Promise<Record<string, string>> => {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
   return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+const invalidatePropertyCaches = (propertyId?: string) => {
+  updateTag(CACHE_TAG_PROPERTIES);
+  if (propertyId) updateTag(propertyDetailTag(propertyId));
 };
 
 export async function getPropertyImages(propertyId: string) {
@@ -27,6 +34,7 @@ export async function uploadPropertyImage(propertyId: string, url: string, delet
       headers,
       body: { url, deleteUrl, isCover, caption },
     });
+    invalidatePropertyCaches(propertyId);
     return { success: true, data: res.data };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -45,6 +53,7 @@ export async function updatePropertyImage(imageId: string, data: Partial<Propert
       headers,
       body: data,
     });
+    invalidatePropertyCaches();
     return { success: true, data: res.data };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -58,6 +67,7 @@ export async function deletePropertyImage(imageId: string) {
       method: "DELETE",
       headers,
     });
+    invalidatePropertyCaches();
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };

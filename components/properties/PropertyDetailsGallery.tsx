@@ -1,25 +1,23 @@
 "use client";
 
 import React, { useState } from "react";
-import Image from "next/image";
-import { PropertyImage } from "@/types";
-import { FeatureImagePlaceholder } from "@/components/shared/FeatureImagePlaceholder";
-import { OptimizedPropertyImage } from "@/components/shared/OptimizedPropertyImage";
+import { PropertyImage } from "@/components/shared/PropertyImage";
+import { PropertyImage as PropertyImageType } from "@/types";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Grid, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/shadcnUtils";
 
 interface PropertyDetailsGalleryProps {
-  images: PropertyImage[];
+  images: PropertyImageType[];
 }
 
 function renderGalleryImage(url: string, alt: string, priority = false) {
   return (
-    <OptimizedPropertyImage
+    <PropertyImage
       src={url}
       alt={alt}
-      priority={priority}
+      preload={priority}
       sizes="(max-width: 768px) 100vw, 50vw"
       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105 transform-gpu"
     />
@@ -32,7 +30,7 @@ export function PropertyDetailsGallery({ images }: PropertyDetailsGalleryProps) 
   if (!images || images.length === 0) {
     return (
       <div className="w-full aspect-[21/9] rounded-2xl overflow-hidden bg-muted">
-        <FeatureImagePlaceholder label="No Images Available" className="w-full h-full object-cover" />
+        <PropertyImage alt="No images available" fallbackLabel="No Images Available" />
       </div>
     );
   }
@@ -101,20 +99,13 @@ export function PropertyDetailsGallery({ images }: PropertyDetailsGalleryProps) 
             <div className="max-w-4xl mx-auto space-y-4">
               {images.map((img, idx) => (
                 <div key={img.id || idx} className="relative w-full aspect-video rounded-lg overflow-hidden bg-muted/10">
-                  {img.url && (img.url.startsWith("http") || img.url.startsWith("/")) ? (
-                    <Image
-                      src={img.url}
-                      alt={img.caption || `Gallery photo ${idx + 1}`}
-                      fill
-                      sizes="90vw"
-                      className="w-full h-full object-contain"
-                    />
-                  ) : (
-                    <FeatureImagePlaceholder
-                      label={img.url || `Photo ${idx + 1}`}
-                      className="w-full h-full object-contain"
-                    />
-                  )}
+                  <PropertyImage
+                    src={img.url}
+                    alt={img.caption || `Gallery photo ${idx + 1}`}
+                    fit="contain"
+                    sizes="90vw"
+                    fallbackLabel={img.caption || `Photo ${idx + 1}`}
+                  />
                   {img.caption && (
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-1.5 rounded-full text-sm backdrop-blur-md">
                       {img.caption}

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/lib/api";
+import { CACHE_TAG_AMENITIES } from "./cache-tags";
 
 export interface AmenityItem {
   id: string;
@@ -9,7 +10,7 @@ export interface AmenityItem {
 export async function getPublicAmenities(): Promise<AmenityItem[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/amenities`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: [CACHE_TAG_AMENITIES] },
     });
 
     if (!res.ok) return [];

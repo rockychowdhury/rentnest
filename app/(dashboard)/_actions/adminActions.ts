@@ -2,7 +2,13 @@
 
 import { fetchApi } from "@/lib/api";
 import { cookies } from "next/headers";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, updateTag } from "next/cache";
+import {
+  CACHE_TAG_PROPERTIES,
+  CACHE_TAG_CATEGORIES,
+  CACHE_TAG_AMENITIES,
+  propertyDetailTag,
+} from "@/service/cache-tags";
 
 const getAuthHeaders = async (): Promise<Record<string, string>> => {
   const cookieStore = await cookies();
@@ -55,6 +61,7 @@ export async function createAmenity(name: string) {
     });
     if (result.success) {
       revalidatePath("/admin-dashboard/amenities");
+      updateTag(CACHE_TAG_AMENITIES);
     }
     return result;
   } catch (error: any) {
@@ -72,6 +79,7 @@ export async function updateAmenity(id: string, name: string) {
     });
     if (result.success) {
       revalidatePath("/admin-dashboard/amenities");
+      updateTag(CACHE_TAG_AMENITIES);
     }
     return result;
   } catch (error: any) {
@@ -89,6 +97,7 @@ export async function deleteAmenity(id: string, name: string) {
     });
     if (result.success) {
       revalidatePath("/admin-dashboard/amenities");
+      updateTag(CACHE_TAG_AMENITIES);
     }
     return result;
   } catch (error: any) {
@@ -112,6 +121,7 @@ export async function createCategory(name: string) {
     });
     if (result.success) {
       revalidatePath("/admin-dashboard/categories");
+      updateTag(CACHE_TAG_CATEGORIES);
     }
     return result;
   } catch (error: any) {
@@ -129,6 +139,7 @@ export async function updateCategory(id: string, name: string) {
     });
     if (result.success) {
       revalidatePath("/admin-dashboard/categories");
+      updateTag(CACHE_TAG_CATEGORIES);
     }
     return result;
   } catch (error: any) {
@@ -146,6 +157,7 @@ export async function deleteCategory(id: string, name: string) {
     });
     if (result.success) {
       revalidatePath("/admin-dashboard/categories");
+      updateTag(CACHE_TAG_CATEGORIES);
     }
     return result;
   } catch (error: any) {
@@ -195,6 +207,8 @@ export async function adminUpdatePropertyStatus(id: string, status: string) {
     });
     if (result.success) {
       revalidatePath("/admin-dashboard/properties");
+      updateTag(CACHE_TAG_PROPERTIES);
+      updateTag(propertyDetailTag(id));
     }
     return result;
   } catch (error: any) {
@@ -211,6 +225,8 @@ export async function adminDeleteProperty(id: string) {
     });
     if (result.success) {
       revalidatePath("/admin-dashboard/properties");
+      updateTag(CACHE_TAG_PROPERTIES);
+      updateTag(propertyDetailTag(id));
     }
     return result;
   } catch (error: any) {
@@ -227,6 +243,8 @@ export async function adminRestoreProperty(id: string) {
     });
     if (result.success) {
       revalidatePath("/admin-dashboard/properties");
+      updateTag(CACHE_TAG_PROPERTIES);
+      updateTag(propertyDetailTag(id));
     }
     return result;
   } catch (error: any) {
@@ -339,6 +357,7 @@ export async function adminDeleteReview(reviewId: string) {
     });
     if (result.success) {
       revalidatePath("/admin-dashboard/reviews");
+      updateTag(CACHE_TAG_PROPERTIES);
     }
     return result;
   } catch (error: any) {
@@ -361,6 +380,54 @@ export async function getAllReviews() {
     }
     
     return { success: true, data: allReviews };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getVerificationQueue() {
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi('/properties/admin/verification-queue?limit=100', { method: 'GET', headers });
+    return { success: true, data: result.data || [] };
+  } catch (error: any) {
+    return { success: false, data: [], error: error.message };
+  }
+}
+
+export async function adminVerifyProperty(propertyId: string) {
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/properties/${propertyId}/verify`, {
+      method: 'PATCH',
+      headers,
+    });
+    if (result.success) {
+      revalidatePath('/admin-dashboard/verification-queue');
+      revalidatePath('/admin-dashboard/properties');
+      updateTag(CACHE_TAG_PROPERTIES);
+      updateTag(propertyDetailTag(propertyId));
+    }
+    return result;
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function adminRejectProperty(propertyId: string) {
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/properties/${propertyId}/reject`, {
+      method: 'PATCH',
+      headers,
+    });
+    if (result.success) {
+      revalidatePath('/admin-dashboard/verification-queue');
+      revalidatePath('/admin-dashboard/properties');
+      updateTag(CACHE_TAG_PROPERTIES);
+      updateTag(propertyDetailTag(propertyId));
+    }
+    return result;
   } catch (error: any) {
     return { success: false, error: error.message };
   }

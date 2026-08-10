@@ -2,12 +2,18 @@
 
 import { fetchApi } from "@/lib/api";
 import { cookies } from "next/headers";
+import { updateTag } from "next/cache";
 import { Pricing } from "@/types";
+import { CACHE_TAG_PROPERTIES } from "@/service/cache-tags";
 
 const getAuthHeaders = async (): Promise<Record<string, string>> => {
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
   return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+const invalidatePropertyListCaches = () => {
+  updateTag(CACHE_TAG_PROPERTIES);
 };
 
 export async function createPricing(propertyUnitId: string, data: Partial<Pricing>) {
@@ -18,6 +24,7 @@ export async function createPricing(propertyUnitId: string, data: Partial<Pricin
       headers,
       body: data,
     });
+    invalidatePropertyListCaches();
     return { success: true, data: res.data };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -32,6 +39,7 @@ export async function updatePricing(pricingId: string, data: Partial<Pricing>) {
       headers,
       body: data,
     });
+    invalidatePropertyListCaches();
     return { success: true, data: res.data };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -45,6 +53,7 @@ export async function deletePricing(pricingId: string) {
       method: "DELETE",
       headers,
     });
+    invalidatePropertyListCaches();
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };

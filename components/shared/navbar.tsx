@@ -16,6 +16,7 @@ import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils/shadcnUtils";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/service/logout";
+import { getMe } from "@/service/getMe";
 import type { User as UserType } from "@/types";
 
 import {
@@ -40,7 +41,25 @@ interface NavbarProps {
   user?: UserType | null;
 }
 
-export function Navbar({ user = null }: NavbarProps) {
+export function Navbar({ user: initialUser = undefined }: NavbarProps) {
+  const [user, setUser] = useState<UserType | null | undefined>(initialUser);
+
+  useEffect(() => {
+    let active = true;
+    getMe()
+      .then((res) => {
+        if (!active) return;
+        setUser(res?.success && res?.data ? (res.data as UserType) : null);
+      })
+      .catch(() => {
+        if (active) setUser(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const isUserLoading = user === undefined;
   const displayName = user?.profile?.fullName || "User";
   const avatarUrl = user?.profile?.avatarUrl || null;
 
@@ -129,7 +148,12 @@ export function Navbar({ user = null }: NavbarProps) {
             <span>{lang}</span>
           </button>
 
-          {user ? (
+          {isUserLoading ? (
+            <div className="hidden md:flex items-center gap-2" aria-hidden="true">
+              <div className="h-8 w-16 animate-pulse rounded-md bg-muted" />
+              <div className="h-8 w-28 animate-pulse rounded-md bg-muted" />
+            </div>
+          ) : user ? (
             /* Logged In User Controls (Desktop) */
             <div className="hidden md:flex items-center gap-2">
               <Button
@@ -219,7 +243,12 @@ export function Navbar({ user = null }: NavbarProps) {
                     </button>
                   </div>
 
-                  {user ? (
+                  {isUserLoading ? (
+                    <div className="grid grid-cols-2 gap-3 pt-2" aria-hidden="true">
+                      <div className="h-11 w-full animate-pulse rounded-lg bg-muted" />
+                      <div className="h-11 w-full animate-pulse rounded-lg bg-muted" />
+                    </div>
+                  ) : user ? (
                     <Button 
                       variant="destructive" 
                       className="w-full h-11 text-sm font-semibold flex items-center justify-center gap-2 group transition-all"

@@ -36,3 +36,12 @@ export async function getAreas(districtId: string) {
     return { success: false, data: [], error: error.message };
   }
 }
+
+export async function searchAreasGlobally(query: string) {
+  try {
+    const res = await fetchApi<{ data: any[] }>(`/areas/search?q=${encodeURIComponent(query)}`);
+    return { success: true, data: res.data || [] };
+  } catch (error: any) {
+    return { success: false, data: [], error: error.message };
+  }
+}

@@ -2,31 +2,17 @@
 
 import { useEffect, useState, use } from "react";
 import { Property } from "@/types";
-import { getPropertyById, updateProperty } from "@/app/(dashboard)/_actions/propertiesActions";
+import { updateProperty } from "@/app/(dashboard)/_actions/propertiesActions";
 import { AddressForm } from "@/app/(dashboard)/_components/properties/AddressForm";
+import { usePropertyContext } from "@/app/(dashboard)/_components/properties/PropertyProvider";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { fetchApi } from "@/lib/api";
 
 export default function PropertyAddressPage(props: { params: Promise<{ id: string }> }) {
   const params = use(props.params);
-  const [property, setProperty] = useState<Property | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { property, setProperty } = usePropertyContext();
   const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    const loadProperty = async () => {
-      setIsLoading(true);
-      const res = await getPropertyById(params.id);
-      if (res.success && res.data) {
-        setProperty(res.data);
-      } else {
-        toast.error("Failed to load property");
-      }
-      setIsLoading(false);
-    };
-    loadProperty();
-  }, [params.id]);
 
   const handleAddressSubmit = async (addressData: any) => {
     setIsSaving(true);
@@ -44,8 +30,9 @@ export default function PropertyAddressPage(props: { params: Promise<{ id: strin
 
       const result = await updateProperty(params.id, { address: formattedAddress } as any);
       
-      if (result.success) {
+      if (result.success && result.data) {
         toast.success("Address saved successfully");
+        setProperty(result.data);
       } else {
         throw new Error(result.error || "Unknown error");
       }
@@ -56,10 +43,6 @@ export default function PropertyAddressPage(props: { params: Promise<{ id: strin
       setIsSaving(false);
     }
   };
-
-  if (isLoading) {
-    return <Skeleton className="h-[500px] w-full rounded-lg" />;
-  }
 
   if (!property) return null;
 

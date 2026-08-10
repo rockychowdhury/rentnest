@@ -6,7 +6,7 @@ export default async function PropertyIdRedirectPage(props: { params: Promise<{ 
   const { data: property, success } = await getPropertyById(params.id);
 
   if (!success || !property) {
-    notFound();
+    return <div className="p-8 text-red-500">Property not found by API in [id]/page.tsx. ID: {params.id}. Please check your backend connection.</div>;
   }
 
   // Redirect to the default 'details' tab with the correct slug

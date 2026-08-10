@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { OptimizedPropertyImage } from "@/components/shared/OptimizedPropertyImage";
+import { PropertyImage } from "@/components/shared/PropertyImage";
 import { createReview, updateReview, deleteReview } from "../../_actions/tenantReviews";
 import { reviewSchema } from "@/lib/validators/forms.validator";
 import { cn } from "@/lib/utils/shadcnUtils";
@@ -165,7 +165,7 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-4 border-b border-border/50">
                       <div className="flex items-center gap-4">
                         <div className="size-14 rounded-xl overflow-hidden bg-muted relative shrink-0">
-                          <OptimizedPropertyImage
+                          <PropertyImage
                             src={propImage}
                             alt={review.property?.title || "Property"}
                             className="w-full h-full object-cover"
@@ -291,7 +291,7 @@ export function ReviewsClient({ reviewsData }: ReviewsClientProps) {
                   <div className="bg-background border border-border/60 rounded-xl p-4 space-y-3">
                     <div className="flex items-start gap-3">
                       <div className="size-12 rounded-lg overflow-hidden bg-muted relative shrink-0">
-                        <OptimizedPropertyImage
+                        <PropertyImage
                           src={eligibleLease.property?.images?.[0]?.url}
                           alt={eligibleLease.property?.title || "Property"}
                         />

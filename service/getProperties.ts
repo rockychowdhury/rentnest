@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/lib/api";
+import { CACHE_TAG_PROPERTIES } from "./cache-tags";
 
 export interface PropertyUnitSummary {
   id: string;
@@ -35,6 +36,7 @@ export interface PropertyItem {
   bedroomsMax: number;
   bathroomsMin: number;
   bathroomsMax: number;
+  sizeSqft?: number;
   availableNow: boolean;
   availableUnits: number;
   totalUnits: number;
@@ -44,8 +46,6 @@ export interface PropertyItem {
   amenitiesList: { id: string; name: string }[];
   amenities: string[];
   coverImage: string;
-  allImages: string[];
-  placeholderLabel: string;
   landlord?: {
     fullName?: string;
     avatarUrl?: string;
@@ -59,10 +59,7 @@ export interface PropertyItem {
 
 export interface GetPropertiesQueryParams {
   searchTerm?: string;
-  location?: string;
-  division?: string;
-  district?: string;
-  area?: string;
+  areaId?: string;
   categoryId?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -70,7 +67,6 @@ export interface GetPropertiesQueryParams {
   bedrooms?: number;
   bathrooms?: number;
   rentType?: string;
-  availableNow?: boolean;
   isFeatured?: boolean;
   sort?: "newest" | "oldest" | "price_asc" | "price_desc";
   page?: number;
@@ -87,19 +83,18 @@ export interface GetPropertiesResponse {
 export async function getProperties(params: GetPropertiesQueryParams = {}): Promise<GetPropertiesResponse> {
   const query = new URLSearchParams();
 
-  if (params.isFeatured !== undefined) query.append("isFeatured", params.isFeatured.toString());
+
+  // Deployed backend has a Zod validation bug with boolean query params, 
+  // so we filter isFeatured on the client side instead of sending it.
   if (params.searchTerm) query.append("searchTerm", params.searchTerm);
-  if (params.location) query.append("location", params.location);
-  if (params.division) query.append("division", params.division);
-  if (params.district) query.append("district", params.district);
-  if (params.area) query.append("area", params.area);
+  if (params.areaId) query.append("areaId", params.areaId);
   if (params.categoryId) query.append("categoryId", params.categoryId);
   if (params.minPrice !== undefined) query.append("minPrice", params.minPrice.toString());
   if (params.maxPrice !== undefined) query.append("maxPrice", params.maxPrice.toString());
   if (params.bedrooms !== undefined) query.append("bedrooms", params.bedrooms.toString());
   if (params.bathrooms !== undefined) query.append("bathrooms", params.bathrooms.toString());
   if (params.rentType) query.append("rentType", params.rentType);
-  if (params.availableNow !== undefined) query.append("availableNow", params.availableNow.toString());
+
   
   if (params.sort) {
     query.append("sort", params.sort);
@@ -123,7 +118,7 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
 
   try {
     const res = await fetch(url, {
-      next: { revalidate: 5 },
+      next: { revalidate: 300, tags: [CACHE_TAG_PROPERTIES] },
     });
 
     if (!res.ok) {
@@ -141,84 +136,36 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
     const meta = responseData.meta || { total: 0, page: 1, limit: 10 };
 
     const mappedData: PropertyItem[] = backendProperties.map((p: any) => {
-      const area = p.address?.area?.name || "";
-      const district = p.address?.area?.district?.name || "";
-      const division = p.address?.area?.district?.division?.name || "";
+      const area = p.address?.area || "";
+      const district = p.address?.district || "";
+      const division = p.address?.division || "";
       const streetAddress = p.address?.streetAddress || "";
       
       const locationParts = [streetAddress, area, district].filter(Boolean);
       const locationStr = locationParts.join(", ") || "Location not specified";
 
-      const units = p.units || [];
-      const images = p.images || [];
-      const amenities = p.amenities || [];
+      const cheapUnit = p.cheapUnit || {};
+      const expensiveUnit = p.expensiveUnit || cheapUnit;
 
-      // Extract pricing & rent types
-      let minPrice = 0;
-      let maxPrice = 0;
-      let primaryRentType = "MONTHLY";
+      const minPrice = cheapUnit.pricing?.rentAmount ? Number(cheapUnit.pricing.rentAmount) : 0;
+      const maxPrice = expensiveUnit.pricing?.rentAmount ? Number(expensiveUnit.pricing.rentAmount) : minPrice;
+      const primaryRentType = cheapUnit.pricing?.rentType || "MONTHLY";
+
+      const bedroomsMin = cheapUnit.beds || 0;
+      const bedroomsMax = expensiveUnit.beds || bedroomsMin;
       
-      if (units.length > 0) {
-        const allPrices: number[] = [];
-        units.forEach((u: any) => {
-          if (u.pricing && u.pricing.length > 0) {
-            u.pricing.forEach((pr: any) => {
-              if (pr.rentAmount) allPrices.push(Number(pr.rentAmount));
-              if (pr.rentType) primaryRentType = pr.rentType;
-            });
-          }
-        });
-        
-        if (allPrices.length > 0) {
-          minPrice = Math.min(...allPrices);
-          maxPrice = Math.max(...allPrices);
-        }
-      }
+      const bathroomsMin = cheapUnit.bath || 0;
+      const bathroomsMax = expensiveUnit.bath || bathroomsMin;
 
-      // Extract beds/baths
-      let bedroomsMin = 0;
-      let bedroomsMax = 0;
-      let bathroomsMin = 0;
-      let bathroomsMax = 0;
+      const sizeSqft = cheapUnit.size || undefined;
 
-      if (units.length > 0) {
-        const beds = units.map((u: any) => u.bedrooms || 0);
-        const baths = units.map((u: any) => u.bathrooms || 0);
-        bedroomsMin = Math.min(...beds);
-        bedroomsMax = Math.max(...beds);
-        bathroomsMin = Math.min(...baths);
-        bathroomsMax = Math.max(...baths);
-      }
-
-      // Available units
-      const availableUnitsCount = units.filter((u: any) => u.status === 'AVAILABLE').length;
-
-      // Extract amenities
-      const amenitiesList = amenities.map((a: any) => ({
-        id: a.amenity?.id || a.id || "",
-        name: a.amenity?.name || a.name || "",
-      })).filter((a: any) => Boolean(a.name));
-
-      const amenityNames = amenitiesList.map((a: any) => a.name);
-
-      // Extract Images
-      const coverObj = images.find((i: any) => i.isCover) || images[0];
-      const coverImage = coverObj?.url || "";
-      const allImages = images.map((i: any) => i.url).filter(Boolean);
-
-      // Landlord Info
-      const landlord = p.landlord ? {
-        fullName: p.landlord.profile?.fullName || p.landlord.email || "Landlord",
-        avatarUrl: p.landlord.profile?.avatarUrl,
-        email: p.landlord.email,
-        phone: p.landlord.phone,
-      } : undefined;
+      const coverImage = p.image?.url || "";
 
       return {
         id: p.id,
         slug: p.slug,
         title: p.title,
-        description: p.description,
+        description: "", // Not provided in compact JSON
         minPrice,
         maxPrice,
         primaryRentType,
@@ -227,41 +174,36 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
         district,
         area,
         streetAddress,
-        categoryId: p.category?.id || p.categoryId || "",
+        categoryId: p.category?.id || "",
         categoryName: p.category?.name || "Property",
-        categorySlug: p.category?.slug,
+        categorySlug: "",
         bedroomsMin,
         bedroomsMax,
         bathroomsMin,
         bathroomsMax,
-        availableNow: availableUnitsCount > 0,
-        availableUnits: availableUnitsCount,
-        totalUnits: p.totalUnits || units.length || 1,
+        sizeSqft,
+        availableNow: true, // Fallback
+        availableUnits: 1, // Fallback
+        totalUnits: 1, // Fallback
         isFeatured: !!p.isFeatured,
-        rating: p.rating || 0,
-        reviewCount: p.reviewCount || 0,
-        amenitiesList,
-        amenities: amenityNames,
+        rating: 0,
+        reviewCount: 0,
+        amenitiesList: [],
+        amenities: [],
         coverImage,
-        allImages,
-        placeholderLabel: coverImage,
-        landlord,
-        units: units.map((u: any) => ({
-          id: u.id,
-          unitLabel: u.unitLabel,
-          status: u.status,
-          bedrooms: u.bedrooms,
-          bathrooms: u.bathrooms,
-          sizeSqft: u.sizeSqft,
-          pricing: u.pricing,
-        })),
-        createdAt: p.createdAt,
+        landlord: undefined,
+        units: [], // Simplified payload doesn't have all units
+        createdAt: new Date().toISOString(), // Fallback for sorting if missing
         popularityScore: p.isFeatured ? 100 : 50,
       };
     });
 
     // Perform guaranteed client-side filtering for Bedrooms, Bathrooms, and Price Range
     let filteredData = mappedData;
+
+    if (params.isFeatured !== undefined) {
+      filteredData = filteredData.filter((p) => p.isFeatured === params.isFeatured);
+    }
 
     if (params.bedrooms !== undefined && !isNaN(Number(params.bedrooms))) {
       const minBeds = Number(params.bedrooms);
@@ -285,6 +227,34 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
     if (params.maxPrice !== undefined && !isNaN(Number(params.maxPrice))) {
       const maxP = Number(params.maxPrice);
       filteredData = filteredData.filter((p) => p.minPrice <= maxP);
+    }
+
+    if (params.categoryId) {
+      filteredData = filteredData.filter((p) => p.categoryId === params.categoryId);
+    }
+
+    if (params.searchTerm) {
+      const term = params.searchTerm.toLowerCase();
+      filteredData = filteredData.filter(
+        (p) =>
+          p.title.toLowerCase().includes(term) ||
+          p.description.toLowerCase().includes(term) ||
+          p.location.toLowerCase().includes(term)
+      );
+    }
+
+
+
+    if (params.amenities && params.amenities.length > 0) {
+      filteredData = filteredData.filter((p) => {
+        // Since compact JSON might not send full amenities list, this is best-effort.
+        // If property has amenities array of IDs/names, check them.
+        if (!p.amenities || p.amenities.length === 0) return true; // Can't filter client-side if data missing
+        return params.amenities!.every((reqAmenity) => 
+          p.amenities.some((a) => a === reqAmenity) || 
+          p.amenitiesList.some((al) => al.id === reqAmenity || al.name === reqAmenity)
+        );
+      });
     }
 
     // Perform guaranteed sorting on filteredData

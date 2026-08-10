@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/lib/api";
+import { CACHE_TAG_CATEGORIES } from "./cache-tags";
 
 export interface CategoryItem {
   id: string;
@@ -9,7 +10,7 @@ export interface CategoryItem {
 export async function getPublicCategories(): Promise<CategoryItem[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/categories`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 60, tags: [CACHE_TAG_CATEGORIES] },
     });
 
     if (!res.ok) return [];

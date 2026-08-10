@@ -4,16 +4,20 @@ import Link from "next/link";
 import { ArrowLeft, Building2, MapPin, Layers, Image as ImageIcon, CheckSquare } from "lucide-react";
 import { PropertyStatusBadge } from "@/app/(dashboard)/_components/properties/PropertyStatusBadge";
 import { ArchivedIndicator } from "@/app/(dashboard)/_components/properties/ArchivedIndicator";
+import { PropertyProvider } from "@/app/(dashboard)/_components/properties/PropertyProvider";
 
 export default async function PropertyHubLayout(props: {
   children: React.ReactNode;
   params: Promise<{ id: string, slug: string }>;
 }) {
   const params = await props.params;
+  console.log("LAYOUT PARAMS:", params);
   const { data: property, success } = await getPropertyById(params.id);
+  console.log("LAYOUT PROPERTY SUCCESS:", success, !!property);
 
   if (!success || !property) {
-    notFound();
+    console.error("NOT FOUND IN LAYOUT FOR ID:", params.id);
+    return <div className="p-8 text-red-500">Property not found by API in layout.tsx. ID: {params.id}. Please check your backend connection.</div>;
   }
   
   const isArchived = !!property.deletedAt;
@@ -60,7 +64,9 @@ export default async function PropertyHubLayout(props: {
           </nav>
         </aside>
         <main className="flex-1">
-          {props.children}
+          <PropertyProvider initialProperty={property as any}>
+            {props.children}
+          </PropertyProvider>
         </main>
       </div>
     </div>

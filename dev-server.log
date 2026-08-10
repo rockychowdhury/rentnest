@@ -1,0 +1,544 @@
+
+> rent-nest-client@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.12 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://10.0.0.113:3000
+- Environments: .env
+✓ Ready in 797ms
+- Experiments (use with caution):
+  · staleTimes
+
+○ Compiling / ...
+Failed to fetch properties: 500
+ GET / 200 in 13.0s (next.js: 6.7s, proxy.ts: 510ms, application-code: 5.8s)
+ POST / 200 in 2.7s (next.js: 14ms, proxy.ts: 21ms, application-code: 2.7s)
+  └─ ƒ getMe() in 2628ms service/getMe.ts
+ POST / 200 in 630ms (next.js: 10ms, proxy.ts: 27ms, application-code: 594ms)
+  └─ ƒ getDivisions() in 574ms app/(dashboard)/_actions/addressActions.ts
+ POST / 200 in 1920ms (next.js: 7ms, proxy.ts: 15ms, application-code: 1897ms)
+  └─ ƒ getCategories() in 1875ms app/(dashboard)/_actions/propertiesActions.ts
+ GET /properties?sort=newest 200 in 3.2s (next.js: 9ms, proxy.ts: 16ms, application-code: 3.2s)
+ GET /properties 200 in 6.6s (next.js: 2.0s, proxy.ts: 26ms, application-code: 4.5s)
+Failed to fetch properties: 500
+ GET / 200 in 913ms (next.js: 30ms, proxy.ts: 23ms, application-code: 860ms)
+ GET /properties 200 in 361ms (next.js: 18ms, proxy.ts: 8ms, application-code: 335ms)
+○ Compiling /tenant-dashboard ...
+Failed to fetch properties: 500
+ GET / 200 in 2.7s (next.js: 48ms, proxy.ts: 27ms, application-code: 2.6s)
+ POST / 200 in 140ms (next.js: 28ms, proxy.ts: 65ms, application-code: 48ms)
+  └─ ƒ getDivisions() in 4ms app/(dashboard)/_actions/addressActions.ts
+ POST / 200 in 53ms (next.js: 9ms, proxy.ts: 22ms, application-code: 22ms)
+  └─ ƒ getCategories() in 1ms app/(dashboard)/_actions/propertiesActions.ts
+ POST / 200 in 65ms (next.js: 15ms, proxy.ts: 24ms, application-code: 27ms)
+  └─ ƒ getDivisions() in 2ms app/(dashboard)/_actions/addressActions.ts
+ POST / 200 in 64ms (next.js: 9ms, proxy.ts: 19ms, application-code: 36ms)
+  └─ ƒ getCategories() in 6ms app/(dashboard)/_actions/propertiesActions.ts
+ GET /tenant-dashboard 200 in 14.1s (next.js: 7.3s, proxy.ts: 29ms, application-code: 6.7s)
+Failed to fetch properties: 500
+ GET / 200 in 1011ms (next.js: 33ms, proxy.ts: 54ms, application-code: 924ms)
+ POST / 200 in 1276ms (next.js: 15ms, proxy.ts: 27ms, application-code: 1234ms)
+  └─ ƒ getMe() in 1200ms service/getMe.ts
+ POST / 200 in 66ms (next.js: 14ms, proxy.ts: 20ms, application-code: 32ms)
+  └─ ƒ getDivisions() in 2ms app/(dashboard)/_actions/addressActions.ts
+ POST / 200 in 46ms (next.js: 6ms, proxy.ts: 17ms, application-code: 22ms)
+  └─ ƒ getCategories() in 3ms app/(dashboard)/_actions/propertiesActions.ts
+ POST / 200 in 51ms (next.js: 6ms, proxy.ts: 12ms, application-code: 32ms)
+  └─ ƒ getDivisions() in 2ms app/(dashboard)/_actions/addressActions.ts
+ POST /properties 200 in 346ms (next.js: 52ms, proxy.ts: 35ms, application-code: 259ms)
+ GET /properties 200 in 349ms (next.js: 87ms, proxy.ts: 40ms, application-code: 222ms)
+ POST / 200 in 41ms (next.js: 11ms, proxy.ts: 11ms, application-code: 19ms)
+  └─ ƒ getCategories() in 1ms app/(dashboard)/_actions/propertiesActions.ts
+ POST /properties 200 in 97ms (next.js: 8ms, proxy.ts: 27ms, application-code: 62ms)
+ POST / 200 in 1060ms (next.js: 10ms, proxy.ts: 15ms, application-code: 1034ms)
+  └─ ƒ getMe() in 984ms service/getMe.ts
+ GET /properties?sort=newest 200 in 133ms (next.js: 11ms, proxy.ts: 10ms, application-code: 112ms)
+ POST /properties?sort=newest 200 in 3.2s (next.js: 11ms, proxy.ts: 22ms, application-code: 3.1s)
+  └─ ƒ getMe() in 3119ms service/getMe.ts
+ GET /properties?sort=newest 200 in 6.8s (next.js: 21ms, proxy.ts: 24ms, application-code: 6.7s)
+Failed to fetch properties: 500
+ GET / 200 in 877ms (next.js: 12ms, proxy.ts: 26ms, application-code: 840ms)
+ POST / 200 in 36ms (next.js: 7ms, proxy.ts: 16ms, application-code: 13ms)
+  └─ ƒ getDivisions() in 1ms app/(dashboard)/_actions/addressActions.ts
+ POST / 200 in 42ms (next.js: 7ms, proxy.ts: 10ms, application-code: 25ms)
+  └─ ƒ getCategories() in 1ms app/(dashboard)/_actions/propertiesActions.ts
+ POST / 200 in 42ms (next.js: 8ms, proxy.ts: 17ms, application-code: 18ms)
+  └─ ƒ getDivisions() in 2ms app/(dashboard)/_actions/addressActions.ts
+ POST / 200 in 53ms (next.js: 13ms, proxy.ts: 15ms, application-code: 25ms)
+  └─ ƒ getCategories() in 3ms app/(dashboard)/_actions/propertiesActions.ts
+⨯ ./service/getProperties.ts:89:9
+the name `query` is defined multiple times
+  [90m87 |[0m   [36mconst[0m query = [36mnew[0m [33mURLSearchParams[0m();
+  [90m88 |[0m
+[31m[1m>[0m [90m89 |[0m   [36mconst[0m query = [36mnew[0m [33mURLSearchParams[0m();
+  [90m   |[0m         [31m[1m^^^^^[0m
+  [90m90 |[0m   [36mif[0m (params.searchTerm) query.append([32m"searchTerm"[0m, params.searchTerm);
+  [90m91 |[0m   [36mif[0m (params.location) query.append([32m"location"[0m, params.location);
+  [90m92 |[0m   [36mif[0m (params.division) query.append([32m"division"[0m, params.division);
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./service/getProperties.ts
+    ./service/getFeaturedProperties.ts
+    ./app/(public)/_components/home/FeaturedProperties.tsx
+    ./app/(public)/page.tsx
+
+
+○ Compiling /_error ...
+ GET / 500 in 8.1s (next.js: 6.1s, proxy.ts: 321ms, application-code: 1679ms)
+ GET / 200 in 2.8s (next.js: 346ms, proxy.ts: 212ms, application-code: 2.2s)
+ GET / 200 in 1861ms (next.js: 90ms, proxy.ts: 1531ms, application-code: 240ms)
+ GET / 200 in 6.9s (next.js: 16ms, proxy.ts: 701ms, application-code: 6.2s)
+ GET /properties 200 in 1135ms (next.js: 652ms, proxy.ts: 14ms, application-code: 470ms)
+ GET /properties?sort=newest 200 in 285ms (next.js: 20ms, proxy.ts: 38ms, application-code: 226ms)
+ POST / 200 in 4.7s (next.js: 130ms, proxy.ts: 185ms, application-code: 4.4s)
+  └─ ƒ getMe() in 4251ms service/getMe.ts
+ POST / 200 in 2.2s (next.js: 10ms, proxy.ts: 23ms, application-code: 2.2s)
+  └─ ƒ getDivisions() in 10ms app/(dashboard)/_actions/addressActions.ts
+ POST /properties 200 in 2.3s (next.js: 32ms, proxy.ts: 21ms, application-code: 2.3s)
+ POST / 200 in 4.3s (next.js: 7ms, proxy.ts: 183ms, application-code: 4.1s)
+  └─ ƒ getCategories() in 5ms app/(dashboard)/_actions/propertiesActions.ts
+ POST /properties?sort=newest 200 in 4.4s (next.js: 19ms, proxy.ts: 42ms, application-code: 4.3s)
+ GET /tenant-dashboard 200 in 2.2s (next.js: 372ms, proxy.ts: 15ms, application-code: 1785ms)
+✓ Compiled in 742ms
+ GET /tenant-dashboard 200 in 1837ms (next.js: 282ms, proxy.ts: 267ms, application-code: 1288ms)
+ GET /tenant-dashboard 200 in 1099ms (next.js: 61ms, proxy.ts: 75ms, application-code: 964ms)
+ GET /tenant-dashboard 200 in 712ms (next.js: 18ms, proxy.ts: 37ms, application-code: 657ms)
+ GET /tenant-dashboard 200 in 810ms (next.js: 128ms, proxy.ts: 37ms, application-code: 645ms)
+✓ Compiled in 300ms
+ GET /tenant-dashboard 200 in 1284ms (next.js: 188ms, proxy.ts: 168ms, application-code: 928ms)
+ GET /tenant-dashboard 200 in 769ms (next.js: 10ms, proxy.ts: 15ms, application-code: 744ms)
+ GET /tenant-dashboard 200 in 703ms (next.js: 17ms, proxy.ts: 20ms, application-code: 666ms)
+ GET /tenant-dashboard 200 in 752ms (next.js: 135ms, proxy.ts: 21ms, application-code: 596ms)
+✓ Compiled in 222ms
+ GET /tenant-dashboard 200 in 1133ms (next.js: 193ms, proxy.ts: 172ms, application-code: 768ms)
+ GET /tenant-dashboard 200 in 749ms (next.js: 22ms, proxy.ts: 21ms, application-code: 705ms)
+✓ Compiled in 620ms
+ GET /tenant-dashboard 200 in 1017ms (next.js: 198ms, proxy.ts: 152ms, application-code: 667ms)
+Failed to fetch properties: 500
+ GET / 200 in 2.6s (next.js: 415ms, proxy.ts: 35ms, application-code: 2.1s)
+ GET /properties 200 in 621ms (next.js: 310ms, proxy.ts: 16ms, application-code: 294ms)
+ GET /properties?sort=newest 200 in 263ms (next.js: 33ms, proxy.ts: 22ms, application-code: 208ms)
+ POST / 200 in 2.8s (next.js: 5ms, proxy.ts: 13ms, application-code: 2.7s)
+  └─ ƒ getMe() in 2713ms service/getMe.ts
+ POST / 200 in 1286ms (next.js: 14ms, proxy.ts: 78ms, application-code: 1194ms)
+  └─ ƒ getCategories() in 6ms app/(dashboard)/_actions/propertiesActions.ts
+ POST /properties?sort=newest 200 in 1430ms (next.js: 21ms, proxy.ts: 22ms, application-code: 1387ms)
+ POST / 200 in 1248ms (next.js: 9ms, proxy.ts: 19ms, application-code: 1220ms)
+  └─ ƒ getDivisions() in 6ms app/(dashboard)/_actions/addressActions.ts
+ POST /properties?sort=newest 200 in 1308ms (next.js: 10ms, proxy.ts: 10ms, application-code: 1288ms)
+ POST / 200 in 1574ms (next.js: 8ms, proxy.ts: 22ms, application-code: 1544ms)
+  └─ ƒ getCategories() in 5ms app/(dashboard)/_actions/propertiesActions.ts
+ POST /properties?sort=newest 200 in 1628ms (next.js: 10ms, proxy.ts: 24ms, application-code: 1595ms)
+ POST /properties?sort=newest 200 in 2.0s (next.js: 27ms, proxy.ts: 118ms, application-code: 1881ms)
+  └─ ƒ getMe() in 1859ms service/getMe.ts
+ POST / 200 in 2.2s (next.js: 7ms, proxy.ts: 14ms, application-code: 2.2s)
+  └─ ƒ getDivisions() in 6ms app/(dashboard)/_actions/addressActions.ts
+ POST /properties 200 in 2.2s (next.js: 10ms, proxy.ts: 12ms, application-code: 2.2s)
+ POST /properties?sort=newest 200 in 2.6s (next.js: 4ms, proxy.ts: 14ms, application-code: 2.5s)
+  └─ ƒ getMe() in 2528ms service/getMe.ts
+ GET /properties?sort=newest 200 in 6.6s (next.js: 7ms, proxy.ts: 22ms, application-code: 6.6s)
+Failed to fetch properties: 500
+ GET / 200 in 490ms (next.js: 5ms, proxy.ts: 18ms, application-code: 467ms)
+ POST / 200 in 25ms (next.js: 4ms, proxy.ts: 15ms, application-code: 6ms)
+  └─ ƒ getDivisions() in 0ms app/(dashboard)/_actions/addressActions.ts
+ POST / 200 in 38ms (next.js: 7ms, proxy.ts: 12ms, application-code: 20ms)
+  └─ ƒ getCategories() in 2ms app/(dashboard)/_actions/propertiesActions.ts
+ POST / 200 in 49ms (next.js: 10ms, proxy.ts: 17ms, application-code: 21ms)
+  └─ ƒ getDivisions() in 1ms app/(dashboard)/_actions/addressActions.ts
+ POST / 200 in 48ms (next.js: 8ms, proxy.ts: 13ms, application-code: 26ms)
+  └─ ƒ getCategories() in 2ms app/(dashboard)/_actions/propertiesActions.ts
+✓ Compiled in 375ms
+ GET / 200 in 1380ms (next.js: 248ms, proxy.ts: 195ms, application-code: 937ms)
+ GET / 200 in 665ms (next.js: 11ms, proxy.ts: 24ms, application-code: 631ms)
+ GET / 200 in 407ms (next.js: 14ms, proxy.ts: 23ms, application-code: 371ms)
+ GET / 200 in 406ms (next.js: 162ms, proxy.ts: 25ms, application-code: 219ms)
+ GET / 200 in 1698ms (next.js: 12ms, proxy.ts: 16ms, application-code: 1670ms)
+ POST / 200 in 2.6s (next.js: 9ms, proxy.ts: 15ms, application-code: 2.6s)
+  └─ ƒ getMe() in 2493ms service/getMe.ts
+ POST / 200 in 61ms (next.js: 14ms, proxy.ts: 13ms, application-code: 34ms)
+  └─ ƒ getDivisions() in 5ms app/(dashboard)/_actions/addressActions.ts
+ POST / 200 in 62ms (next.js: 13ms, proxy.ts: 21ms, application-code: 28ms)
+  └─ ƒ getCategories() in 3ms app/(dashboard)/_actions/propertiesActions.ts
+ GET /properties 200 in 856ms (next.js: 468ms, proxy.ts: 20ms, application-code: 368ms)
+ GET /properties?sort=newest 200 in 154ms (next.js: 8ms, proxy.ts: 28ms, application-code: 118ms)
+ GET /properties?sort=newest 200 in 1448ms (next.js: 8ms, proxy.ts: 27ms, application-code: 1413ms)
+ POST /properties?sort=newest 200 in 1224ms (next.js: 10ms, proxy.ts: 13ms, application-code: 1200ms)
+  └─ ƒ getMe() in 1163ms service/getMe.ts
+✓ Compiled in 484ms
+ GET /properties?sort=newest 200 in 849ms (next.js: 237ms, proxy.ts: 176ms, application-code: 436ms)
+ GET /properties?sort=newest 200 in 243ms (next.js: 10ms, proxy.ts: 63ms, application-code: 170ms)
+ GET /properties 200 in 37ms (next.js: 5ms, proxy.ts: 21ms, application-code: 10ms)
+ GET /properties 200 in 169ms (next.js: 9ms, proxy.ts: 22ms, application-code: 138ms)
+✓ Compiled in 215ms
+ GET /properties 200 in 1221ms (next.js: 284ms, proxy.ts: 112ms, application-code: 825ms)
+ GET /properties 200 in 631ms (next.js: 12ms, proxy.ts: 59ms, application-code: 561ms)
+ GET /properties 200 in 426ms (next.js: 120ms, proxy.ts: 57ms, application-code: 249ms)
+ GET /properties 200 in 429ms (next.js: 11ms, proxy.ts: 57ms, application-code: 361ms)
+✓ Compiled in 203ms
+ GET /properties 200 in 1095ms (next.js: 188ms, proxy.ts: 147ms, application-code: 760ms)
+ GET /properties 200 in 564ms (next.js: 10ms, proxy.ts: 50ms, application-code: 504ms)
+ GET /properties 200 in 380ms (next.js: 12ms, proxy.ts: 48ms, application-code: 320ms)
+ GET /properties 200 in 379ms (next.js: 86ms, proxy.ts: 47ms, application-code: 247ms)
+✓ Compiled in 1513ms
+ GET /properties 200 in 1449ms (next.js: 242ms, proxy.ts: 252ms, application-code: 955ms)
+ GET /properties 200 in 807ms (next.js: 26ms, proxy.ts: 78ms, application-code: 703ms)
+ GET /properties 200 in 804ms (next.js: 232ms, proxy.ts: 79ms, application-code: 493ms)
+ GET /properties 200 in 812ms (next.js: 142ms, proxy.ts: 79ms, application-code: 592ms)
+ GET /properties 200 in 856ms (next.js: 129ms, proxy.ts: 343ms, application-code: 384ms)
+ GET /properties 200 in 354ms (next.js: 19ms, proxy.ts: 19ms, application-code: 316ms)
+ GET /properties 200 in 332ms (next.js: 43ms, proxy.ts: 123ms, application-code: 166ms)
+ GET /properties 200 in 6.5s (next.js: 288ms, proxy.ts: 26ms, application-code: 6.2s)
+✓ Compiled in 400ms
+ GET /properties 200 in 1480ms (next.js: 404ms, proxy.ts: 209ms, application-code: 867ms)
+ GET /properties 200 in 656ms (next.js: 10ms, proxy.ts: 101ms, application-code: 545ms)
+ GET /properties 200 in 453ms (next.js: 15ms, proxy.ts: 59ms, application-code: 379ms)
+ GET /properties 200 in 453ms (next.js: 133ms, proxy.ts: 60ms, application-code: 260ms)
+✓ Compiled in 929ms
+✓ Compiled in 781ms
+⨯ ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  [90m10 |[0m   [33mRotateCcw[0m,
+  [90m11 |[0m   [33mCheck[0m,
+[31m[1m>[0m [90m12 |[0m   [33mCheck[0m,
+  [90m   |[0m   [31m[1m^^^^^[0m
+  [90m13 |[0m   [33mCalendar[0m,
+  [90m14 |[0m   [33mSparkles[0m,
+  [90m15 |[0m   [33mLoader2[0m,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+ GET /properties 500 in 538ms (next.js: 136ms, proxy.ts: 317ms, application-code: 85ms)
+⨯ ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  [90m10 |[0m   [33mRotateCcw[0m,
+  [90m11 |[0m   [33mCheck[0m,
+[31m[1m>[0m [90m12 |[0m   [33mCheck[0m,
+  [90m   |[0m   [31m[1m^^^^^[0m
+  [90m13 |[0m   [33mCalendar[0m,
+  [90m14 |[0m   [33mSparkles[0m,
+  [90m15 |[0m   [33mLoader2[0m,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+ GET /properties 500 in 70ms (next.js: 22ms, proxy.ts: 18ms, application-code: 29ms)
+⨯ ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  [90m10 |[0m   [33mRotateCcw[0m,
+  [90m11 |[0m   [33mCheck[0m,
+[31m[1m>[0m [90m12 |[0m   [33mCheck[0m,
+  [90m   |[0m   [31m[1m^^^^^[0m
+  [90m13 |[0m   [33mCalendar[0m,
+  [90m14 |[0m   [33mSparkles[0m,
+  [90m15 |[0m   [33mLoader2[0m,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+⨯ ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  [90m10 |[0m   [33mRotateCcw[0m,
+  [90m11 |[0m   [33mCheck[0m,
+[31m[1m>[0m [90m12 |[0m   [33mCheck[0m,
+  [90m   |[0m   [31m[1m^^^^^[0m
+  [90m13 |[0m   [33mCalendar[0m,
+  [90m14 |[0m   [33mSparkles[0m,
+  [90m15 |[0m   [33mLoader2[0m,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+ GET /properties 500 in 215ms (next.js: 43ms, proxy.ts: 29ms, application-code: 143ms)
+ GET /properties 500 in 204ms (next.js: 58ms, proxy.ts: 24ms, application-code: 122ms)
+[browser] Uncaught Error: ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  10 |   RotateCcw,
+  11 |   Check,
+> 12 |   Check,
+     |   ^^^^^
+  13 |   Calendar,
+  14 |   Sparkles,
+  15 |   Loader2,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+    at <unknown> (Error: ./components/properties/PropertyFilterBar.tsx:12:3)
+    at <unknown> (Error: (./components/properties/PropertyFilterBar.tsx:12:3)
+⨯ ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  [90m10 |[0m   [33mRotateCcw[0m,
+  [90m11 |[0m   [33mCheck[0m,
+[31m[1m>[0m [90m12 |[0m   [33mCheck[0m,
+  [90m   |[0m   [31m[1m^^^^^[0m
+  [90m13 |[0m   [33mCalendar[0m,
+  [90m14 |[0m   [33mSparkles[0m,
+  [90m15 |[0m   [33mLoader2[0m,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+ GET /properties 500 in 111ms (next.js: 54ms, proxy.ts: 29ms, application-code: 28ms)
+[browser] Uncaught Error: ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  10 |   RotateCcw,
+  11 |   Check,
+> 12 |   Check,
+     |   ^^^^^
+  13 |   Calendar,
+  14 |   Sparkles,
+  15 |   Loader2,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+    at <unknown> (Error: ./components/properties/PropertyFilterBar.tsx:12:3)
+    at <unknown> (Error: (./components/properties/PropertyFilterBar.tsx:12:3)
+✓ Compiled in 222ms
+⨯ ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  [90m10 |[0m   [33mRotateCcw[0m,
+  [90m11 |[0m   [33mCheck[0m,
+[31m[1m>[0m [90m12 |[0m   [33mCheck[0m,
+  [90m   |[0m   [31m[1m^^^^^[0m
+  [90m13 |[0m   [33mCalendar[0m,
+  [90m14 |[0m   [33mSparkles[0m,
+  [90m15 |[0m   [33mLoader2[0m,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+ GET /properties 500 in 75ms (next.js: 37ms, proxy.ts: 14ms, application-code: 24ms)
+[browser] Uncaught Error: ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  10 |   RotateCcw,
+  11 |   Check,
+> 12 |   Check,
+     |   ^^^^^
+  13 |   Calendar,
+  14 |   Sparkles,
+  15 |   Loader2,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+    at <unknown> (Error: ./components/properties/PropertyFilterBar.tsx:12:3)
+    at <unknown> (Error: (./components/properties/PropertyFilterBar.tsx:12:3)
+⨯ ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  [90m10 |[0m   [33mRotateCcw[0m,
+  [90m11 |[0m   [33mCheck[0m,
+[31m[1m>[0m [90m12 |[0m   [33mCheck[0m,
+  [90m   |[0m   [31m[1m^^^^^[0m
+  [90m13 |[0m   [33mCalendar[0m,
+  [90m14 |[0m   [33mSparkles[0m,
+  [90m15 |[0m   [33mLoader2[0m,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+ GET /properties 500 in 268ms (next.js: 54ms, proxy.ts: 190ms, application-code: 23ms)
+[browser] Uncaught Error: ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  10 |   RotateCcw,
+  11 |   Check,
+> 12 |   Check,
+     |   ^^^^^
+  13 |   Calendar,
+  14 |   Sparkles,
+  15 |   Loader2,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+    at <unknown> (Error: ./components/properties/PropertyFilterBar.tsx:12:3)
+    at <unknown> (Error: (./components/properties/PropertyFilterBar.tsx:12:3)
+✓ Compiled in 164ms
+⨯ ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  [90m10 |[0m   [33mRotateCcw[0m,
+  [90m11 |[0m   [33mCheck[0m,
+[31m[1m>[0m [90m12 |[0m   [33mCheck[0m,
+  [90m   |[0m   [31m[1m^^^^^[0m
+  [90m13 |[0m   [33mCalendar[0m,
+  [90m14 |[0m   [33mSparkles[0m,
+  [90m15 |[0m   [33mLoader2[0m,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+ GET /properties 500 in 82ms (next.js: 40ms, proxy.ts: 13ms, application-code: 29ms)
+[browser] Uncaught Error: ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  10 |   RotateCcw,
+  11 |   Check,
+> 12 |   Check,
+     |   ^^^^^
+  13 |   Calendar,
+  14 |   Sparkles,
+  15 |   Loader2,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+    at <unknown> (Error: ./components/properties/PropertyFilterBar.tsx:12:3)
+    at <unknown> (Error: (./components/properties/PropertyFilterBar.tsx:12:3)
+⨯ ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  [90m10 |[0m   [33mRotateCcw[0m,
+  [90m11 |[0m   [33mCheck[0m,
+[31m[1m>[0m [90m12 |[0m   [33mCheck[0m,
+  [90m   |[0m   [31m[1m^^^^^[0m
+  [90m13 |[0m   [33mCalendar[0m,
+  [90m14 |[0m   [33mSparkles[0m,
+  [90m15 |[0m   [33mLoader2[0m,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+ GET /properties 500 in 236ms (next.js: 40ms, proxy.ts: 170ms, application-code: 25ms)
+[browser] Uncaught Error: ./components/properties/PropertyFilterBar.tsx:12:3
+the name `Check` is defined multiple times
+  10 |   RotateCcw,
+  11 |   Check,
+> 12 |   Check,
+     |   ^^^^^
+  13 |   Calendar,
+  14 |   Sparkles,
+  15 |   Loader2,
+
+Ecmascript file had an error
+
+Import trace:
+  Server Component:
+    ./components/properties/PropertyFilterBar.tsx
+    ./app/(public)/properties/page.tsx
+
+
+    at <unknown> (Error: ./components/properties/PropertyFilterBar.tsx:12:3)
+    at <unknown> (Error: (./components/properties/PropertyFilterBar.tsx:12:3)
+✓ Compiled in 163ms
+ GET /properties 200 in 2.2s (next.js: 427ms, proxy.ts: 29ms, application-code: 1759ms)
+ POST /properties 200 in 2.8s (next.js: 5ms, proxy.ts: 14ms, application-code: 2.8s)
+  └─ ƒ getMe() in 2728ms service/getMe.ts
+[browser] Failed to search areas: TypeError: Failed to fetch
+    at fetchApi (lib/api.ts:30:28)
+    at AreaSearchCombobox.useEffect.searchAreas (components/properties/AreaSearchCombobox.tsx:71:35)
+    at AreaSearchCombobox.useEffect (components/properties/AreaSearchCombobox.tsx:86:5)
+  28 |
+  29 |   try {
+> 30 |     const response = await fetch(url, config);
+     |                            ^
+  31 |     const data = await response.json().catch(() => ({}));
+  32 |
+  33 |     // If response is not ok or API explicitly returned success: false (components/properties/AreaSearchCombobox.tsx:78:17)
+[browser] Failed to search areas: TypeError: Failed to fetch
+    at fetchApi (lib/api.ts:30:28)
+    at AreaSearchCombobox.useEffect.searchAreas (components/properties/AreaSearchCombobox.tsx:71:35)
+    at AreaSearchCombobox.useEffect (components/properties/AreaSearchCombobox.tsx:86:5)
+  28 |
+  29 |   try {
+> 30 |     const response = await fetch(url, config);
+     |                            ^
+  31 |     const data = await response.json().catch(() => ({}));
+  32 |
+  33 |     // If response is not ok or API explicitly returned success: false (components/properties/AreaSearchCombobox.tsx:78:17)
+✓ Compiled in 1469ms
+ GET /properties 200 in 1194ms (next.js: 269ms, proxy.ts: 240ms, application-code: 684ms)
+ GET /properties 200 in 515ms (next.js: 112ms, proxy.ts: 72ms, application-code: 330ms)
+ GET /properties 200 in 519ms (next.js: 12ms, proxy.ts: 72ms, application-code: 435ms)
+ GET /properties 200 in 5.1s (next.js: 261ms, proxy.ts: 14ms, application-code: 4.8s)
+✓ Compiled in 559ms
+ GET /properties 200 in 1639ms (next.js: 222ms, proxy.ts: 237ms, application-code: 1180ms)
+ GET /properties 200 in 1063ms (next.js: 9ms, proxy.ts: 68ms, application-code: 986ms)
+ GET /properties 200 in 863ms (next.js: 139ms, proxy.ts: 86ms, application-code: 638ms)
+ GET /properties 200 in 869ms (next.js: 26ms, proxy.ts: 88ms, application-code: 755ms)
+ GET /properties 200 in 863ms (next.js: 234ms, proxy.ts: 87ms, application-code: 542ms)
+ GET /properties 200 in 862ms (next.js: 369ms, proxy.ts: 90ms, application-code: 403ms)
+ POST /properties 200 in 2.8s (next.js: 6ms, proxy.ts: 15ms, application-code: 2.7s)
+  └─ ƒ searchAreasGlobally("mi") in 2721ms app/(dashboard)/_actions/addressActions.ts
+ POST /properties 200 in 1041ms (next.js: 5ms, proxy.ts: 6ms, application-code: 1029ms)
+  └─ ƒ searchAreasGlobally("mir") in 1019ms app/(dashboard)/_actions/addressActions.ts
+ POST /properties 200 in 2.7s (next.js: 3ms, proxy.ts: 6ms, application-code: 2.7s)
+  └─ ƒ searchAreasGlobally("mirpur") in 2730ms app/(dashboard)/_actions/addressActions.ts
+ GET /properties?areaId=2619&areaName=Mirpur&sort=newest 200 in 4.5s (next.js: 7ms, proxy.ts: 18ms, application-code: 4.5s)
+ GET /properties 200 in 21ms (next.js: 5ms, proxy.ts: 11ms, application-code: 5ms)
+ GET /properties 200 in 114ms (next.js: 4ms, proxy.ts: 18ms, application-code: 92ms)
+ GET /properties?categoryId=410b809f-bab8-4877-99d0-b4c301a1bc32&sort=newest 200 in 6.5s (next.js: 8ms, proxy.ts: 20ms, application-code: 6.5s)
+ GET /properties 200 in 29ms (next.js: 6ms, proxy.ts: 15ms, application-code: 9ms)
+ GET /properties 200 in 142ms (next.js: 8ms, proxy.ts: 4ms, application-code: 129ms)
