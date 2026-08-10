@@ -74,7 +74,7 @@ export function PricingTable({ unit, onPricingUpdated, disabled }: PricingTableP
           {!disabled && (
             <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
               <DialogTrigger render={
-                <Button variant="outline" size="sm">
+                <Button variant="default" size="sm">
                   <Plus className="h-4 w-4 mr-2" />
                   Add Pricing
                 </Button>
@@ -98,7 +98,7 @@ export function PricingTable({ unit, onPricingUpdated, disabled }: PricingTableP
       {unit.pricing && unit.pricing.length > 0 && availableRentTypes.length > 0 && !disabled && (
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
           <DialogTrigger render={
-            <Button variant="outline" size="sm" className="w-full border-dashed">
+            <Button variant="default" size="sm" className="w-fit mt-2">
               <Plus className="h-4 w-4 mr-2" />
               Add Pricing
             </Button>

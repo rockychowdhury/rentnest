@@ -15,15 +15,15 @@ export default function PropertiesListPage() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchProperties = async () => {
-    setIsLoading(true);
+  const fetchProperties = async (silent = false) => {
+    if (!silent) setIsLoading(true);
     const res = await getMyProperties();
     if (res.success) {
       setProperties(res.data);
     } else {
       toast.error(res.error || "Failed to load properties");
     }
-    setIsLoading(false);
+    if (!silent) setIsLoading(false);
   };
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function PropertiesListPage() {
     const res = await requestPropertyVerification(id);
     if (res.success) {
       toast.success(res.message || "Verification requested successfully");
-      fetchProperties();
+      fetchProperties(true);
     } else {
       toast.error(res.error || "Failed to request verification");
     }
@@ -44,19 +44,21 @@ export default function PropertiesListPage() {
     const res = await deactivateProperty(id);
     if (res.success) {
       toast.success(res.message || "Property deactivated successfully");
-      fetchProperties();
+      fetchProperties(true);
     } else {
       toast.error(res.error || "Failed to deactivate property");
     }
   };
 
   const handleArchive = async (id: string) => {
+    setProperties(prev => prev.filter(p => p.id !== id)); // Optimistic UI update
     const res = await archiveProperty(id);
     if (res.success) {
       toast.success("Property deleted successfully");
-      fetchProperties();
+      fetchProperties(true);
     } else {
       toast.error(res.error || "Failed to delete property");
+      fetchProperties(true); // Re-fetch on failure to sync
     }
   };
 
@@ -64,7 +66,7 @@ export default function PropertiesListPage() {
     const res = await restoreProperty(id);
     if (res.success) {
       toast.success(res.message || "Property restored");
-      fetchProperties();
+      fetchProperties(true);
     } else {
       toast.error(res.error || "Failed to restore property");
     }
@@ -83,7 +85,7 @@ export default function PropertiesListPage() {
       );
     }
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProps.map((property) => (
           <PropertyManageCard
             key={property.id}

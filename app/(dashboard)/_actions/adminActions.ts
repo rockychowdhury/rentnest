@@ -205,12 +205,33 @@ export async function adminUpdatePropertyStatus(id: string, status: string) {
       headers,
       body: { status },
     });
-    if (result.success) {
+    if (result.success !== false) {
       revalidatePath("/admin-dashboard/properties");
       updateTag(CACHE_TAG_PROPERTIES);
-      updateTag(propertyDetailTag(id));
+      if (id) updateTag(propertyDetailTag(id));
+      return { success: true, data: result.data, message: result.message };
     }
-    return result;
+    return { success: false, error: result.message || "Failed to update property status" };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function adminTogglePropertyFeatured(id: string, isFeatured: boolean) {
+  try {
+    const headers = await getAuthHeaders();
+    const result = await fetchApi(`/properties/${id}`, {
+      method: "PATCH",
+      headers,
+      body: { isFeatured },
+    });
+    if ((result as any).success !== false) {
+      revalidatePath("/admin-dashboard/properties");
+      updateTag(CACHE_TAG_PROPERTIES);
+      if (id) updateTag(propertyDetailTag(id));
+      return { success: true, data: (result as any).data, message: (result as any).message || "Property featured status updated" };
+    }
+    return { success: false, error: (result as any).message || "Failed to feature property" };
   } catch (error: any) {
     return { success: false, error: error.message };
   }

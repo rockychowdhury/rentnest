@@ -10,7 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { ChevronRight, ChevronLeft, Save, CheckCircle2 } from "lucide-react";
+import { ChevronRight, ChevronLeft, Save, CheckCircle2, ChevronsUpDown } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils/shadcnUtils";
 
 import { propertyWizardSchema } from "@/lib/validators/forms.validator";
 
@@ -26,6 +29,8 @@ export function PropertyFormWizard({ categories }: PropertyFormWizardProps) {
     description: "",
     categoryId: "",
   });
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [categorySearch, setCategorySearch] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,24 +81,62 @@ export function PropertyFormWizard({ categories }: PropertyFormWizardProps) {
             />
           </div>
 
-          <div className="space-y-2">
+          <div className="space-y-2 flex flex-col">
             <Label htmlFor="category">Category <span className="text-destructive">*</span></Label>
-            <Select 
-              value={formData.categoryId} 
-              onValueChange={(val) => setFormData({ ...formData, categoryId: val as string })}
-              required
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a property category">
-                  {formData.categoryId ? categories.find(c => c.id === formData.categoryId)?.name : "Select a property category"}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
+              <PopoverTrigger render={
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={categoryOpen}
+                  className={cn(
+                    "w-full justify-between font-normal",
+                    !formData.categoryId && "text-muted-foreground"
+                  )}
+                >
+                  {formData.categoryId
+                    ? categories.find((c) => c.id === formData.categoryId)?.name
+                    : "Select a property category"}
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              } />
+              <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
+                <Command shouldFilter={false}>
+                  <CommandInput 
+                    placeholder="Search category..." 
+                    value={categorySearch}
+                    onValueChange={setCategorySearch}
+                  />
+                  <CommandList>
+                    <CommandEmpty>No category found.</CommandEmpty>
+                    <CommandGroup>
+                      {(categorySearch 
+                        ? categories.filter(c => c.name.toLowerCase().includes(categorySearch.toLowerCase()))
+                        : categories.slice(0, 5)
+                      ).map((cat) => (
+                        <CommandItem
+                          key={cat.id}
+                          value={cat.id}
+                          onSelect={() => {
+                            setFormData({ ...formData, categoryId: cat.id });
+                            setCategoryOpen(false);
+                            setCategorySearch("");
+                          }}
+                        >
+                          <CheckCircle2
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              formData.categoryId === cat.id ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {cat.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           </div>
 
           <div className="space-y-2">

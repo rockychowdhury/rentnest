@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getAllProperties, adminDeleteProperty, adminRestoreProperty, adminUpdatePropertyStatus } from "../../_actions/adminActions";
+import { getAllProperties, adminDeleteProperty, adminRestoreProperty, adminUpdatePropertyStatus, adminTogglePropertyFeatured } from "../../_actions/adminActions";
 import { Property, PropertyStatus } from "@/types";
 import { format } from "date-fns";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, ExternalLink, Trash2, RotateCcw, Activity, Search } from "lucide-react";
+import { MoreHorizontal, ExternalLink, Trash2, RotateCcw, Activity, Search, Star } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -61,6 +61,16 @@ export default function AdminPropertiesPage() {
       fetchProperties();
     } else {
       toast.error(res.error || "Failed to update status");
+    }
+  };
+
+  const handleToggleFeatured = async (id: string, isFeatured: boolean) => {
+    const res = await adminTogglePropertyFeatured(id, isFeatured);
+    if (res.success) {
+      toast.success(`Property is now ${isFeatured ? "featured" : "un-featured"}`);
+      fetchProperties();
+    } else {
+      toast.error(res.error || "Failed to update featured status");
     }
   };
 
@@ -213,6 +223,10 @@ export default function AdminPropertiesPage() {
                             {!property.deletedAt && (
                               <>
                                 <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => handleToggleFeatured(property.id, !property.isFeatured)}>
+                                  <Star className={`mr-2 h-4 w-4 ${property.isFeatured ? "fill-yellow-400 text-yellow-400" : ""}`} />
+                                  {property.isFeatured ? "Remove Featured" : "Make Featured"}
+                                </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => handleUpdateStatus(property.id, PropertyStatus.ACTIVE)}>
                                   <Activity className="mr-2 h-4 w-4" />
                                   Mark Active
