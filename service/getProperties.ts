@@ -83,7 +83,6 @@ export interface GetPropertiesResponse {
 export async function getProperties(params: GetPropertiesQueryParams = {}): Promise<GetPropertiesResponse> {
   const query = new URLSearchParams();
 
-
   // Deployed backend has a Zod validation bug with boolean query params, 
   // so we filter isFeatured on the client side instead of sending it.
   if (params.searchTerm) query.append("searchTerm", params.searchTerm);
@@ -269,7 +268,7 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
     }
 
     const limit = meta.limit || 10;
-    const totalCount = filteredData.length;
+    const totalCount = meta.total !== undefined ? meta.total : filteredData.length;
     const totalPages = Math.ceil(totalCount / limit) || 1;
 
     return {

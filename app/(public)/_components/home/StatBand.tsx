@@ -1,34 +1,34 @@
 import React from "react";
 
-export function StatBand() {
-  const stats = [
-    { value: "1,200+", label: "Verified Listings", note: "Across 8 divisions" },
-    { value: "64", label: "Districts Covered", note: "Full country reach" },
-    { value: "450+", label: "Verified Landlords", note: "Identity verified" },
-    { value: "3,500+", label: "Happy Tenants", note: "Transparent rentals" },
-  ];
+const stats = [
+  { label: "Verified listings", value: "5,000+" },
+  { label: "Divisions covered", value: "8" },
+  { label: "Verified landlords", value: "1,200+" },
+  { label: "Happy tenants", value: "10,000+" },
+];
 
+export function StatBand() {
   return (
-    <section className="py-14 bg-muted/40 border-y border-border/60">
+    <section className="py-16 bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
-          {stats.map((stat) => (
-            <div key={stat.label} className="space-y-1">
-              <div className="text-3xl sm:text-4xl font-heading font-extrabold text-primary tracking-tight">
+        
+        {/* Note: Numbers are placeholders until real metrics are available */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-x-0 md:divide-x divide-primary-foreground/20 text-center">
+          
+          {stats.map((stat, idx) => (
+            <div key={idx} className="flex flex-col items-center justify-center px-4">
+              <span className="text-4xl md:text-5xl font-bold font-heading mb-2 tracking-tighter drop-shadow-sm">
                 {stat.value}
-              </div>
-              <div className="text-xs sm:text-sm font-semibold text-foreground">
+              </span>
+              <span className="text-sm md:text-base font-medium opacity-90 tracking-wide uppercase">
                 {stat.label}
-              </div>
-              <div className="text-[11px] text-muted-foreground font-medium">
-                {stat.note}
-              </div>
+              </span>
             </div>
           ))}
+
         </div>
+        
       </div>
     </section>
   );
 }
-
-export default StatBand;

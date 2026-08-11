@@ -1,5 +1,6 @@
 import React from "react";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { cn } from "@/lib/utils/shadcnUtils";
 import { Toaster } from "@/components/ui/sonner";
@@ -17,8 +18,15 @@ export default async function RootLayout({
       lang="en" suppressHydrationWarning className={cn("min-h-screen font-sans", inter.variable, spaceGrotesk.variable)}
     >
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased" suppressHydrationWarning>
-        {children}
-        <Toaster position="bottom-center" richColors />
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+          {children}
+          <Toaster position="bottom-center" richColors />
+        </ThemeProvider>
       </body>
     </html>
   );

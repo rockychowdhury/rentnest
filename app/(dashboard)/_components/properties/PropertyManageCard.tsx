@@ -186,7 +186,7 @@ export function PropertyManageCard({ property, onArchive, onRestore, onRequestVe
         {/* Info Pills */}
         <div className="flex items-center gap-1.5 mb-4 mt-auto flex-wrap overflow-hidden">
           {bedroomsMin > 0 && (
-            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
+            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground dark:bg-muted/50 dark:text-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
               <Bed className="size-3 text-secondary" />
               <span>
                 {bedroomsMin === bedroomsMax
@@ -196,7 +196,7 @@ export function PropertyManageCard({ property, onArchive, onRestore, onRequestVe
             </div>
           )}
           {bathroomsMin > 0 && (
-            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
+            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground dark:bg-muted/50 dark:text-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
               <Bath className="size-3 text-secondary" />
               <span>
                 {bathroomsMin === bathroomsMax
@@ -206,12 +206,12 @@ export function PropertyManageCard({ property, onArchive, onRestore, onRequestVe
             </div>
           )}
           {!!sizeSqft && sizeSqft > 0 && (
-            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
+            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground dark:bg-muted/50 dark:text-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
               <Square className="size-2.5 text-secondary" />
               <span>{sizeSqft} sqft</span>
             </div>
           )}
-          <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
+          <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground dark:bg-muted/50 dark:text-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
              <Building2 className="size-3 text-secondary" />
              <span>{property.totalUnits} {property.totalUnits === 1 ? 'unit' : 'units'}</span>
           </div>

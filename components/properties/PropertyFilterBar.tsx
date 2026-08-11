@@ -124,14 +124,21 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
     });
   };
 
-  const isFirstRender = React.useRef(true);
-
   // Trigger URL update on debounced input change only when user types/changes inputs
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
+    const currentSearch = searchParams.get("searchTerm") || "";
+    const currentMin = searchParams.get("minPrice") || "";
+    const currentMax = searchParams.get("maxPrice") || "";
+
+    // Prevent loop in strict mode by verifying value actually changed
+    if (
+      debouncedSearchTerm === currentSearch &&
+      debouncedMinPrice === currentMin &&
+      debouncedMaxPrice === currentMax
+    ) {
       return;
     }
+
     updateURL({});
   }, [debouncedSearchTerm, debouncedMinPrice, debouncedMaxPrice]);
 

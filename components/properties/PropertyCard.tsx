@@ -104,7 +104,7 @@ export function PropertyCard({ property, layout = "grid" }: PropertyCardProps) {
         {/* Info Pills */}
         <div className="flex items-center gap-1.5 mb-4 mt-auto flex-wrap overflow-hidden">
           {property.bedroomsMin > 0 && (
-            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
+            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground dark:bg-muted/50 dark:text-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
               <Bed className="size-3 text-secondary" />
               <span>
                 {property.bedroomsMin === property.bedroomsMax
@@ -114,7 +114,7 @@ export function PropertyCard({ property, layout = "grid" }: PropertyCardProps) {
             </div>
           )}
           {property.bathroomsMin > 0 && (
-            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
+            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground dark:bg-muted/50 dark:text-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
               <Bath className="size-3 text-secondary" />
               <span>
                 {property.bathroomsMin === property.bathroomsMax
@@ -124,7 +124,7 @@ export function PropertyCard({ property, layout = "grid" }: PropertyCardProps) {
             </div>
           )}
           {!!property.sizeSqft && property.sizeSqft > 0 && (
-            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
+            <div className="flex items-center gap-1 bg-secondary/15 text-secondary-foreground dark:bg-muted/50 dark:text-foreground px-1.5 py-0.5 rounded text-[10px] font-medium whitespace-nowrap">
               <Square className="size-2.5 text-secondary" />
               <span>{property.sizeSqft} sqft</span>
             </div>

@@ -1,26 +1,33 @@
 import React from "react";
 import { HeroSection } from "./_components/home/HeroSection";
-import { BrowseCategoryBento } from "./_components/home/BrowseCategoryBento";
-import { BuiltForBangladesh } from "./_components/home/BuiltForBangladesh";
+import { CategoryBentoGrid } from "./_components/home/CategoryBentoGrid";
+import { FeatureRow } from "./_components/home/FeatureRow";
 import { FeaturedProperties } from "./_components/home/FeaturedProperties";
-import { HowItWorksTimeline } from "./_components/home/HowItWorksTimeline";
-import { LandlordToolsShowcase } from "./_components/home/LandlordToolsShowcase";
+import { HowItWorks } from "./_components/home/HowItWorks";
+import { LandlordTools } from "./_components/home/LandlordTools";
 import { StatBand } from "./_components/home/StatBand";
-import { TestimonialsSection } from "./_components/home/TestimonialsSection";
-import { FinalCtaBand } from "./_components/home/FinalCtaBand";
+import { Testimonials } from "./_components/home/Testimonials";
+import { FinalCTA } from "./_components/home/FinalCTA";
+import { getPublicCategories } from "@/service/getCategories";
+import { getPublicAmenities } from "@/service/getAmenities";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [categories, amenities] = await Promise.all([
+    getPublicCategories(),
+    getPublicAmenities(),
+  ]);
+
   return (
     <div className="w-full flex flex-col">
-      <HeroSection />
-      <BrowseCategoryBento />
-      <BuiltForBangladesh />
+      <HeroSection categories={categories} amenities={amenities} />
+      <CategoryBentoGrid />
+      <FeatureRow />
       <FeaturedProperties />
-      <HowItWorksTimeline />
-      <LandlordToolsShowcase />
+      <HowItWorks />
+      <LandlordTools />
       <StatBand />
-      <TestimonialsSection />
-      <FinalCtaBand />
+      <Testimonials />
+      <FinalCTA />
     </div>
   );
 }

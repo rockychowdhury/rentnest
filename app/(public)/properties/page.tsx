@@ -41,7 +41,7 @@ async function AsyncSearchResults({ resolvedParams }: { resolvedParams: any }) {
     amenities: resolvedParams.amenities ? resolvedParams.amenities.split(",") : undefined,
     sort: resolvedParams.sort,
     page: resolvedParams.page ? Number(resolvedParams.page) : 1,
-    limit: resolvedParams.limit ? Number(resolvedParams.limit) : 12,
+    limit: resolvedParams.limit ? Number(resolvedParams.limit) : 20,
   });
 
   return <SearchResultsMode results={searchResults} searchParams={resolvedParams} />;

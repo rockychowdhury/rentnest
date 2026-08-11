@@ -91,6 +91,8 @@ export interface Pricing {
   rentType: RentType;
   rentAmount: number;
   securityDeposit?: number;
+  utilityBill?: number;
+  utilityPolicy?: string;
   currency: string;
   isActive: boolean;
 }

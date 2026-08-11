@@ -26,6 +26,8 @@ const pricingSchema = z.object({
   rentType: z.nativeEnum(RentType),
   rentAmount: preprocessNumber.refine(val => val !== undefined && val >= 0, "Must be positive"),
   securityDeposit: preprocessOptionalNumber.refine(val => val === undefined || val >= 0, "Cannot be negative"),
+  utilityBill: preprocessOptionalNumber.refine(val => val === undefined || val >= 0, "Cannot be negative"),
+  utilityPolicy: z.string().max(255).optional(),
   currency: z.nativeEnum(Currency),
   isActive: z.boolean(),
 });
@@ -66,6 +68,8 @@ export function PricingFormRow({
       rentType: pricing?.rentType || availableTypes[0] || RentType.MONTHLY,
       rentAmount: pricing?.rentAmount ?? ("" as any),
       securityDeposit: pricing?.securityDeposit ?? ("" as any),
+      utilityBill: pricing?.utilityBill ?? ("" as any),
+      utilityPolicy: pricing?.utilityPolicy || "",
       currency: pricing?.currency as Currency || Currency.BDT,
       isActive: pricing?.isActive ?? true,
     },
@@ -84,7 +88,7 @@ export function PricingFormRow({
   if (!isEditing) {
     return (
       <div className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${disabled ? 'opacity-60' : ''}`}>
-        <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="flex-1 grid grid-cols-2 sm:grid-cols-6 gap-4">
           <div>
             <p className="text-xs text-muted-foreground mb-1">Type</p>
             <p className="font-medium">{pricing?.rentType}</p>
@@ -96,6 +100,14 @@ export function PricingFormRow({
           <div>
             <p className="text-xs text-muted-foreground mb-1">Deposit</p>
             <p className="font-medium">{pricing?.securityDeposit ? `${pricing.currency} ${pricing.securityDeposit.toLocaleString()}` : "N/A"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">Utility Bill</p>
+            <p className="font-medium">{pricing?.utilityBill ? `${pricing.currency} ${pricing.utilityBill.toLocaleString()}` : "N/A"}</p>
+          </div>
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">Utility Policy</p>
+            <p className="font-medium text-xs truncate" title={pricing?.utilityPolicy || ""}>{pricing?.utilityPolicy || "N/A"}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground mb-1">Status</p>
@@ -174,6 +186,31 @@ export function PricingFormRow({
             />
           </div>
           {errors.securityDeposit && <p className="text-xs text-destructive">{errors.securityDeposit.message as string}</p>}
+        </div>
+
+        <div className="space-y-2">
+          <Label>Utility Bill (Optional)</Label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 flex items-center justify-center bg-muted border-r border-input rounded-l-md w-[60px]">
+              <span className="text-sm text-muted-foreground font-medium">{watch("currency")}</span>
+            </div>
+            <Input 
+              type="number" 
+              className="pl-[68px]"
+              {...register("utilityBill")} 
+            />
+          </div>
+          {errors.utilityBill && <p className="text-xs text-destructive">{errors.utilityBill.message as string}</p>}
+        </div>
+
+        <div className="space-y-2 sm:col-span-2 md:col-span-1">
+          <Label>Utility Policy</Label>
+          <Input 
+            type="text"
+            placeholder="e.g., Water and Gas included"
+            {...register("utilityPolicy")} 
+          />
+          {errors.utilityPolicy && <p className="text-xs text-destructive">{errors.utilityPolicy.message as string}</p>}
         </div>
 
         <div className="space-y-2">
