@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense } from "react";
-import { FeatureImagePlaceholder } from "./FeatureImagePlaceholder";
+import Image from "next/image";
 import { PropertyFilterBar } from "@/components/properties/PropertyFilterBar";
 import { Building, MapPin, Zap } from "lucide-react";
 import Link from "next/link";
@@ -20,12 +20,14 @@ const quickFilters = [
 export function HeroSection({ categories, amenities }: { categories?: CategoryItem[], amenities?: AmenityItem[] }) {
   return (
     <section className="relative w-full h-[600px] md:h-[700px] flex items-center justify-center overflow-hidden">
-      {/* Background Image Placeholder */}
+      {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <FeatureImagePlaceholder 
-          label="Hero background: wide shot of a Bangladeshi apartment building or rooftop, warm/lived-in feel" 
-          aspect="21/9"
-          className="rounded-none border-none"
+        <Image
+          src="/assets/herosection.jpg"
+          alt="RentNest hero background"
+          fill
+          priority
+          className="object-cover object-center"
         />
       </div>
       

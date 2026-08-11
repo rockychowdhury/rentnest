@@ -26,24 +26,10 @@ async function FeaturedPropertiesContent() {
 
   return (
     <div className="relative w-full overflow-hidden">
-      <div className="flex overflow-x-auto gap-4 sm:gap-6 pb-8 pt-4 px-1 -mx-1 snap-x snap-mandatory hide-scrollbar">
-        {properties.map((property, idx) => {
-          // Make the first item and every 4th item wider to mimic an editorial feed
-          const isWider = idx === 0 || idx % 4 === 0;
-          
-          return (
-            <div 
-              key={property.id} 
-              className={cn(
-                "shrink-0 snap-start transition-all",
-                isWider ? "w-[300px] sm:w-[400px]" : "w-[240px] sm:w-[280px]"
-              )}
-            >
-              <PropertyCard property={property} layout="grid" /> 
-              {/* layout="grid" doesn't force a fixed width, allowing the wrapper to control it */}
-            </div>
-          );
-        })}
+      <div className="flex gap-5 overflow-x-auto pb-8 pt-4 px-1 -mx-1 scrollbar-none snap-x snap-mandatory transform-gpu hide-scrollbar">
+        {properties.map((property) => (
+          <PropertyCard key={property.id} property={property} layout="rail" />
+        ))}
         
         {/* View All Card */}
         <div className="w-[200px] shrink-0 snap-start flex items-center justify-center">
@@ -64,14 +50,11 @@ async function FeaturedPropertiesContent() {
 
 function FeaturedPropertiesSkeleton() {
   return (
-    <div className="flex overflow-x-hidden gap-4 sm:gap-6 pb-8 pt-4">
-      {[1, 2, 3, 4].map((i, idx) => (
+    <div className="flex overflow-x-hidden gap-5 pb-8 pt-4 px-1 -mx-1">
+      {[1, 2, 3, 4].map((i) => (
         <div 
           key={i} 
-          className={cn(
-            "shrink-0 flex flex-col space-y-3",
-            idx === 0 ? "w-[300px] sm:w-[400px]" : "w-[240px] sm:w-[280px]"
-          )}
+          className="shrink-0 flex flex-col space-y-3 w-[240px] sm:w-[280px]"
         >
           <Skeleton className="h-[250px] w-full rounded-xl" />
           <div className="space-y-2">

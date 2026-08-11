@@ -80,6 +80,69 @@ export interface GetPropertiesResponse {
   totalPages: number;
 }
 
+export function mapBackendPropertyToPropertyItem(p: any): PropertyItem {
+  const area = p.address?.area || "";
+  const district = p.address?.district || "";
+  const division = p.address?.division || "";
+  const streetAddress = p.address?.streetAddress || "";
+  
+  const locationParts = [streetAddress, area, district].filter(Boolean);
+  const locationStr = locationParts.join(", ") || "Location not specified";
+
+  const cheapUnit = p.cheapUnit || {};
+  const expensiveUnit = p.expensiveUnit || cheapUnit;
+
+  const minPrice = cheapUnit.pricing?.rentAmount ? Number(cheapUnit.pricing.rentAmount) : 0;
+  const maxPrice = expensiveUnit.pricing?.rentAmount ? Number(expensiveUnit.pricing.rentAmount) : minPrice;
+  const primaryRentType = cheapUnit.pricing?.rentType || "MONTHLY";
+
+  const bedroomsMin = cheapUnit.beds || 0;
+  const bedroomsMax = expensiveUnit.beds || bedroomsMin;
+  
+  const bathroomsMin = cheapUnit.bath || 0;
+  const bathroomsMax = expensiveUnit.bath || bathroomsMin;
+
+  const sizeSqft = cheapUnit.size || undefined;
+
+  const coverImage = p.image?.url || "";
+
+  return {
+    id: p.id,
+    slug: p.slug,
+    title: p.title,
+    description: "", // Not provided in compact JSON
+    minPrice,
+    maxPrice,
+    primaryRentType,
+    location: locationStr,
+    division,
+    district,
+    area,
+    streetAddress,
+    categoryId: p.category?.id || "",
+    categoryName: p.category?.name || "Property",
+    categorySlug: "",
+    bedroomsMin,
+    bedroomsMax,
+    bathroomsMin,
+    bathroomsMax,
+    sizeSqft,
+    availableNow: true, // Fallback
+    availableUnits: 1, // Fallback
+    totalUnits: 1, // Fallback
+    isFeatured: !!p.isFeatured,
+    rating: 0,
+    reviewCount: 0,
+    amenitiesList: [],
+    amenities: [],
+    coverImage,
+    landlord: undefined,
+    units: [], // Simplified payload doesn't have all units
+    createdAt: new Date().toISOString(), // Fallback for sorting if missing
+    popularityScore: p.isFeatured ? 100 : 50,
+  };
+}
+
 export async function getProperties(params: GetPropertiesQueryParams = {}): Promise<GetPropertiesResponse> {
   const query = new URLSearchParams();
 
@@ -134,68 +197,10 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
     const backendProperties = responseData.data || [];
     const meta = responseData.meta || { total: 0, page: 1, limit: 10 };
 
-    const mappedData: PropertyItem[] = backendProperties.map((p: any) => {
-      const area = p.address?.area || "";
-      const district = p.address?.district || "";
-      const division = p.address?.division || "";
-      const streetAddress = p.address?.streetAddress || "";
-      
-      const locationParts = [streetAddress, area, district].filter(Boolean);
-      const locationStr = locationParts.join(", ") || "Location not specified";
+    const mappedData: PropertyItem[] = backendProperties.map(mapBackendPropertyToPropertyItem);
 
-      const cheapUnit = p.cheapUnit || {};
-      const expensiveUnit = p.expensiveUnit || cheapUnit;
+    // Perform guaranteed client-side filtering for Bedrooms, Bathrooms, and Price Range
 
-      const minPrice = cheapUnit.pricing?.rentAmount ? Number(cheapUnit.pricing.rentAmount) : 0;
-      const maxPrice = expensiveUnit.pricing?.rentAmount ? Number(expensiveUnit.pricing.rentAmount) : minPrice;
-      const primaryRentType = cheapUnit.pricing?.rentType || "MONTHLY";
-
-      const bedroomsMin = cheapUnit.beds || 0;
-      const bedroomsMax = expensiveUnit.beds || bedroomsMin;
-      
-      const bathroomsMin = cheapUnit.bath || 0;
-      const bathroomsMax = expensiveUnit.bath || bathroomsMin;
-
-      const sizeSqft = cheapUnit.size || undefined;
-
-      const coverImage = p.image?.url || "";
-
-      return {
-        id: p.id,
-        slug: p.slug,
-        title: p.title,
-        description: "", // Not provided in compact JSON
-        minPrice,
-        maxPrice,
-        primaryRentType,
-        location: locationStr,
-        division,
-        district,
-        area,
-        streetAddress,
-        categoryId: p.category?.id || "",
-        categoryName: p.category?.name || "Property",
-        categorySlug: "",
-        bedroomsMin,
-        bedroomsMax,
-        bathroomsMin,
-        bathroomsMax,
-        sizeSqft,
-        availableNow: true, // Fallback
-        availableUnits: 1, // Fallback
-        totalUnits: 1, // Fallback
-        isFeatured: !!p.isFeatured,
-        rating: 0,
-        reviewCount: 0,
-        amenitiesList: [],
-        amenities: [],
-        coverImage,
-        landlord: undefined,
-        units: [], // Simplified payload doesn't have all units
-        createdAt: new Date().toISOString(), // Fallback for sorting if missing
-        popularityScore: p.isFeatured ? 100 : 50,
-      };
-    });
 
     // Perform guaranteed client-side filtering for Bedrooms, Bathrooms, and Price Range
     let filteredData = mappedData;

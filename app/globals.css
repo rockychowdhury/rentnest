@@ -186,4 +186,8 @@
   background-color: color-mix(in srgb, var(--primary) 12%, var(--card)) !important;
   border-color: color-mix(in srgb, var(--primary) 35%, transparent) !important;
   color: var(--card-foreground) !important;
+}
+
+html {
+  scroll-behavior: smooth;
 }
