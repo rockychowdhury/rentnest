@@ -12,7 +12,10 @@ export function PropertyRail({ rail }: PropertyRailProps) {
   if (!rail.items || rail.items.length === 0) return null;
 
   return (
-    <section className="space-y-4">
+    <section 
+      className="space-y-4"
+      style={{ contentVisibility: "auto", containIntrinsicSize: "auto 400px" }}
+    >
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
         <div>
           <h2 className="text-xl sm:text-2xl font-heading font-bold text-foreground">
@@ -35,7 +38,10 @@ export function PropertyRail({ rail }: PropertyRailProps) {
       </div>
 
       {/* Horizontal Scroll-Snap Row with Smooth Scroll Hardware Acceleration */}
-      <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory transform-gpu">
+      <div 
+        className="flex gap-5 overflow-x-auto pb-4 scrollbar-none snap-x snap-mandatory transform-gpu"
+        style={{ contain: "layout paint" }}
+      >
         {rail.items.map((item) => (
           <PropertyCard key={item.id} property={item} layout="rail" />
         ))}

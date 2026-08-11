@@ -110,20 +110,16 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
   ];
 
   return (
-    <div className={cn(
-      "sticky top-0 z-50 w-full transition-all duration-500 flex justify-center",
-      scrolled ? "pt-4 px-4 pointer-events-none" : ""
-    )}>
-      <header
-        className={cn(
-          "w-full max-w-7xl transition-all duration-500 pointer-events-auto",
-          scrolled 
-            ? "rounded-full bg-background/85 backdrop-blur-2xl border border-border/60 shadow-[0_8px_30px_rgb(0,0,0,0.12)] px-2 sm:px-4" 
-            : "bg-background/70 backdrop-blur-lg border-b border-border/30"
-        )}
-      >
-        <div className="px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-        {/* Logo */}
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full transition-all duration-300 border-b",
+        scrolled 
+          ? "bg-background/85 backdrop-blur-2xl border-border/60 shadow-sm" 
+          : "bg-background/70 backdrop-blur-lg border-border/30"
+      )}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+      {/* Logo */}
         <Logo />
 
         {/* Desktop Navigation */}
@@ -206,7 +202,7 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
                   <DropdownMenuSeparator className="bg-border/40 my-1" />
                   
                   <div className="px-1 py-1 space-y-0.5">
-                    <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                    <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
                       <Link href={getDashboardHref(user.role)} className="flex items-center w-full group/item">
                         <LayoutDashboard className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
                         <span className="font-medium text-sm">Overview</span>
@@ -215,13 +211,13 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
 
                     {user.role === "LANDLORD" && (
                       <>
-                        <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                        <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
                           <Link href="/landlord-dashboard/properties" className="flex items-center w-full group/item">
                             <Building className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
                             <span className="font-medium text-sm">My Properties</span>
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                        <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
                           <Link href="/landlord-dashboard/applications" className="flex items-center w-full group/item">
                             <Briefcase className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
                             <span className="font-medium text-sm">Applications</span>
@@ -232,13 +228,13 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
 
                     {user.role === "TENANT" && (
                       <>
-                        <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                        <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
                           <Link href="/tenant-dashboard/applications" className="flex items-center w-full group/item">
                             <Briefcase className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
                             <span className="font-medium text-sm">My Applications</span>
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                        <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
                           <Link href="/properties?saved=true" className="flex items-center w-full group/item">
                             <Home className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
                             <span className="font-medium text-sm">Saved Properties</span>
@@ -251,7 +247,7 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
                   <DropdownMenuSeparator className="bg-border/40 my-1" />
                   
                   <div className="px-1 py-1 space-y-0.5">
-                    <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                    <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
                       <Link href="/profile" className="flex items-center w-full group/item">
                         <UserIcon className="mr-2.5 size-4 text-muted-foreground group-hover/item:text-foreground transition-colors" />
                         <span className="font-medium text-sm">Profile</span>
@@ -421,9 +417,8 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
             </SheetContent>
           </Sheet>
         </div>
-        </div>
-      </header>
-    </div>
+      </div>
+    </header>
   );
 }
 
