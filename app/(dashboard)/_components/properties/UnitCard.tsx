@@ -67,8 +67,8 @@ export function UnitCard({ unit, onUnitUpdated }: UnitCardProps) {
   const isArchived = !!unit.deletedAt;
 
   return (
-    <AccordionItem value={unit.id} className="border rounded-md px-4 bg-card mb-4 shadow-sm">
-      <AccordionTrigger className="hover:no-underline py-4">
+    <AccordionItem value={unit.id} className="border rounded-md px-4 bg-card mb-4 shadow-sm relative">
+      <AccordionTrigger className="hover:no-underline py-4 pr-40">
         <div className="flex flex-1 items-center justify-between pr-4">
           <div className="flex items-center gap-4">
             <h4 className="font-semibold text-foreground text-base tracking-tight">{unit.unitLabel}</h4>
@@ -85,34 +85,40 @@ export function UnitCard({ unit, onUnitUpdated }: UnitCardProps) {
                 From {unit.pricing?.[0]?.currency || "$"}{lowestRent.toLocaleString()}
               </span>
             )}
-            <div onClick={(e) => e.stopPropagation()}>
-              <Select
-                value={unit.status}
-                onValueChange={(val) => handleStatusChange(val as UnitStatus)}
-                disabled={isUpdatingStatus || isArchived}
-              >
-                <SelectTrigger className={`w-[130px] h-8 text-xs font-semibold ${
-                  unit.status === UnitStatus.AVAILABLE ? 'bg-success/10 text-success border-success/20' : 
-                  unit.status === UnitStatus.OCCUPIED ? 'bg-warning/10 text-warning-foreground border-warning/20' : 
-                  'bg-muted text-muted-foreground'
-                }`}>
-                  <SelectValue placeholder="Status">
-                    {unit.status === UnitStatus.AVAILABLE ? "Available" : 
-                     unit.status === UnitStatus.OCCUPIED ? "Occupied" : 
-                     unit.status === UnitStatus.MAINTENANCE ? "Maintenance" : "Status"}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={UnitStatus.AVAILABLE} className="text-success font-medium">Available</SelectItem>
-                  <SelectItem value={UnitStatus.OCCUPIED} className="text-warning-foreground font-medium">Occupied</SelectItem>
-                  <SelectItem value={UnitStatus.MAINTENANCE} className="text-muted-foreground font-medium">Maintenance</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
             {isArchived && <span className="text-xs text-destructive font-medium">Removed</span>}
           </div>
         </div>
       </AccordionTrigger>
+
+      {/* Select component is positioned absolutely over the header to avoid invalid <button> inside <button> HTML nesting */}
+      <div 
+        className="absolute right-12 top-4 z-10" 
+        onClick={(e) => e.stopPropagation()}
+        onPointerDown={(e) => e.stopPropagation()}
+      >
+        <Select
+          value={unit.status}
+          onValueChange={(val) => handleStatusChange(val as UnitStatus)}
+          disabled={isUpdatingStatus || isArchived}
+        >
+          <SelectTrigger className={`w-[130px] h-8 text-xs font-semibold ${
+            unit.status === UnitStatus.AVAILABLE ? 'bg-success/10 text-success border-success/20' : 
+            unit.status === UnitStatus.OCCUPIED ? 'bg-warning/10 text-warning-foreground border-warning/20' : 
+            'bg-muted text-muted-foreground'
+          }`}>
+            <SelectValue placeholder="Status">
+              {unit.status === UnitStatus.AVAILABLE ? "Available" : 
+               unit.status === UnitStatus.OCCUPIED ? "Occupied" : 
+               unit.status === UnitStatus.MAINTENANCE ? "Maintenance" : "Status"}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={UnitStatus.AVAILABLE} className="text-success font-medium">Available</SelectItem>
+            <SelectItem value={UnitStatus.OCCUPIED} className="text-warning-foreground font-medium">Occupied</SelectItem>
+            <SelectItem value={UnitStatus.MAINTENANCE} className="text-muted-foreground font-medium">Maintenance</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
       <AccordionContent className="pt-2 pb-6 space-y-6 border-t mt-2">
         <div className="flex justify-between items-start">
           <div className="space-y-1 max-w-[60%]">

@@ -31,8 +31,8 @@ export function HomeFAQ() {
 
           {/* Accordion Area */}
           <div className="lg:col-span-7">
-            <Accordion className="w-full space-y-4">
-              <AccordionItem value="item-1" className="border border-border rounded-xl px-5 bg-card hover:border-primary/30 transition-colors">
+            <Accordion className="w-full space-y-4 border-none">
+              <AccordionItem value="item-1" className="rounded-xl px-5 bg-card transition-colors border-none">
                 <AccordionTrigger className="text-base sm:text-lg font-semibold hover:no-underline py-5 text-left">
                   Is RentNest really free to use?
                 </AccordionTrigger>
@@ -41,7 +41,7 @@ export function HomeFAQ() {
                 </AccordionContent>
               </AccordionItem>
               
-              <AccordionItem value="item-2" className="border border-border rounded-xl px-5 bg-card hover:border-primary/30 transition-colors">
+              <AccordionItem value="item-2" className="rounded-xl px-5 bg-card transition-colors border-none">
                 <AccordionTrigger className="text-base sm:text-lg font-semibold hover:no-underline py-5 text-left">
                   How do I know the listings are legitimate?
                 </AccordionTrigger>
@@ -50,7 +50,7 @@ export function HomeFAQ() {
                 </AccordionContent>
               </AccordionItem>
               
-              <AccordionItem value="item-3" className="border border-border rounded-xl px-5 bg-card hover:border-primary/30 transition-colors">
+              <AccordionItem value="item-3" className="rounded-xl px-5 bg-card transition-colors border-none">
                 <AccordionTrigger className="text-base sm:text-lg font-semibold hover:no-underline py-5 text-left">
                   What is a "Bachelor Mess" category?
                 </AccordionTrigger>

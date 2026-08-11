@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { FeatureImagePlaceholder } from "./FeatureImagePlaceholder";
+import Image from "next/image";
 import { Clock, CheckCircle2, TrendingUp, Building } from "lucide-react";
 
 export function LandlordTools() {
@@ -28,11 +28,16 @@ export function LandlordTools() {
         <div className="relative max-w-5xl mx-auto mt-16 md:mt-24">
           
           {/* Main Anchor Image */}
-          <div className="relative z-0 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-border">
-            <FeatureImagePlaceholder 
-              label="Landlord dashboard overview: occupancy rate, expiring leases, pending applications" 
-              aspect="16/10" 
+          <div className="relative z-0 rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl border border-border group aspect-[16/10]">
+            <Image 
+              src="/assets/landlordDashboard.png"
+              alt="Landlord dashboard overview"
+              fill
+              className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.02]"
+              sizes="(max-width: 768px) 100vw, 1024px"
             />
+            {/* Gray overlay in dark mode */}
+            <div className="absolute inset-0 hidden dark:block bg-gray-900/40 mix-blend-multiply pointer-events-none" />
           </div>
 
           {/* Callout 1 (Top Left) */}

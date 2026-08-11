@@ -73,13 +73,14 @@ export function FeaturedProperties() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl md:text-4xl font-bold font-heading text-foreground tracking-tight">
-            Fresh on RentNest
+            Best Picks for You
           </h2>
           <Link 
             href="/properties?sort=newest" 
-            className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+            className="hidden sm:flex items-center text-primary font-medium hover:text-primary/80 transition-colors group"
           >
-            View all <ArrowRight className="size-4" />
+            View all 
+            <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
         

@@ -15,7 +15,8 @@ import {
   Phone,
   HelpCircle,
   Briefcase,
-  Home
+  Home,
+  User as UserIcon
 } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils/shadcnUtils";
@@ -108,18 +109,20 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
     { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
   ];
 
-  if (user) {
-    navLinks.push({ name: "Dashboard", href: getDashboardHref(user.role), icon: LayoutDashboard });
-  }
-
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-200 backdrop-blur-xl bg-background/80 border-b border-border/40",
-        scrolled ? "shadow-sm border-border bg-background/95" : ""
-      )}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div className={cn(
+      "sticky top-0 z-50 w-full transition-all duration-500 flex justify-center",
+      scrolled ? "pt-4 px-4 pointer-events-none" : ""
+    )}>
+      <header
+        className={cn(
+          "w-full max-w-7xl transition-all duration-500 pointer-events-auto",
+          scrolled 
+            ? "rounded-full bg-background/85 backdrop-blur-2xl border border-border/60 shadow-[0_8px_30px_rgb(0,0,0,0.12)] px-2 sm:px-4" 
+            : "bg-background/70 backdrop-blur-lg border-b border-border/30"
+        )}
+      >
+        <div className="px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
         {/* Logo */}
         <Logo />
 
@@ -133,9 +136,9 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors hover:text-primary hover:bg-muted/50",
+                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors hover:text-foreground hover:bg-muted/60",
                   isActive
-                    ? "text-primary font-semibold bg-primary/10"
+                    ? "text-foreground font-semibold bg-muted shadow-sm border border-border/50"
                     : "text-muted-foreground"
                 )}
               >
@@ -147,7 +150,7 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
           
           {/* Company Dropdown */}
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-medium transition-colors hover:text-primary hover:bg-muted/50 text-muted-foreground focus:outline-none">
+            <DropdownMenuTrigger className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors hover:text-foreground hover:bg-muted/60 text-muted-foreground focus:outline-none">
               <Info className="size-4" />
               Company
               <ChevronDown className="size-3.5 opacity-50" />
@@ -181,34 +184,92 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
             /* Logged In User Controls (Desktop) */
             <div className="hidden md:flex items-center gap-2">
               <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="outline" className="gap-2 px-3 pl-2 shadow-xs rounded-full" />}>
-                  <div className="size-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
+                <DropdownMenuTrigger render={<Button variant="ghost" className="gap-2 px-2 py-1 h-9 rounded-full hover:bg-muted/50 border border-transparent hover:border-border/50 transition-all duration-300" />}>
+                  <div className="size-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">
                     {(user.profile?.fullName || "User").charAt(0).toUpperCase()}
                   </div>
                   <span className="text-sm font-medium">{user.profile?.fullName || "User"}</span>
-                  <ChevronDown className="size-3.5 text-muted-foreground" />
+                  <ChevronDown className="size-3.5 text-muted-foreground/70 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.profile?.fullName || "User"}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user.role}</p>
+                <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-xl shadow-lg border-border/50 bg-background/95 backdrop-blur-xl">
+                  <DropdownMenuLabel className="font-normal px-2.5 py-3">
+                    <div className="flex items-center gap-3">
+                      <div className="size-9 rounded-full bg-muted flex items-center justify-center text-foreground text-sm font-bold border border-border/50">
+                        {(user.profile?.fullName || "User").charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex flex-col">
+                        <p className="text-sm font-semibold leading-tight text-foreground">{user.profile?.fullName || "User"}</p>
+                        <p className="text-xs font-medium text-muted-foreground capitalize mt-0.5">{user.role.toLowerCase()}</p>
+                      </div>
                     </div>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem render={<Link href={getDashboardHref(user.role)} />} className="cursor-pointer">
-                    <LayoutDashboard className="mr-2 size-4" />
-                    Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuItem render={<Link href="/settings" />} className="cursor-pointer">
-                    <Settings className="mr-2 size-4" />
-                    Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={async () => await logout()} className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive">
-                    <LogOut className="mr-2 size-4" />
-                    Log out
-                  </DropdownMenuItem>
+                  <DropdownMenuSeparator className="bg-border/40 my-1" />
+                  
+                  <div className="px-1 py-1 space-y-0.5">
+                    <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                      <Link href={getDashboardHref(user.role)} className="flex items-center w-full group/item">
+                        <LayoutDashboard className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
+                        <span className="font-medium text-sm">Overview</span>
+                      </Link>
+                    </DropdownMenuItem>
+
+                    {user.role === "LANDLORD" && (
+                      <>
+                        <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                          <Link href="/landlord-dashboard/properties" className="flex items-center w-full group/item">
+                            <Building className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
+                            <span className="font-medium text-sm">My Properties</span>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                          <Link href="/landlord-dashboard/applications" className="flex items-center w-full group/item">
+                            <Briefcase className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
+                            <span className="font-medium text-sm">Applications</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+
+                    {user.role === "TENANT" && (
+                      <>
+                        <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                          <Link href="/tenant-dashboard/applications" className="flex items-center w-full group/item">
+                            <Briefcase className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
+                            <span className="font-medium text-sm">My Applications</span>
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                          <Link href="/properties?saved=true" className="flex items-center w-full group/item">
+                            <Home className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
+                            <span className="font-medium text-sm">Saved Properties</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </div>
+
+                  <DropdownMenuSeparator className="bg-border/40 my-1" />
+                  
+                  <div className="px-1 py-1 space-y-0.5">
+                    <DropdownMenuItem asChild className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
+                      <Link href="/profile" className="flex items-center w-full group/item">
+                        <UserIcon className="mr-2.5 size-4 text-muted-foreground group-hover/item:text-foreground transition-colors" />
+                        <span className="font-medium text-sm">Profile</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem 
+                      onClick={async () => {
+                        await logout();
+                        setUser(null);
+                        window.location.href = "/";
+                      }} 
+                      className="rounded-md cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive py-2 px-2.5 mt-0.5"
+                    >
+                      <LogOut className="mr-2.5 size-4" />
+                      <span className="font-medium text-sm">Log out</span>
+                    </DropdownMenuItem>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -300,17 +361,49 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
                     <div className="h-11 w-full animate-pulse rounded-lg bg-muted" />
                   </div>
                 ) : user ? (
-                  <Button 
-                    variant="destructive" 
-                    className="w-full h-11 text-sm font-semibold flex items-center justify-center gap-2 group transition-all"
-                    onClick={async () => {
-                      setMobileDrawerOpen(false);
-                      await logout();
-                    }}
-                  >
-                    <LogOut className="size-4 transition-transform group-hover:-translate-x-1" />
-                    Log Out
-                  </Button>
+                  <div className="space-y-4 w-full">
+                    <div className="space-y-2">
+                      <p className="text-xs font-bold tracking-widest text-muted-foreground uppercase px-1 pb-1">Dashboard</p>
+                      <Link href={getDashboardHref(user.role)} onClick={() => setMobileDrawerOpen(false)} className="w-full">
+                        <Button variant="secondary" className="w-full justify-start h-11 font-medium bg-muted/60">
+                          <LayoutDashboard className="mr-3 size-4 text-primary" />
+                          Overview
+                        </Button>
+                      </Link>
+                      
+                      {user.role === "LANDLORD" && (
+                        <Link href="/landlord-dashboard/properties" onClick={() => setMobileDrawerOpen(false)} className="w-full">
+                          <Button variant="secondary" className="w-full justify-start h-11 font-medium bg-muted/60">
+                            <Building className="mr-3 size-4 text-blue-500" />
+                            My Properties
+                          </Button>
+                        </Link>
+                      )}
+                      
+                      {user.role === "TENANT" && (
+                        <Link href="/tenant-dashboard/applications" onClick={() => setMobileDrawerOpen(false)} className="w-full">
+                          <Button variant="secondary" className="w-full justify-start h-11 font-medium bg-muted/60">
+                            <Briefcase className="mr-3 size-4 text-blue-500" />
+                            My Applications
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
+
+                    <Button 
+                      variant="destructive" 
+                      className="w-full h-11 text-sm font-semibold flex items-center justify-center gap-2 group transition-all"
+                      onClick={async () => {
+                        setMobileDrawerOpen(false);
+                        await logout();
+                        setUser(null);
+                        window.location.href = "/";
+                      }}
+                    >
+                      <LogOut className="size-4 transition-transform group-hover:-translate-x-1" />
+                      Log Out
+                    </Button>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-1 gap-3">
                     <Link href="/login" onClick={() => setMobileDrawerOpen(false)} className="w-full">
@@ -328,8 +421,9 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
             </SheetContent>
           </Sheet>
         </div>
-      </div>
-    </header>
+        </div>
+      </header>
+    </div>
   );
 }
 
