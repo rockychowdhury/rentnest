@@ -118,7 +118,7 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
           : "bg-background/70 backdrop-blur-lg border-border/30"
       )}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
       {/* Logo */}
         <Logo />
 
@@ -235,7 +235,7 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
-                          <Link href="/properties?saved=true" className="flex items-center w-full group/item">
+                          <Link href="/tenant-dashboard/saved-properties" className="flex items-center w-full group/item">
                             <Home className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
                             <span className="font-medium text-sm">Saved Properties</span>
                           </Link>

@@ -14,7 +14,7 @@ export default function HowItWorksPage() {
       {/* Hero Section */}
       <section className="relative py-20 lg:py-32 overflow-hidden bg-primary/5 border-b border-border">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-heading text-foreground tracking-tight mb-6">
             Renting, <span className="text-primary">simplified.</span>
           </h1>
@@ -26,7 +26,7 @@ export default function HowItWorksPage() {
 
       {/* For Tenants Section */}
       <section className="py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold font-heading mb-4">How it works for Tenants</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">Find your next home in just a few clicks. No hidden fees, no unreliable listings.</p>
@@ -84,7 +84,7 @@ export default function HowItWorksPage() {
 
       {/* For Landlords Section */}
       <section className="py-20 lg:py-28 bg-muted/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold font-heading mb-4">How it works for Landlords</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">Manage your properties efficiently. Reach thousands of verified tenants instantly.</p>

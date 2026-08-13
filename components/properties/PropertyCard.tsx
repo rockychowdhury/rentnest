@@ -84,7 +84,7 @@ export function PropertyCard({ property, layout = "grid" }: PropertyCardProps) {
 
         {/* Favorite Button */}
         <div className="absolute top-2 right-2 z-10">
-          <FavoriteButton propertyId={property.id} />
+          <FavoriteButton property={property} />
         </div>
       </div>
 

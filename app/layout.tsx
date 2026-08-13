@@ -16,6 +16,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en" suppressHydrationWarning className={cn("min-h-screen font-sans", inter.variable, spaceGrotesk.variable)}
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-screen flex flex-col bg-background text-foreground antialiased" suppressHydrationWarning>
         <ThemeProvider

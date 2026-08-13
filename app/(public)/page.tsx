@@ -6,7 +6,7 @@ import { FeatureRow } from "./_components/home/FeatureRow";
 import { FeaturedProperties } from "./_components/home/FeaturedProperties";
 import { LandlordTools } from "./_components/home/LandlordTools";
 import { StatBand } from "./_components/home/StatBand";
-import { Testimonials } from "./_components/home/Testimonials";
+import { DecisionShowcase } from "./_components/home/DecisionShowcase";
 import { HomeContact } from "./_components/home/HomeContact";
 import { FinalCTA } from "./_components/home/FinalCTA";
 import { getPublicCategories } from "@/service/getCategories";
@@ -27,7 +27,7 @@ async function HeroSectionWithData() {
 export default function HomePage() {
   return (
     <div className="w-full flex flex-col">
-      <Suspense fallback={<div className="w-full h-[600px] md:h-[700px] bg-muted animate-pulse" />}>
+      <Suspense fallback={<div className="w-full min-h-[600px] h-screen bg-muted animate-pulse" />}>
         <HeroSectionWithData />
       </Suspense>
       <CategoryBentoGrid />
@@ -36,7 +36,7 @@ export default function HomePage() {
       <HowItWorks />
       <LandlordTools />
       <StatBand />
-      <Testimonials />
+      <DecisionShowcase />
       <HomeFAQ />
       <HomeContact />
       <FinalCTA />

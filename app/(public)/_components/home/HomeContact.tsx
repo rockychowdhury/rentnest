@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export function HomeContact() {
   return (
     <section className="py-12 bg-muted/30 border-t border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8 py-8 md:py-12">
           
           <div className="max-w-xl text-center md:text-left">

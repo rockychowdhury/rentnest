@@ -16,7 +16,7 @@ export function Footer() {
 
   return (
     <footer className="bg-card border-t border-border mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
         
         {/* Desktop Layout */}
         <div className="hidden md:grid grid-cols-4 gap-8 xl:gap-12 pb-12 border-b border-border/50">

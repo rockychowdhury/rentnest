@@ -16,7 +16,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="relative py-20 lg:py-28 overflow-hidden bg-primary/5">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold font-heading text-foreground tracking-tight mb-6">
             Building trust in every <span className="text-primary">rented home.</span>
           </h1>
@@ -28,7 +28,7 @@ export default function AboutPage() {
 
       {/* Our Story / Mission */}
       <section className="py-20 lg:py-28">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="relative">
                <FeatureImagePlaceholder 
@@ -56,7 +56,7 @@ export default function AboutPage() {
 
       {/* Core Values */}
       <section className="py-20 bg-muted/30 border-y border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold font-heading mb-4">Our Core Values</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">The principles that guide every feature we build.</p>

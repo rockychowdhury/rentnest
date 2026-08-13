@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/sheet";
 import { User as UserType } from "@/types";
 
+import { ThemeToggle } from "@/components/shared/theme-toggle";
+
 export interface DashboardNavItem {
   name: string;
   href: string;
@@ -97,15 +99,18 @@ export function MobileDashboardHeader({ user, navItems, roleTitle }: MobileDashb
             </div>
 
             <div className="p-4 border-t border-border mt-auto">
-              <div className="flex items-center gap-3 mb-3 px-1">
-                <Avatar className="size-9 border border-border">
-                  <AvatarImage src={user?.profile?.avatarUrl || undefined} />
-                  <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{userInitials}</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col overflow-hidden text-left">
-                  <span className="text-xs font-semibold text-foreground truncate">{userName}</span>
-                  <span className="text-[10px] text-muted-foreground truncate">{userEmail}</span>
+              <div className="flex items-center justify-between mb-3 px-1">
+                <div className="flex items-center gap-3">
+                  <Avatar className="size-9 border border-border">
+                    <AvatarImage src={user?.profile?.avatarUrl || undefined} />
+                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{userInitials}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col overflow-hidden text-left">
+                    <span className="text-xs font-semibold text-foreground truncate">{userName}</span>
+                    <span className="text-[10px] text-muted-foreground truncate">{userEmail}</span>
+                  </div>
                 </div>
+                <ThemeToggle />
               </div>
               <Button
                 variant="ghost"
@@ -123,6 +128,7 @@ export function MobileDashboardHeader({ user, navItems, roleTitle }: MobileDashb
       </div>
 
       <div className="flex items-center gap-2">
+        <ThemeToggle />
         <Avatar className="size-8 border border-border">
           <AvatarImage src={user?.profile?.avatarUrl || undefined} />
           <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{userInitials}</AvatarFallback>

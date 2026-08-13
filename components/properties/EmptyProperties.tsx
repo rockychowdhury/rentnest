@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export function EmptyProperties() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-4">
+    <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center space-y-4">
       <div className="size-16 rounded-full bg-muted flex items-center justify-center mx-auto text-muted-foreground">
         <SearchX className="size-8" />
       </div>

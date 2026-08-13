@@ -44,7 +44,7 @@ export function FeatureRow() {
       
       <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-border to-transparent opacity-50" />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-20">
           <h2 className="text-3xl md:text-5xl font-bold font-heading text-foreground tracking-tight drop-shadow-sm">
             Details that actually matter here

@@ -9,8 +9,6 @@ import {
   Building,
   RotateCcw,
   Check,
-  Calendar,
-  Sparkles,
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -176,8 +174,8 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
   );
 
   return (
-    <div className="w-full bg-card border-b border-border shadow-xs sticky top-16 z-30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 space-y-3">
+    <div className="w-full bg-card border-b border-border shadow-xs sticky top-14 z-30">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 space-y-3">
         {/* Main Search Controls */}
         <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           {/* Free-text Search Input */}

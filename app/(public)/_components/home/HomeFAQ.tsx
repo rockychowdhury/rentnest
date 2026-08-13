@@ -9,7 +9,7 @@ import { ArrowRight } from "lucide-react";
 export function HomeFAQ() {
   return (
     <section className="py-20 lg:py-28 bg-background border-t border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-start">
           
           {/* Header Area */}

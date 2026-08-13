@@ -11,7 +11,7 @@ export default function ContactPage() {
       
       {/* Hero Section */}
       <section className="relative py-20 bg-primary/5 border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold font-heading text-foreground tracking-tight mb-4">
             We&apos;re here to help
           </h1>
@@ -23,7 +23,7 @@ export default function ContactPage() {
 
       {/* Contact Content */}
       <section className="py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             
             {/* Contact Form */}

@@ -19,7 +19,7 @@ const quickFilters = [
 
 export function HeroSection({ categories, amenities }: { categories?: CategoryItem[], amenities?: AmenityItem[] }) {
   return (
-    <section className="relative w-full h-[600px] md:h-[700px] flex items-center justify-center overflow-hidden">
+    <section className="relative w-full min-h-[600px] h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
@@ -53,7 +53,7 @@ export function HeroSection({ categories, amenities }: { categories?: CategoryIt
           <Suspense fallback={<div className="h-12 w-full animate-pulse bg-muted rounded-full" />}>
             {/* We use a thin wrapper over PropertyFilterBar to make it look decent in hero. 
                 In a real app we might pass a 'variant' prop to strip its borders/backgrounds. */}
-            <div className="[&>div]:bg-transparent [&>div]:border-none [&>div]:shadow-none [&>div]:sticky-none [&>div]:static [&>div]:p-0 hero-search-override">
+            <div className="[&>div]:bg-transparent [&>div]:border-none [&>div]:shadow-none [&>div]:static [&>div]:p-0 hero-search-override">
               <PropertyFilterBar categories={categories} amenities={amenities} />
             </div>
           </Suspense>
