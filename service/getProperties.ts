@@ -60,6 +60,7 @@ export interface PropertyItem {
 export interface GetPropertiesQueryParams {
   searchTerm?: string;
   areaId?: string;
+  districtId?: string;
   categoryId?: string;
   minPrice?: number;
   maxPrice?: number;
@@ -67,8 +68,12 @@ export interface GetPropertiesQueryParams {
   bedrooms?: number;
   bathrooms?: number;
   rentType?: string;
+  flexibleRent?: boolean;
   isFeatured?: boolean;
-  sort?: "newest" | "oldest" | "price_asc" | "price_desc";
+  timeFilter?: string;
+  quickAvailable?: boolean;
+  sortBy?: string;
+  sortOrder?: string;
   page?: number;
   limit?: number;
 }
@@ -146,28 +151,22 @@ export function mapBackendPropertyToPropertyItem(p: any): PropertyItem {
 export async function getProperties(params: GetPropertiesQueryParams = {}): Promise<GetPropertiesResponse> {
   const query = new URLSearchParams();
 
-  // Deployed backend has a Zod validation bug with boolean query params, 
-  // so we filter isFeatured on the client side instead of sending it.
   if (params.searchTerm) query.append("searchTerm", params.searchTerm);
   if (params.areaId) query.append("areaId", params.areaId);
+  if (params.districtId) query.append("districtId", params.districtId);
   if (params.categoryId) query.append("categoryId", params.categoryId);
   if (params.minPrice !== undefined) query.append("minPrice", params.minPrice.toString());
   if (params.maxPrice !== undefined) query.append("maxPrice", params.maxPrice.toString());
   if (params.bedrooms !== undefined) query.append("bedrooms", params.bedrooms.toString());
   if (params.bathrooms !== undefined) query.append("bathrooms", params.bathrooms.toString());
   if (params.rentType) query.append("rentType", params.rentType);
+  if (params.flexibleRent !== undefined) query.append("flexibleRent", params.flexibleRent.toString());
+  if (params.isFeatured !== undefined) query.append("isFeatured", params.isFeatured.toString());
+  if (params.timeFilter) query.append("timeFilter", params.timeFilter);
+  if (params.quickAvailable !== undefined) query.append("quickAvailable", params.quickAvailable.toString());
 
-  
-  if (params.sort) {
-    query.append("sort", params.sort);
-    if (params.sort === "newest") {
-      query.append("sortBy", "createdAt");
-      query.append("sortOrder", "desc");
-    } else if (params.sort === "oldest") {
-      query.append("sortBy", "createdAt");
-      query.append("sortOrder", "asc");
-    }
-  }
+  if (params.sortBy) query.append("sortBy", params.sortBy);
+  if (params.sortOrder) query.append("sortOrder", params.sortOrder);
 
   if (params.page !== undefined) query.append("page", params.page.toString());
   if (params.limit !== undefined) query.append("limit", params.limit.toString());
@@ -199,85 +198,12 @@ export async function getProperties(params: GetPropertiesQueryParams = {}): Prom
 
     const mappedData: PropertyItem[] = backendProperties.map(mapBackendPropertyToPropertyItem);
 
-    // Perform guaranteed client-side filtering for Bedrooms, Bathrooms, and Price Range
-
-
-    // Perform guaranteed client-side filtering for Bedrooms, Bathrooms, and Price Range
-    let filteredData = mappedData;
-
-    if (params.isFeatured !== undefined) {
-      filteredData = filteredData.filter((p) => p.isFeatured === params.isFeatured);
-    }
-
-    if (params.bedrooms !== undefined && !isNaN(Number(params.bedrooms))) {
-      const minBeds = Number(params.bedrooms);
-      filteredData = filteredData.filter(
-        (p) => p.bedroomsMax >= minBeds || (p.units && p.units.some((u) => u.bedrooms >= minBeds))
-      );
-    }
-
-    if (params.bathrooms !== undefined && !isNaN(Number(params.bathrooms))) {
-      const minBaths = Number(params.bathrooms);
-      filteredData = filteredData.filter(
-        (p) => p.bathroomsMax >= minBaths || (p.units && p.units.some((u) => u.bathrooms >= minBaths))
-      );
-    }
-
-    if (params.minPrice !== undefined && !isNaN(Number(params.minPrice))) {
-      const minP = Number(params.minPrice);
-      filteredData = filteredData.filter((p) => (p.maxPrice || p.minPrice) >= minP);
-    }
-
-    if (params.maxPrice !== undefined && !isNaN(Number(params.maxPrice))) {
-      const maxP = Number(params.maxPrice);
-      filteredData = filteredData.filter((p) => p.minPrice <= maxP);
-    }
-
-    if (params.categoryId) {
-      filteredData = filteredData.filter((p) => p.categoryId === params.categoryId);
-    }
-
-    if (params.searchTerm) {
-      const term = params.searchTerm.toLowerCase();
-      filteredData = filteredData.filter(
-        (p) =>
-          p.title.toLowerCase().includes(term) ||
-          p.description.toLowerCase().includes(term) ||
-          p.location.toLowerCase().includes(term)
-      );
-    }
-
-
-
-    if (params.amenities && params.amenities.length > 0) {
-      filteredData = filteredData.filter((p) => {
-        // Since compact JSON might not send full amenities list, this is best-effort.
-        // If property has amenities array of IDs/names, check them.
-        if (!p.amenities || p.amenities.length === 0) return true; // Can't filter client-side if data missing
-        return params.amenities!.every((reqAmenity) => 
-          p.amenities.some((a) => a === reqAmenity) || 
-          p.amenitiesList.some((al) => al.id === reqAmenity || al.name === reqAmenity)
-        );
-      });
-    }
-
-    // Perform guaranteed sorting on filteredData
-    if (params.sort === "oldest") {
-      filteredData.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
-    } else if (params.sort === "price_asc") {
-      filteredData.sort((a, b) => a.minPrice - b.minPrice);
-    } else if (params.sort === "price_desc") {
-      filteredData.sort((a, b) => b.minPrice - a.minPrice);
-    } else if (params.sort === "newest") {
-      filteredData.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-    }
-
     const limit = meta.limit || 10;
-    const totalCount = meta.total !== undefined ? meta.total : filteredData.length;
+    const totalCount = meta.total !== undefined ? meta.total : mappedData.length;
     const totalPages = Math.ceil(totalCount / limit) || 1;
 
     return {
-      data: filteredData,
+      data: mappedData,
       total: totalCount,
       page: meta.page || 1,
       totalPages: totalPages,

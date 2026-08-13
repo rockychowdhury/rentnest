@@ -22,7 +22,13 @@ interface PropertiesPageProps {
     bedrooms?: string;
     bathrooms?: string;
     isFeatured?: string;
-    sort?: "newest" | "oldest" | "price_asc" | "price_desc";
+    sortBy?: string;
+    sortOrder?: string;
+    timeFilter?: string;
+    districtId?: string;
+    quickAvailable?: string;
+    flexibleRent?: string;
+    rentType?: string;
     page?: string;
     limit?: string;
   }>;
@@ -32,6 +38,7 @@ async function AsyncSearchResults({ resolvedParams }: { resolvedParams: any }) {
   const searchResults = await getProperties({
     searchTerm: resolvedParams.searchTerm,
     areaId: resolvedParams.areaId,
+    districtId: resolvedParams.districtId,
     categoryId: resolvedParams.categoryId,
     minPrice: resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,
     maxPrice: resolvedParams.maxPrice ? Number(resolvedParams.maxPrice) : undefined,
@@ -39,7 +46,12 @@ async function AsyncSearchResults({ resolvedParams }: { resolvedParams: any }) {
     bathrooms: resolvedParams.bathrooms ? Number(resolvedParams.bathrooms) : undefined,
     isFeatured: resolvedParams.isFeatured === "true" ? true : undefined,
     amenities: resolvedParams.amenities ? resolvedParams.amenities.split(",") : undefined,
-    sort: resolvedParams.sort,
+    sortBy: resolvedParams.sortBy,
+    sortOrder: resolvedParams.sortOrder,
+    timeFilter: resolvedParams.timeFilter,
+    quickAvailable: resolvedParams.quickAvailable === "true" ? true : undefined,
+    flexibleRent: resolvedParams.flexibleRent === "true" ? true : undefined,
+    rentType: resolvedParams.rentType,
     page: resolvedParams.page ? Number(resolvedParams.page) : 1,
     limit: resolvedParams.limit ? Number(resolvedParams.limit) : 20,
   });

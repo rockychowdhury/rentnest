@@ -30,6 +30,7 @@ export function SearchResultsMode({ results, searchParams }: SearchResultsModePr
       const response = await fetchMoreProperties({
         searchTerm: searchParams.searchTerm as string,
         areaId: searchParams.areaId as string,
+        districtId: searchParams.districtId as string,
         categoryId: searchParams.categoryId as string,
         minPrice: searchParams.minPrice ? Number(searchParams.minPrice) : undefined,
         maxPrice: searchParams.maxPrice ? Number(searchParams.maxPrice) : undefined,
@@ -37,7 +38,12 @@ export function SearchResultsMode({ results, searchParams }: SearchResultsModePr
         bathrooms: searchParams.bathrooms ? Number(searchParams.bathrooms) : undefined,
         isFeatured: searchParams.isFeatured === "true" ? true : undefined,
         amenities: searchParams.amenities ? (searchParams.amenities as string).split(",") : undefined,
-        sort: searchParams.sort as any,
+        sortBy: searchParams.sortBy as string,
+        sortOrder: searchParams.sortOrder as string,
+        timeFilter: searchParams.timeFilter as string,
+        quickAvailable: searchParams.quickAvailable === "true" ? true : undefined,
+        flexibleRent: searchParams.flexibleRent === "true" ? true : undefined,
+        rentType: searchParams.rentType as string,
         limit: 20,
         page: nextPage,
       });

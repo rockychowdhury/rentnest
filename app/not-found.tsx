@@ -1,4 +1,4 @@
-import Image from "next/image";
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -9,33 +9,7 @@ export default function NotFound() {
       {/* Radial glow background effect */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-orange-100/40 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Floating Images Container */}
-      <div className="absolute inset-0 max-w-5xl mx-auto w-full h-full pointer-events-none hidden md:block">
-        {/* Top Left */}
-        <div className="absolute top-[15%] left-[15%] w-48 h-32 -rotate-12 shadow-xl rounded-2xl overflow-hidden border-4 border-white">
-          <Image src="/assets/loginImage1.jpg" alt="Interior" fill className="object-cover" />
-        </div>
-        
-        {/* Top Center */}
-        <div className="absolute top-[5%] left-[45%] w-36 h-48 rotate-6 shadow-xl rounded-2xl overflow-hidden border-4 border-white">
-          <Image src="/assets/loginImage2.jpg" alt="Interior" fill className="object-cover" />
-        </div>
 
-        {/* Top Right */}
-        <div className="absolute top-[18%] right-[15%] w-48 h-32 rotate-[15deg] shadow-xl rounded-2xl overflow-hidden border-4 border-white">
-          <Image src="/assets/loginImage1.jpg" alt="Interior" fill className="object-cover" />
-        </div>
-
-        {/* Mid Left */}
-        <div className="absolute top-[45%] left-[10%] w-40 h-28 -rotate-6 shadow-xl rounded-2xl overflow-hidden border-4 border-white">
-          <Image src="/assets/loginImage2.jpg" alt="Interior" fill className="object-cover" />
-        </div>
-
-        {/* Mid Right */}
-        <div className="absolute top-[40%] right-[12%] w-44 h-32 rotate-3 shadow-xl rounded-2xl overflow-hidden border-4 border-white">
-          <Image src="/assets/loginImage1.jpg" alt="Interior" fill className="object-cover" />
-        </div>
-      </div>
 
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center text-center px-4">

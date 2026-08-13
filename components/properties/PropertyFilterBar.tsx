@@ -10,11 +10,17 @@ import {
   RotateCcw,
   Check,
   Loader2,
+  ChevronsUpDown,
+  ChevronDown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { getPublicCategories, CategoryItem } from "@/service/getCategories";
 import { getPublicAmenities, AmenityItem } from "@/service/getAmenities";
@@ -56,16 +62,23 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
   const [bathrooms, setBathrooms] = useState(searchParams.get("bathrooms") || "");
 
   const [isFeatured, setIsFeatured] = useState(searchParams.get("isFeatured") === "true");
-  const [sort, setSort] = useState(searchParams.get("sort") || "newest");
+  const [timeFilter, setTimeFilter] = useState(searchParams.get("timeFilter") || "");
+  const [quickAvailable, setQuickAvailable] = useState(searchParams.get("quickAvailable") === "true");
+  const [flexibleRent, setFlexibleRent] = useState(searchParams.get("flexibleRent") === "true");
+  const [rentType, setRentType] = useState(searchParams.get("rentType") || "");
+
+  const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "createdAt");
+  const [sortOrder, setSortOrder] = useState(searchParams.get("sortOrder") || "desc");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>(
     searchParams.get("amenities") ? searchParams.get("amenities")!.split(",") : []
   );
 
   // Debounced inputs for price & search
-  const debouncedSearchTerm = useDebouncedValue(searchTerm, 400);
-  const debouncedMinPrice = useDebouncedValue(minPrice, 400);
-  const debouncedMaxPrice = useDebouncedValue(maxPrice, 400);
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 500);
+  const debouncedMinPrice = useDebouncedValue(minPrice, 500);
+  const debouncedMaxPrice = useDebouncedValue(maxPrice, 500);
 
+  const [categoryOpen, setCategoryOpen] = useState(false);
   const [geoLocating, setGeoLocating] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -81,7 +94,13 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
     setBathrooms(searchParams.get("bathrooms") || "");
 
     setIsFeatured(searchParams.get("isFeatured") === "true");
-    setSort(searchParams.get("sort") || "newest");
+    setTimeFilter(searchParams.get("timeFilter") || "");
+    setQuickAvailable(searchParams.get("quickAvailable") === "true");
+    setFlexibleRent(searchParams.get("flexibleRent") === "true");
+    setRentType(searchParams.get("rentType") || "");
+
+    setSortBy(searchParams.get("sortBy") || "createdAt");
+    setSortOrder(searchParams.get("sortOrder") || "desc");
     setSelectedAmenities(
       searchParams.get("amenities") ? searchParams.get("amenities")!.split(",") : []
     );
@@ -99,9 +118,15 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
       minPrice: debouncedMinPrice,
       maxPrice: debouncedMaxPrice,
       bedrooms,
+      bathrooms,
 
       isFeatured,
-      sort,
+      timeFilter,
+      quickAvailable,
+      flexibleRent,
+      rentType,
+      sortBy,
+      sortOrder,
       amenities: selectedAmenities,
       ...overrides,
     };
@@ -151,7 +176,13 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
     setBathrooms("");
 
     setIsFeatured(false);
-    setSort("newest");
+    setTimeFilter("");
+    setQuickAvailable(false);
+    setFlexibleRent(false);
+    setRentType("");
+    
+    setSortBy("createdAt");
+    setSortOrder("desc");
     setSelectedAmenities([]);
 
     startTransition(() => {
@@ -177,9 +208,9 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
     <div className="w-full bg-card border-b border-border shadow-xs sticky top-14 z-30">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 space-y-3">
         {/* Main Search Controls */}
-        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-          {/* Free-text Search Input */}
-          <div className="relative flex-1 min-w-[150px] max-w-sm">
+        <div className="flex items-center gap-3 w-full">
+          {/* Free-text Search Input (Left side) */}
+          <div className="relative flex-1">
             {isPending ? (
               <Loader2 className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-primary animate-spin" />
             ) : (
@@ -188,8 +219,8 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search keyword..."
-              className="pl-8 h-9 text-xs bg-muted/20 border-border shadow-sm rounded-md transition-colors focus-visible:bg-background"
+              placeholder="Search by keyword, property name, or description..."
+              className="pl-8 h-9 text-xs bg-muted/20 border-border shadow-sm rounded-full transition-colors focus-visible:bg-background w-full max-w-xl"
             />
             {searchTerm && (
               <button
@@ -200,87 +231,154 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
                 }}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
-                <X className="size-3" />
+                <X className="size-3.5" />
               </button>
             )}
           </div>
 
-          {/* Location Combobox */}
-          <div className="w-[180px] sm:w-[220px] shrink-0">
-            <AreaSearchCombobox
-              value={areaId}
-              defaultAreaName={areaName}
-              onChange={(id, name) => {
-                setAreaId(id);
-                setAreaName(name);
-                updateURL({ areaId: id, areaName: name });
-              }}
-              className="h-9"
-            />
-          </div>
+          {/* Right Side Controls */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Category Combobox (Desktop) */}
+            <div className="hidden lg:block w-48 shrink-0">
+              <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
+                <PopoverTrigger
+                  render={
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={categoryOpen}
+                      className="w-full justify-between h-9 text-xs font-normal rounded-xl border-border shadow-sm px-3"
+                    />
+                  }
+                >
+                  <div className="flex items-center gap-2 truncate">
+                    <Building className="size-3.5 shrink-0 opacity-50" />
+                    <span className="truncate">
+                      {category && category !== "ALL"
+                        ? categoriesList.find((c) => c.id === category || c.slug === category)?.name || category
+                        : "All Categories"}
+                    </span>
+                  </div>
+                  <ChevronDown className="ml-2 size-3.5 shrink-0 opacity-50" />
+                </PopoverTrigger>
+                <PopoverContent className="w-[250px] p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search category..." className="h-10 text-sm" />
+                    <CommandList>
+                      <CommandEmpty className="text-sm py-4 text-center">No category found.</CommandEmpty>
+                      <CommandGroup>
+                        <CommandItem
+                          value="ALL"
+                          onSelect={() => {
+                            setCategory("");
+                            updateURL({ categoryId: "" });
+                            setCategoryOpen(false);
+                          }}
+                          className="text-sm py-2"
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 size-4 shrink-0 text-primary",
+                              !category || category === "ALL" ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          All Categories
+                        </CommandItem>
+                        {categoriesList.map((cat) => {
+                          const isSelected = category === cat.id;
+                          return (
+                            <CommandItem
+                              key={cat.id}
+                              value={cat.name} // Used for filtering internally by Command
+                              onSelect={() => {
+                                setCategory(cat.id);
+                                updateURL({ categoryId: cat.id });
+                                setCategoryOpen(false);
+                              }}
+                              className="text-sm py-2"
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 size-4 shrink-0 text-primary",
+                                  isSelected ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              {cat.name}
+                            </CommandItem>
+                          );
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
 
-          {/* Category Select (Desktop) */}
-          <div className="hidden lg:block w-44 shrink-0">
-            <Select
-              value={category || "ALL"}
-              onValueChange={(val) => {
-                const next = !val || val === "ALL" ? "" : val;
-                setCategory(next);
-                updateURL({ categoryId: next });
-              }}
-            >
-              <SelectTrigger className="h-10 text-xs">
-                <Building className="size-3.5 mr-1.5 text-muted-foreground shrink-0" />
-                <SelectValue placeholder="All Categories">
-                  {categoriesList.find((c) => c.id === category || c.slug === category)?.name || (!category || category === "ALL" ? "All Categories" : category)}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="ALL">All Categories</SelectItem>
-                {categoriesList.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+            {/* Sort Select */}
+            <div className="hidden sm:block w-44 shrink-0">
+              <Select
+                value={`${sortBy}_${sortOrder}`}
+                onValueChange={(val) => {
+                  let nextSortBy = "createdAt";
+                  let nextSortOrder = "desc";
+                  
+                  if (val === "createdAt_asc") {
+                    nextSortOrder = "asc";
+                  } else if (val === "rentAmount_asc") {
+                    nextSortBy = "rentAmount";
+                    nextSortOrder = "asc";
+                  } else if (val === "rentAmount_desc") {
+                    nextSortBy = "rentAmount";
+                    nextSortOrder = "desc";
+                  } else if (val === "popular_desc") {
+                    nextSortBy = "popular";
+                    nextSortOrder = "desc";
+                  }
+                  
+                  setSortBy(nextSortBy);
+                  setSortOrder(nextSortOrder);
+                  updateURL({ sortBy: nextSortBy, sortOrder: nextSortOrder });
+                }}
+              >
+                <SelectTrigger className="h-9 text-xs rounded-xl px-3">
+                  <SelectValue placeholder="Sort by">
+                    {sortBy === "createdAt" && sortOrder === "asc"
+                      ? "Oldest First"
+                      : sortBy === "rentAmount" && sortOrder === "asc"
+                      ? "Price: Low to High"
+                      : sortBy === "rentAmount" && sortOrder === "desc"
+                      ? "Price: High to Low"
+                      : sortBy === "popular"
+                      ? "Popular Right Now"
+                      : "Newest First"}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="createdAt_desc">Newest First</SelectItem>
+                  <SelectItem value="createdAt_asc">Oldest First</SelectItem>
+                  <SelectItem value="rentAmount_asc">Price: Low to High</SelectItem>
+                  <SelectItem value="rentAmount_desc">Price: High to Low</SelectItem>
+                  <SelectItem value="popular_desc">Popular Right Now</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Sort Select */}
-          <div className="w-36 sm:w-44 shrink-0">
-            <Select
-              value={sort || "newest"}
-              onValueChange={(val) => {
-                const next = !val ? "newest" : val;
-                setSort(next);
-                updateURL({ sort: next });
-              }}
+            {/* Clear Filters (Hidden to prevent layout shift: use invisible class) */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClearAll}
+              className={cn("h-9 text-xs px-3 rounded-full transition-opacity whitespace-nowrap", hasActiveFilters ? "opacity-100" : "opacity-0 pointer-events-none w-0 px-0")}
             >
-              <SelectTrigger className="h-10 text-xs">
-                <SelectValue placeholder="Sort by">
-                  {sort === "oldest"
-                    ? "Oldest First"
-                    : sort === "price_asc"
-                    ? "Price: Low to High"
-                    : sort === "price_desc"
-                    ? "Price: High to Low"
-                    : "Newest First"}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="oldest">Oldest First</SelectItem>
-                <SelectItem value="price_asc">Price: Low to High</SelectItem>
-                <SelectItem value="price_desc">Price: High to Low</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+              <RotateCcw className="size-3.5 mr-1.5" />
+              Clear
+            </Button>
 
           {/* Mobile & Drawer Filter Trigger Button */}
           <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
             <SheetTrigger
               render={
-                <Button variant="outline" size="sm" className="h-9 px-3 text-xs gap-1.5 shrink-0 relative shadow-sm" />
+                <Button variant="outline" className="h-9 px-3 text-xs gap-1.5 shrink-0 relative shadow-sm rounded-xl font-medium" />
               }
             >
               <SlidersHorizontal className="size-3.5 text-primary" />
@@ -443,19 +541,104 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
                   </div>
                 )}
 
-                {/* Toggles */}
-                <div className="space-y-3 pt-2 border-t border-border">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-foreground">Featured Properties Only</span>
-                    <input
-                      type="checkbox"
-                      checked={isFeatured}
-                      onChange={(e) => {
-                        const next = e.target.checked;
-                        setIsFeatured(next);
-                        updateURL({ isFeatured: next });
+                {/* Rent Type & Timing */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-foreground">Rent Type</label>
+                    <Select
+                      value={rentType || "ALL"}
+                      onValueChange={(val) => {
+                        const next = !val || val === "ALL" ? "" : val;
+                        setRentType(next);
+                        updateURL({ rentType: next });
                       }}
-                      className="size-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+                    >
+                      <SelectTrigger className="w-full h-9 text-xs">
+                        <SelectValue placeholder="Any Type">
+                          {rentType === "DAILY" ? "Daily" : rentType === "MONTHLY" ? "Monthly" : rentType === "HOURLY" ? "Hourly" : "Any Type"}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ALL">Any Type</SelectItem>
+                        <SelectItem value="MONTHLY">Monthly</SelectItem>
+                        <SelectItem value="DAILY">Daily</SelectItem>
+                        <SelectItem value="HOURLY">Hourly</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold text-foreground">Date Listed</label>
+                    <Select
+                      value={timeFilter || "ALL"}
+                      onValueChange={(val) => {
+                        const next = !val || val === "ALL" ? "" : val;
+                        setTimeFilter(next);
+                        updateURL({ timeFilter: next });
+                      }}
+                    >
+                      <SelectTrigger className="w-full h-9 text-xs">
+                        <SelectValue placeholder="Any Time">
+                          {timeFilter === "today" ? "Today" : timeFilter === "this-month" ? "This Month" : "Any Time"}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ALL">Any Time</SelectItem>
+                        <SelectItem value="today">Today</SelectItem>
+                        <SelectItem value="this-month">This Month</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Toggles */}
+                <div className="space-y-4 pt-4 border-t border-border">
+                  
+                  {/* Flexible Rent */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-0.5">
+                      <Label htmlFor="flexible-rent" className="text-xs font-semibold text-foreground cursor-pointer">Flexible Rent</Label>
+                      <span className="text-[10px] text-muted-foreground">Properties offering flexible terms</span>
+                    </div>
+                    <Switch
+                      id="flexible-rent"
+                      checked={flexibleRent}
+                      onCheckedChange={(checked) => {
+                        setFlexibleRent(checked);
+                        updateURL({ flexibleRent: checked });
+                      }}
+                    />
+                  </div>
+
+                  {/* Quick Available */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-0.5">
+                      <Label htmlFor="quick-available" className="text-xs font-semibold text-foreground cursor-pointer">Quick Available</Label>
+                      <span className="text-[10px] text-muted-foreground">Move-in ready within 10 days</span>
+                    </div>
+                    <Switch
+                      id="quick-available"
+                      checked={quickAvailable}
+                      onCheckedChange={(checked) => {
+                        setQuickAvailable(checked);
+                        updateURL({ quickAvailable: checked });
+                      }}
+                    />
+                  </div>
+
+                  {/* Featured */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex flex-col gap-0.5">
+                      <Label htmlFor="featured" className="text-xs font-semibold text-foreground cursor-pointer">Featured Properties</Label>
+                      <span className="text-[10px] text-muted-foreground">Only show premium listings</span>
+                    </div>
+                    <Switch
+                      id="featured"
+                      checked={isFeatured}
+                      onCheckedChange={(checked) => {
+                        setIsFeatured(checked);
+                        updateURL({ isFeatured: checked });
+                      }}
                     />
                   </div>
                 </div>
@@ -473,18 +656,8 @@ export function PropertyFilterBar({ categories: initialCategories, amenities: in
             </SheetContent>
           </Sheet>
 
-          {/* Clear All CTA */}
-          {hasActiveFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleClearAll}
-              className="h-9 text-xs text-muted-foreground hover:text-destructive gap-1 shrink-0"
-            >
-              <RotateCcw className="size-3.5" />
-              Clear
-            </Button>
-          )}
+
+          </div>
         </div>
       </div>
     </div>
