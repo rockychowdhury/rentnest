@@ -83,7 +83,7 @@ export function PropertyManageCard({ property, onArchive, onRestore, onRequestVe
   };
 
   return (
-    <div className="group relative flex flex-col rounded-xl border border-border/50 bg-card overflow-hidden transition-all duration-300 transform-gpu hover:border-primary/30 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 w-full h-full">
+    <div className="group relative flex flex-col rounded-xl border border-border/50 bg-card overflow-hidden transition-all duration-300 transform-gpu hover:border-primary/50 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 w-full h-full">
       {/* Property Image Header */}
       <div className="relative w-full aspect-[16/10] overflow-hidden bg-muted">
         <PropertyImage

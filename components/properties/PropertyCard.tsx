@@ -54,7 +54,7 @@ export function PropertyCard({ property, layout = "grid" }: PropertyCardProps) {
     <Link
       href={`/properties/${property.id}/${property.slug}`}
       className={cn(
-        "group relative flex flex-col rounded-xl border border-border/50 bg-card overflow-hidden transition-all duration-300 transform-gpu hover:border-primary/30 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+        "group relative flex flex-col rounded-xl border border-border/50 bg-card overflow-hidden transition-all duration-300 transform-gpu hover:border-primary/50 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         layout === "rail" ? "w-[240px] sm:w-[280px] shrink-0 snap-start" : "w-full h-full"
       )}
     >

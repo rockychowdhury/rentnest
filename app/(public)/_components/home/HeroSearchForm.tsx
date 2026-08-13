@@ -110,7 +110,7 @@ export function HeroSearchForm({ categories }: HeroSearchFormProps) {
       
       {/* Location Direct Input */}
       <div className="relative w-full flex-1" ref={locationRef}>
-        <div className="relative flex items-center w-full group rounded-full hover:bg-white/5 transition-colors">
+        <div className="relative flex items-center w-full group rounded-full bg-white/10 hover:bg-white/20 transition-colors">
           <MapPin className="absolute left-5 size-5 text-white/70 pointer-events-none" />
           <Input
             value={inputValue}
@@ -187,7 +187,7 @@ export function HeroSearchForm({ categories }: HeroSearchFormProps) {
               variant="outline"
               role="combobox"
               aria-expanded={categoryOpen}
-              className="w-full md:w-auto flex-[0.6] justify-between h-14 bg-transparent border-transparent text-white hover:bg-white/10 hover:text-white rounded-full shadow-none px-6 text-base"
+              className="w-full md:w-auto flex-[0.6] justify-between h-14 bg-white/10 border-transparent text-white hover:bg-white/20 hover:text-white rounded-full shadow-none px-6 text-base"
             />
           }
         >

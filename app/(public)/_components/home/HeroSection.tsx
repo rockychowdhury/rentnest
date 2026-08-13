@@ -23,8 +23,8 @@ export function HeroSection({ categories, amenities }: { categories?: CategoryIt
         />
       </div>
       
-      {/* Overlay Scrim */}
-      <div className="absolute inset-0 bg-black/50 z-10 pointer-events-none" />
+      {/* Overlay Scrim - Lighter in light mode to show the image's natural beauty, darker in dark mode */}
+      <div className="absolute inset-0 bg-black/10 dark:bg-black/60 z-10 pointer-events-none transition-colors duration-500" />
       
       {/* Content */}
       <div className="relative z-20 w-full max-w-5xl mx-auto px-4 flex flex-col items-center text-center mt-8">
