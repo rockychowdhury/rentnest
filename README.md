@@ -2,7 +2,7 @@
 
 Frontend for RentNest, an end-to-end rental marketplace for tenants and landlords in Bangladesh. Browse by real location hierarchy, request a specific unit, pay on approval, track the lease.
 
-**Live app:** https://rentnest.vercel.app | **API repo:** [rentnest-api](https://github.com/rockychowdhury/rentnest-api)
+**Live app:** https://rentnest-red.vercel.app/ | **API repo:** [rentnest-api](https://github.com/rockychowdhury/rentnest-api)
 
 ## Why this exists
 
