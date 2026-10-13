@@ -1,80 +1,58 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React from "react";
 import Image from "next/image";
-import { PropertyFilterBar } from "@/components/properties/PropertyFilterBar";
-import { Building, MapPin, Zap } from "lucide-react";
-import Link from "next/link";
-import { cn } from "@/lib/utils/shadcnUtils";
+import { ChevronDown } from "lucide-react";
+import { HeroSearchForm } from "./HeroSearchForm";
+import { HeroCTAButtons } from "./HeroCTAButtons";
 
 import { CategoryItem } from "@/service/getCategories";
 import { AmenityItem } from "@/service/getAmenities";
 
-const quickFilters = [
-  { label: "Bachelor Mess", slug: "bachelor-mess", icon: Zap },
-  { label: "Family Apartment", slug: "family-apartment", icon: Building },
-  { label: "Sublet", slug: "sublet", icon: Zap },
-  { label: "Near Me", slug: "near-me", icon: MapPin },
-];
-
 export function HeroSection({ categories, amenities }: { categories?: CategoryItem[], amenities?: AmenityItem[] }) {
   return (
-    <section className="relative w-full h-[600px] md:h-[700px] flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
+    <section className="relative w-full min-h-[550px] h-[70vh] flex items-center justify-center overflow-hidden">
+      {/* Background Image with subtle zoom animation for interactivity */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/assets/herosection.jpg"
           alt="RentNest hero background"
           fill
           priority
-          className="object-cover object-center"
+          className="object-cover object-center transition-transform duration-[10000ms] ease-out hover:scale-105"
         />
       </div>
       
-      {/* Overlay Scrim */}
-      <div className="absolute inset-0 bg-black/50 z-10" />
+      {/* Overlay Scrim - Lighter in light mode to show the image's natural beauty, darker in dark mode */}
+      <div className="absolute inset-0 bg-black/10 dark:bg-black/60 z-10 pointer-events-none transition-colors duration-500" />
       
       {/* Content */}
-      <div className="relative z-20 w-full max-w-5xl mx-auto px-4 flex flex-col items-center text-center">
-        <span className="px-4 py-1.5 mb-6 rounded-full bg-white/20 text-white text-xs font-bold tracking-wider uppercase backdrop-blur-md border border-white/30">
+      <div className="relative z-20 w-full max-w-5xl mx-auto px-4 flex flex-col items-center text-center mt-8">
+        <span className="px-4 py-1.5 mb-6 rounded-full bg-white/20 text-white text-xs font-bold tracking-wider uppercase backdrop-blur-md border border-white/30 shadow-sm">
           Find your next home in Bangladesh
         </span>
         
-        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight drop-shadow-md">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 tracking-tight drop-shadow-md">
           Rent with confidence, <br className="hidden md:block" /> list with ease
         </h1>
         
-        <p className="text-lg md:text-xl text-white/90 mb-10 max-w-2xl drop-shadow max-w-[600px]">
+        <p className="text-base md:text-lg text-white/90 mb-10 max-w-2xl drop-shadow max-w-[600px]">
           Verified listings across every division, district, and upazila — search by what actually matters to you.
         </p>
         
         {/* Search Bar Wrapper */}
-        <div className="w-full max-w-4xl bg-background/95 backdrop-blur-xl p-4 md:p-2 rounded-2xl md:rounded-full shadow-2xl border border-white/20 mb-6">
-          <Suspense fallback={<div className="h-12 w-full animate-pulse bg-muted rounded-full" />}>
-            {/* We use a thin wrapper over PropertyFilterBar to make it look decent in hero. 
-                In a real app we might pass a 'variant' prop to strip its borders/backgrounds. */}
-            <div className="[&>div]:bg-transparent [&>div]:border-none [&>div]:shadow-none [&>div]:sticky-none [&>div]:static [&>div]:p-0 hero-search-override">
-              <PropertyFilterBar categories={categories} amenities={amenities} />
-            </div>
-          </Suspense>
+        <div className="w-full max-w-3xl mx-auto bg-black/40 backdrop-blur-xl p-2 rounded-2xl md:rounded-full shadow-2xl border border-white/20 mb-8">
+          <HeroSearchForm categories={categories || []} />
         </div>
 
-        {/* Quick Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-3">
-          {quickFilters.map((filter) => {
-            const Icon = filter.icon;
-            return (
-              <Link 
-                key={filter.slug} 
-                href={filter.slug === 'near-me' ? '/properties?sort=nearest' : `/properties?categoryId=${filter.slug}`}
-                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-full text-sm font-medium transition-colors backdrop-blur-md border border-white/20"
-              >
-                <Icon className="size-4" />
-                {filter.label}
-              </Link>
-            )
-          })}
-        </div>
+        {/* Dynamic CTA Buttons based on Role */}
+        <HeroCTAButtons />
+      </div>
+
+      {/* Visual Flow Indicator */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center animate-bounce pointer-events-none opacity-80">
+        <span className="text-white text-[10px] font-medium tracking-widest uppercase mb-1 drop-shadow-md">Explore</span>
+        <ChevronDown className="text-white size-4 drop-shadow-md" />
       </div>
     </section>
   );

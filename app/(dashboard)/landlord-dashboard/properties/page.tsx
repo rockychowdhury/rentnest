@@ -85,7 +85,7 @@ export default function PropertiesListPage() {
       );
     }
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredProps.map((property) => (
           <PropertyManageCard
             key={property.id}
@@ -108,8 +108,8 @@ export default function PropertiesListPage() {
           <Skeleton className="h-10 w-32" />
         </div>
         <Skeleton className="h-12 w-full" />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {[1, 2, 3].map((i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-80 w-full" />
           ))}
         </div>

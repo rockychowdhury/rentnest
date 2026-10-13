@@ -17,6 +17,7 @@ import {
 import { Logo } from "@/components/shared/logo";
 import { logout } from "@/service/logout";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useRouter } from "next/navigation";
 import { User as UserType } from "@/types";
@@ -25,6 +26,7 @@ export const tenantNavItems = [
   { name: "Overview", href: "/tenant-dashboard", icon: LayoutDashboard },
   { name: "My Leases", href: "/tenant-dashboard/lease", icon: Key },
   { name: "Payments", href: "/tenant-dashboard/payments", icon: CreditCard },
+  { name: "Saved Properties", href: "/tenant-dashboard/saved-properties", icon: Heart },
   { name: "Applications", href: "/tenant-dashboard/applications", icon: FileText },
   { name: "My Reviews", href: "/tenant-dashboard/reviews", icon: Star },
   { name: "Account", href: "/tenant-dashboard/account", icon: User },
@@ -68,16 +70,19 @@ export function TenantSidebar({ user }: { user?: UserType | null }) {
         })}
       </div>
       
-            <div className="p-4 border-t border-border/40 mt-auto">
-        <div className="flex items-center gap-3 mb-4 px-2">
-          <Avatar className="size-10 border border-border">
-            <AvatarImage src={user?.profile?.avatarUrl || undefined} />
-            <AvatarFallback className="bg-primary/10 text-primary font-medium">{userInitials}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col overflow-hidden">
-            <span className="text-sm font-semibold truncate">{userName}</span>
-            <span className="text-xs text-muted-foreground truncate">{userEmail}</span>
+      <div className="p-4 border-t border-border/40 mt-auto">
+        <div className="flex items-center justify-between mb-4 px-2">
+          <div className="flex items-center gap-3">
+            <Avatar className="size-10 border border-border">
+              <AvatarImage src={user?.profile?.avatarUrl || undefined} />
+              <AvatarFallback className="bg-primary/10 text-primary font-medium">{userInitials}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col overflow-hidden">
+              <span className="text-sm font-semibold truncate">{userName}</span>
+              <span className="text-xs text-muted-foreground truncate">{userEmail}</span>
+            </div>
           </div>
+          <ThemeToggle />
         </div>
         <form action={async () => {
           await logout();

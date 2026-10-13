@@ -50,7 +50,7 @@ export function BrowseCategoryBento() {
 
   return (
     <section className="py-20 bg-background border-t border-border/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <span className="text-xs font-semibold text-primary uppercase tracking-wider">

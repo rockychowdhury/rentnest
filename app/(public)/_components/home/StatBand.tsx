@@ -10,7 +10,7 @@ const stats = [
 export function StatBand() {
   return (
     <section className="py-16 bg-primary text-primary-foreground">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Note: Numbers are placeholders until real metrics are available */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-x-0 md:divide-x divide-primary-foreground/20 text-center">

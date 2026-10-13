@@ -41,7 +41,7 @@ export function TestimonialsSection() {
 
   return (
     <section className="py-20 bg-background border-t border-border/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center max-w-2xl mx-auto space-y-2">
           <span className="text-xs font-semibold text-primary uppercase tracking-wider">
             Community Feedback

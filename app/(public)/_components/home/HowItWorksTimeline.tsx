@@ -59,7 +59,7 @@ export function HowItWorksTimeline() {
 
   return (
     <section className="py-24 bg-muted/20 border-t border-border/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         <div className="flex flex-col items-center text-center space-y-5 max-w-2xl mx-auto">
           <span className="text-xs font-bold text-primary uppercase tracking-widest">
             Step-by-Step Guide

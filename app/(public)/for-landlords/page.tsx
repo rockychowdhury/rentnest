@@ -16,7 +16,7 @@ export default function ForLandlordsPage() {
       {/* Hero Section */}
       <section className="relative py-20 lg:py-28 overflow-hidden bg-primary/5">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 grid md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary font-semibold text-sm mb-6">
               <Zap className="size-4" /> Built for Bangladesh
@@ -53,7 +53,7 @@ export default function ForLandlordsPage() {
 
       {/* Feature Grid */}
       <section className="py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold font-heading mb-4">Everything you need to manage your portfolio</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">From single apartments to multi-unit buildings, RentNest adapts to your needs.</p>
@@ -89,7 +89,7 @@ export default function ForLandlordsPage() {
 
       {/* FAQ / Trust Section */}
       <section className="py-24 bg-muted/30 border-t border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center text-center">
           <h2 className="text-3xl font-bold font-heading mb-8">Ready to modernize your rentals?</h2>
           <ul className="space-y-4 mb-10 max-w-lg mx-auto text-left">
             <li className="flex items-start gap-3">

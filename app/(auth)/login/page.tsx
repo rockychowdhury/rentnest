@@ -1,10 +1,24 @@
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { LoginForm } from "@/components/forms/LoginForm";
 import { Logo } from "@/components/shared/logo";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 export default function LoginPage() {
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4 font-sans overflow-hidden bg-background">
+      
+      {/* Back Button */}
+      <div className="absolute top-4 left-4 sm:top-8 sm:left-8 z-50">
+        <Link href="/">
+          <Button variant="ghost" className="gap-2 text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="size-4" />
+            Back to Home
+          </Button>
+        </Link>
+      </div>
 
       <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-secondary/30 rounded-full blur-[100px] pointer-events-none" />
@@ -13,12 +27,19 @@ export default function LoginPage() {
 
       <div className="relative z-10 bg-card/80 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden flex flex-col lg:flex-row max-w-4xl w-full min-h-[500px] border border-border/50">
         
+        {/* Theme Toggle for Auth Card */}
+        <div className="absolute top-4 right-4 z-50 lg:hidden">
+          <ThemeToggle />
+        </div>
 
-        <div className="w-full lg:w-1/2 p-8 sm:p-12 flex items-center justify-center">
+        <div className="w-full lg:w-1/2 p-8 sm:p-12 flex items-center justify-center relative">
+          <div className="hidden lg:block absolute top-4 left-4 z-50">
+            <ThemeToggle />
+          </div>
           <div className="w-full max-w-sm space-y-6">
             <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-heading font-bold tracking-tight text-slate-900">Welcome back</h1>
-              <p className="text-balance text-slate-500 text-sm">
+              <h1 className="text-3xl font-heading font-bold tracking-tight text-foreground">Welcome back</h1>
+              <p className="text-balance text-muted-foreground text-sm">
                 Enter your email and password to access your account.
               </p>
             </div>
