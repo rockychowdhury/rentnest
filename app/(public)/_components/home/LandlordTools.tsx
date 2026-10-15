@@ -16,7 +16,7 @@ export function LandlordTools() {
             Our landlord dashboard gives you complete visibility over your properties, applications, and revenue in real-time.
           </p>
           <Link 
-            href="/register/landlord" 
+            href="/register?role=LANDLORD" 
             className="inline-flex items-center justify-center rounded-full text-sm font-semibold bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 hover:shadow-xl transition-all px-6 py-3 h-auto"
           >
             <Building className="size-4 mr-2" />

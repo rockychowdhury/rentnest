@@ -2,9 +2,8 @@ import React, { Suspense } from "react";
 import Link from "next/link";
 import { getFeaturedProperties } from "@/service/getFeaturedProperties";
 import { PropertyCard } from "@/components/properties/PropertyCard";
-import { Skeleton } from "@/components/ui/skeleton";
+import { PropertyCardSkeleton } from "@/components/properties/PropertyCardSkeleton";
 import { ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils/shadcnUtils";
 
 async function FeaturedPropertiesContent() {
   const properties = await getFeaturedProperties();
@@ -15,7 +14,7 @@ async function FeaturedPropertiesContent() {
         <h3 className="text-xl font-semibold text-foreground mb-2">New listings added every day</h3>
         <p className="text-muted-foreground mb-6">Be the first to see yours</p>
         <Link 
-          href="/register/landlord" 
+          href="/register?role=LANDLORD" 
           className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 h-9 px-4 py-2"
         >
           List your property
@@ -34,7 +33,7 @@ async function FeaturedPropertiesContent() {
         {/* View All Card */}
         <div className="w-[200px] shrink-0 snap-start flex items-center justify-center">
           <Link 
-            href="/properties?sort=newest" 
+            href="/properties" 
             className="flex flex-col items-center justify-center gap-4 text-muted-foreground hover:text-primary transition-colors group p-8"
           >
             <div className="size-14 rounded-full bg-muted group-hover:bg-primary/10 flex items-center justify-center transition-colors">
@@ -50,18 +49,9 @@ async function FeaturedPropertiesContent() {
 
 function FeaturedPropertiesSkeleton() {
   return (
-    <div className="flex overflow-x-hidden gap-5 pb-8 pt-4 px-1 -mx-1">
+    <div className="flex overflow-hidden gap-5 pb-8 pt-4 px-1 -mx-1" aria-hidden="true">
       {[1, 2, 3, 4].map((i) => (
-        <div 
-          key={i} 
-          className="shrink-0 flex flex-col space-y-3 w-[240px] sm:w-[280px]"
-        >
-          <Skeleton className="h-[250px] w-full rounded-xl" />
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-4 w-1/2" />
-          </div>
-        </div>
+        <PropertyCardSkeleton key={i} layout="rail" />
       ))}
     </div>
   );
@@ -76,7 +66,7 @@ export function FeaturedProperties() {
             Best Picks for You
           </h2>
           <Link 
-            href="/properties?sort=newest" 
+            href="/properties" 
             className="hidden sm:flex items-center text-primary font-medium hover:text-primary/80 transition-colors group"
           >
             View all 

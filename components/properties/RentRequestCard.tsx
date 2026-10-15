@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { format } from "date-fns";
+import { formatMoney } from "@/lib/utils/formatUtils";
 import { cn } from "@/lib/utils/shadcnUtils";
 import { createRentalRequest } from "@/app/(dashboard)/_actions/rentRequestActions";
 import { getPricingsByUnit } from "@/app/(dashboard)/_actions/pricingActions";
@@ -222,7 +223,7 @@ export function RentRequestCard({ property, user }: RentRequestCardProps) {
                       <SelectValue placeholder="Choose pricing">
                         {selectedPricing ? (
                           <span className="truncate pr-2">
-                            {selectedPricing.currency} {selectedPricing.rentAmount.toLocaleString()} / {selectedPricing.rentType.toLowerCase()}
+                            {selectedPricing.currency} {formatMoney(selectedPricing.rentAmount)} / {selectedPricing.rentType.toLowerCase()}
                           </span>
                         ) : null}
                       </SelectValue>
@@ -231,7 +232,7 @@ export function RentRequestCard({ property, user }: RentRequestCardProps) {
                   <SelectContent>
                     {activePricings.map((p) => (
                       <SelectItem key={p.id} value={p.id}>
-                        {p.currency} {p.rentAmount.toLocaleString()} / {p.rentType.toLowerCase()}
+                        {p.currency} {formatMoney(p.rentAmount)} / {p.rentType.toLowerCase()}
                       </SelectItem>
                     ))}
                   </SelectContent>

@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trash2, Save, X } from "lucide-react";
 import { useState } from "react";
+import { formatMoney } from "@/lib/utils/formatUtils";
 
 const preprocessNumber = z.preprocess((val) => {
   if (val === "" || val == null) return undefined;
@@ -95,15 +96,15 @@ export function PricingFormRow({
           </div>
           <div>
             <p className="text-xs text-muted-foreground mb-1">Rent</p>
-            <p className="font-medium">{pricing?.currency} {pricing?.rentAmount?.toLocaleString()}</p>
+            <p className="font-medium">{pricing?.currency} {formatMoney(pricing?.rentAmount)}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground mb-1">Deposit</p>
-            <p className="font-medium">{pricing?.securityDeposit ? `${pricing.currency} ${pricing.securityDeposit.toLocaleString()}` : "N/A"}</p>
+            <p className="font-medium">{pricing?.securityDeposit ? `${pricing.currency} ${formatMoney(pricing.securityDeposit)}` : "N/A"}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground mb-1">Utility Bill</p>
-            <p className="font-medium">{pricing?.utilityBill ? `${pricing.currency} ${pricing.utilityBill.toLocaleString()}` : "N/A"}</p>
+            <p className="font-medium">{pricing?.utilityBill ? `${pricing.currency} ${formatMoney(pricing.utilityBill)}` : "N/A"}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground mb-1">Utility Policy</p>

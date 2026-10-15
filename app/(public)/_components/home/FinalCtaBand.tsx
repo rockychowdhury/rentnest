@@ -45,7 +45,7 @@ export function FinalCtaBand() {
               </p>
             </div>
             <div className="pt-2">
-              <Link href="/register">
+              <Link href="/register?role=LANDLORD">
                 <Button size="lg" variant="secondary" className="font-semibold text-xs gap-2">
                   List Your Property
                   <ArrowRight className="size-3.5" />

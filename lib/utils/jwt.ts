@@ -8,11 +8,13 @@ const verifyToken = (token: string, secret: string) => {
             success: true,
             data: verifiedToken
         };
-    } catch (error: any) {
-        console.log("Token verification failed:", error);
+    } catch (error: unknown) {
+        // Verification failure is normal control flow (expired / signed
+        // with a rotated secret / absent). Never log here: this runs on
+        // every proxied request and would spam the server logs.
         return {
             success: false,
-            error: error.message
+            error: error instanceof Error ? error.message : "Invalid token"
         }
     }
 }

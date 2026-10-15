@@ -5,22 +5,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LogOut,
-  Settings,
   LayoutDashboard,
   Building,
   Menu,
-  X,
   ChevronDown,
-  Info,
-  Phone,
-  HelpCircle,
-  Briefcase,
-  Home,
-  User as UserIcon
+  ArrowRight,
+  ArrowUpRight,
+  Plus,
+  Heart,
+  FileText,
 } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils/shadcnUtils";
-import { Button } from "@/components/ui/button";
 import { logout } from "@/service/logout";
 import { getMe } from "@/service/getMe";
 import type { User as UserType } from "@/types";
@@ -42,12 +38,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
 interface NavbarProps {
   user?: UserType | null;
@@ -81,13 +71,15 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
-    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close mobile drawer on route change
+  // Close mobile drawer on route change (deferred to avoid cascading render)
   useEffect(() => {
-    setMobileDrawerOpen(false);
+    const t = setTimeout(() => setMobileDrawerOpen(false), 0);
+    return () => clearTimeout(t);
   }, [pathname]);
 
   const getDashboardHref = (role: string) => {
@@ -103,313 +95,408 @@ export function Navbar({ user: initialUser = undefined }: NavbarProps) {
     }
   };
 
+  const getAccountHref = (role?: string | null) => {
+    if (role === "TENANT") return "/tenant-dashboard/account";
+    if (role === "LANDLORD") return "/landlord-dashboard/account";
+    if (role === "ADMIN") return "/admin-dashboard/account";
+    return "/login";
+  };
+
+  // Role-aware primary CTA: landlords go straight to creation,
+  // tenants get browse (never a landlord-only route -> no 400),
+  // guests go to landlord registration.
+  const primaryCta =
+    user?.role === "LANDLORD"
+      ? { href: "/landlord-dashboard/properties/new", label: "List Your Property", icon: Plus }
+      : user?.role === "TENANT"
+        ? { href: "/properties", label: "Browse Properties", icon: ArrowRight }
+        : user?.role === "ADMIN"
+          ? { href: "/admin-dashboard", label: "Admin Dashboard", icon: LayoutDashboard }
+          : { href: "/register?role=LANDLORD", label: "List Your Property", icon: Plus };
+
   const navLinks = [
-    { name: "Browse Properties", href: "/properties", icon: Building },
-    { name: "For Landlords", href: "/for-landlords", icon: Briefcase },
-    { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
+    { name: "Browse", href: "/properties" },
+    { name: "For Landlords", href: "/for-landlords" },
+    { name: "How It Works", href: "/how-it-works" },
   ];
+
+  const isActiveLink = (href: string) => {
+    if (href === "/") return pathname === "/";
+    if (href === "/properties")
+      return pathname === "/properties" || pathname.startsWith("/properties/");
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
+  const onDashboard = pathname.includes("-dashboard");
+  const displayName = user?.profile?.fullName || "User";
+  const displayInitial = displayName.charAt(0).toUpperCase();
 
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 w-full transition-all duration-300 border-b",
-        scrolled 
-          ? "bg-background/85 backdrop-blur-2xl border-border/60 shadow-sm" 
-          : "bg-background/70 backdrop-blur-lg border-border/30"
+        "sticky top-0 z-50 w-full border-b transition-all duration-300",
+        scrolled
+          ? "border-line/70 bg-paper/90 shadow-[0_12px_40px_-16px_rgba(0,0,0,0.25)] backdrop-blur-2xl"
+          : "border-line/40 bg-paper/75 backdrop-blur-xl"
       )}
     >
-      <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
-      {/* Logo */}
-        <Logo />
+      <div className="mx-auto flex h-16 w-full max-w-screen-2xl items-center justify-between gap-4 px-4 sm:px-6 lg:h-[72px] lg:px-8">
+        {/* Left — brand + primary nav */}
+        <div className="flex min-w-0 items-center gap-8 lg:gap-10">
+          <Logo />
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href || (link.href !== "/properties" && pathname.includes("dashboard") && link.name === "Dashboard");
-            const Icon = link.icon;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
+          {/* Desktop Navigation — editorial underline style */}
+          <nav aria-label="Primary" className="hidden items-center gap-7 md:flex">
+            {navLinks.map((link) => {
+              const active = isActiveLink(link.href);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "group relative py-2 font-body text-[13.5px] font-medium tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                    active ? "text-ink" : "text-muted-foreground hover:text-ink"
+                  )}
+                >
+                  {link.name}
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "absolute inset-x-0 -bottom-px h-0.5 origin-left rounded-full bg-ledger transition-transform duration-300",
+                      active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                    )}
+                  />
+                </Link>
+              );
+            })}
+
+            {/* Company dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
                 className={cn(
-                  "flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors hover:text-foreground hover:bg-muted/60",
-                  isActive
-                    ? "text-foreground font-semibold bg-muted shadow-sm border border-border/50"
-                    : "text-muted-foreground"
+                  "group relative flex items-center gap-1 py-2 font-body text-[13.5px] font-medium tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  pathname === "/about" || pathname === "/contact" || pathname === "/faq"
+                    ? "text-ink"
+                    : "text-muted-foreground hover:text-ink"
                 )}
               >
-                <Icon className="size-4" />
-                {link.name}
-              </Link>
-            );
-          })}
-          
-          {/* Company Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors hover:text-foreground hover:bg-muted/60 text-muted-foreground focus:outline-none">
-              <Info className="size-4" />
-              Company
-              <ChevronDown className="size-3.5 opacity-50" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem render={<Link href="/about" />}>
-                About Us
-              </DropdownMenuItem>
-              <DropdownMenuItem render={<Link href="/contact" />}>
-                Contact
-              </DropdownMenuItem>
-              <DropdownMenuItem render={<Link href="/faq" />}>
-                FAQ
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </nav>
+                Company
+                <ChevronDown className="size-3.5 opacity-60 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-52 rounded-2xl border-line/60 bg-paper p-1.5 shadow-xl">
+                {[
+                  { name: "About Us", href: "/about", hint: "Who we are" },
+                  { name: "Contact", href: "/contact", hint: "Talk to us" },
+                  { name: "FAQ", href: "/faq", hint: "Quick answers" },
+                ].map((item) => (
+                  <DropdownMenuItem
+                    key={item.href}
+                    render={
+                      <Link
+                        href={item.href}
+                        className="flex items-center justify-between rounded-xl px-3 py-2.5 focus-visible:outline-none"
+                      />
+                    }
+                    className="rounded-xl focus:bg-field/60"
+                  >
+                    <span>
+                      <span className="block font-body text-sm font-medium text-ink">{item.name}</span>
+                      <span className="block font-body text-xs text-muted-foreground">{item.hint}</span>
+                    </span>
+                    <ArrowUpRight className="size-4 text-muted-foreground" />
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-        {/* Right Cluster - Mobile & Desktop */}
-        <div className="flex items-center gap-2.5">
+            {/* Authenticated shortcut — only rendered for the right role */}
+            {!isUserLoading && user && (
+              <Link
+                href={getDashboardHref(user.role)}
+                aria-current={onDashboard ? "page" : undefined}
+                className={cn(
+                  "group relative py-2 font-body text-[13.5px] font-semibold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  onDashboard ? "text-ink" : "text-ledger hover:text-ink"
+                )}
+              >
+                Dashboard
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute inset-x-0 -bottom-px h-0.5 origin-left rounded-full bg-ledger transition-transform duration-300",
+                    onDashboard ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                  )}
+                />
+              </Link>
+            )}
+          </nav>
+        </div>
+
+        {/* Right cluster */}
+        <div className="flex items-center gap-2 sm:gap-3">
           <div className="hidden md:block">
             <ThemeToggle />
           </div>
 
           {isUserLoading ? (
-            <div className="hidden md:flex items-center gap-2" aria-hidden="true">
-              <div className="h-8 w-16 animate-pulse rounded-md bg-muted" />
-              <div className="h-8 w-28 animate-pulse rounded-md bg-muted" />
+            <div className="hidden items-center gap-2 md:flex" aria-hidden="true">
+              <div className="h-9 w-20 animate-pulse rounded-full bg-field" />
+              <div className="h-9 w-36 animate-pulse rounded-full bg-field" />
             </div>
           ) : user ? (
-            /* Logged In User Controls (Desktop) */
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden items-center gap-3 md:flex">
+              {/* North-star action — isolated, role-aware */}
+              <Link
+                href={primaryCta.href}
+                className="inline-flex h-9 items-center gap-1.5 rounded-full bg-ledger px-4 font-body text-[13px] font-semibold text-white shadow-[0_8px_20px_-8px_var(--color-ledger)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-8px_var(--color-ledger)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:translate-y-0"
+              >
+                <primaryCta.icon className="size-4" />
+                {primaryCta.label}
+              </Link>
+
               <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="ghost" className="gap-2 px-2 py-1 h-9 rounded-full hover:bg-muted/50 border border-transparent hover:border-border/50 transition-all duration-300" />}>
-                  <div className="size-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-[10px] font-bold">
-                    {(user.profile?.fullName || "User").charAt(0).toUpperCase()}
-                  </div>
-                  <span className="text-sm font-medium">{user.profile?.fullName || "User"}</span>
-                  <ChevronDown className="size-3.5 text-muted-foreground/70 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                <DropdownMenuTrigger
+                  render={
+                    <button
+                      aria-label="Account menu"
+                      className="flex h-9 items-center gap-2 rounded-full border border-line/70 bg-paper py-1 pl-1 pr-2.5 transition-all duration-200 hover:-translate-y-px hover:border-line hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    />
+                  }
+                >
+                  <span className="flex size-7 items-center justify-center rounded-full bg-ledger/10 font-display text-xs font-bold text-ledger">
+                    {displayInitial}
+                  </span>
+                  <span className="max-w-24 truncate font-body text-[13px] font-medium text-ink">
+                    {displayName}
+                  </span>
+                  <ChevronDown className="size-3.5 text-muted-foreground transition-transform duration-200 group-data-[state=open]:rotate-180" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 p-1.5 rounded-xl shadow-lg border-border/50 bg-background/95 backdrop-blur-xl">
-                  <DropdownMenuLabel className="font-normal px-2.5 py-3">
-                    <div className="flex items-center gap-3">
-                      <div className="size-9 rounded-full bg-muted flex items-center justify-center text-foreground text-sm font-bold border border-border/50">
-                        {(user.profile?.fullName || "User").charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex flex-col">
-                        <p className="text-sm font-semibold leading-tight text-foreground">{user.profile?.fullName || "User"}</p>
-                        <p className="text-xs font-medium text-muted-foreground capitalize mt-0.5">{user.role.toLowerCase()}</p>
-                      </div>
-                    </div>
+                <DropdownMenuContent
+                  align="end"
+                  className="w-64 rounded-2xl border-line/60 bg-paper p-2 shadow-xl"
+                >
+                  <DropdownMenuLabel className="px-3 py-3 font-normal">
+                    <p className="truncate font-body text-sm font-semibold text-ink">{displayName}</p>
+                    <p className="mt-0.5 font-body text-xs font-medium capitalize text-muted-foreground">
+                      {user.role.toLowerCase()} account
+                    </p>
                   </DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-border/40 my-1" />
-                  
-                  <div className="px-1 py-1 space-y-0.5">
-                    <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
-                      <Link href={getDashboardHref(user.role)} className="flex items-center w-full group/item">
-                        <LayoutDashboard className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
-                        <span className="font-medium text-sm">Overview</span>
-                      </Link>
+                  <DropdownMenuSeparator className="bg-line/60" />
+
+                  <div className="space-y-0.5 p-1">
+                    <DropdownMenuItem className="rounded-xl focus:bg-field/60" render={<Link href={getDashboardHref(user.role)} className="flex w-full items-center gap-2.5 px-3 py-2" />}>
+                      <LayoutDashboard className="size-4 text-muted-foreground" />
+                      <span className="font-body text-sm font-medium text-ink">Dashboard overview</span>
                     </DropdownMenuItem>
 
                     {user.role === "LANDLORD" && (
                       <>
-                        <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
-                          <Link href="/landlord-dashboard/properties" className="flex items-center w-full group/item">
-                            <Building className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
-                            <span className="font-medium text-sm">My Properties</span>
-                          </Link>
+                        <DropdownMenuItem className="rounded-xl focus:bg-field/60" render={<Link href="/landlord-dashboard/properties" className="flex w-full items-center gap-2.5 px-3 py-2" />}>
+                          <Building className="size-4 text-muted-foreground" />
+                          <span className="font-body text-sm font-medium text-ink">My properties</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
-                          <Link href="/landlord-dashboard/applications" className="flex items-center w-full group/item">
-                            <Briefcase className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
-                            <span className="font-medium text-sm">Applications</span>
-                          </Link>
+                        <DropdownMenuItem className="rounded-xl focus:bg-field/60" render={<Link href="/landlord-dashboard/requests" className="flex w-full items-center gap-2.5 px-3 py-2" />}>
+                          <FileText className="size-4 text-muted-foreground" />
+                          <span className="font-body text-sm font-medium text-ink">Rental requests</span>
                         </DropdownMenuItem>
                       </>
                     )}
 
                     {user.role === "TENANT" && (
                       <>
-                        <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
-                          <Link href="/tenant-dashboard/applications" className="flex items-center w-full group/item">
-                            <Briefcase className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
-                            <span className="font-medium text-sm">My Applications</span>
-                          </Link>
+                        <DropdownMenuItem className="rounded-xl focus:bg-field/60" render={<Link href="/tenant-dashboard/applications" className="flex w-full items-center gap-2.5 px-3 py-2" />}>
+                          <FileText className="size-4 text-muted-foreground" />
+                          <span className="font-body text-sm font-medium text-ink">My applications</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
-                          <Link href="/tenant-dashboard/saved-properties" className="flex items-center w-full group/item">
-                            <Home className="size-4 text-muted-foreground mr-2.5 group-hover/item:text-foreground transition-colors" />
-                            <span className="font-medium text-sm">Saved Properties</span>
-                          </Link>
+                        <DropdownMenuItem className="rounded-xl focus:bg-field/60" render={<Link href="/tenant-dashboard/saved-properties" className="flex w-full items-center gap-2.5 px-3 py-2" />}>
+                          <Heart className="size-4 text-muted-foreground" />
+                          <span className="font-body text-sm font-medium text-ink">Saved homes</span>
                         </DropdownMenuItem>
                       </>
                     )}
+
+                    <DropdownMenuItem className="rounded-xl focus:bg-field/60" render={<Link href={getAccountHref(user.role)} className="flex w-full items-center gap-2.5 px-3 py-2" />}>
+                      <LayoutDashboard className="size-4 text-muted-foreground" />
+                      <span className="font-body text-sm font-medium text-ink">Account settings</span>
+                    </DropdownMenuItem>
                   </div>
 
-                  <DropdownMenuSeparator className="bg-border/40 my-1" />
-                  
-                  <div className="px-1 py-1 space-y-0.5">
-                    <DropdownMenuItem className="rounded-md cursor-pointer hover:bg-muted focus:bg-muted py-2 px-2.5">
-                      <Link href="/profile" className="flex items-center w-full group/item">
-                        <UserIcon className="mr-2.5 size-4 text-muted-foreground group-hover/item:text-foreground transition-colors" />
-                        <span className="font-medium text-sm">Profile</span>
-                      </Link>
-                    </DropdownMenuItem>
-                    
-                    <DropdownMenuItem 
+                  <DropdownMenuSeparator className="bg-line/60" />
+
+                  <div className="p-1">
+                    <DropdownMenuItem
                       onClick={async () => {
                         await logout();
                         setUser(null);
                         window.location.href = "/";
-                      }} 
-                      className="rounded-md cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive py-2 px-2.5 mt-0.5"
+                      }}
+                      className="rounded-xl text-destructive focus:bg-destructive/10 focus:text-destructive"
                     >
-                      <LogOut className="mr-2.5 size-4" />
-                      <span className="font-medium text-sm">Log out</span>
+                      <span className="flex w-full items-center gap-2.5 px-3 py-2">
+                        <LogOut className="size-4" />
+                        <span className="font-body text-sm font-medium">Log out</span>
+                      </span>
                     </DropdownMenuItem>
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           ) : (
-            /* Logged Out Desktop CTA Cluster */
-            <div className="hidden md:flex items-center gap-2">
+            <div className="hidden items-center gap-1 md:flex">
               <Link
                 href="/login"
-                className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+                className="rounded-full px-4 py-2 font-body text-[13.5px] font-medium text-muted-foreground transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 Log in
               </Link>
-              <Link href="/register/landlord">
-                <Button size="sm" className="font-semibold shadow-xs">
-                  <Building className="mr-1.5 size-4" />
-                  List Your Property
-                </Button>
+              <Link
+                href="/register?role=LANDLORD"
+                className="inline-flex h-9 items-center gap-1.5 rounded-full bg-ledger px-4 font-body text-[13px] font-semibold text-white shadow-[0_8px_20px_-8px_var(--color-ledger)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-8px_var(--color-ledger)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 active:translate-y-0"
+              >
+                <Plus className="size-4" />
+                List Your Property
               </Link>
             </div>
           )}
 
-          {/* Mobile Sheet Menu Trigger */}
+          {/* Mobile trigger */}
           <Sheet open={mobileDrawerOpen} onOpenChange={setMobileDrawerOpen}>
             <SheetTrigger
               render={
                 <button
-                  className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted"
-                  aria-label="Toggle navigation menu"
+                  aria-label="Open navigation menu"
+                  className="rounded-xl p-2.5 text-muted-foreground transition-colors hover:bg-field/60 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:hidden"
                 >
                   <Menu className="size-5" />
                 </button>
               }
             />
-            <SheetContent side="left" className="w-[85vw] max-w-sm p-0 flex flex-col bg-card border-r border-border shadow-2xl">
-              <SheetHeader className="p-4 border-b border-border flex items-center justify-between text-left">
+            <SheetContent
+              side="left"
+              className="flex w-[86vw] max-w-sm flex-col border-r border-line/60 bg-paper p-0"
+            >
+              <SheetHeader className="flex flex-row items-center justify-between border-b border-line/60 px-5 py-4 text-left">
                 <Logo />
-                <SheetTitle className="sr-only">Mobile Navigation</SheetTitle>
+                <SheetTitle className="sr-only">Site navigation</SheetTitle>
               </SheetHeader>
 
-              <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                <div className="space-y-1.5">
-                  {navLinks.map((link) => {
-                    const isActive = pathname === link.href || (link.href !== "/properties" && pathname.includes("dashboard") && link.name === "Dashboard");
-                    const Icon = link.icon;
+              <div className="flex-1 overflow-y-auto px-5 py-6">
+                <p className="font-body text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  Explore
+                </p>
+                <nav aria-label="Mobile" className="mt-3">
+                  {[
+                    ...navLinks.map((l, i) => ({ ...l, index: `0${i + 1}` })),
+                    ...(!isUserLoading && user
+                      ? [{ name: "Dashboard", href: getDashboardHref(user.role), index: "04" }]
+                      : []),
+                  ].map((link) => {
+                    const active = isActiveLink(link.href) || (link.name === "Dashboard" && onDashboard);
                     return (
                       <Link
-                        key={link.href}
+                        key={link.href + link.name}
                         href={link.href}
                         onClick={() => setMobileDrawerOpen(false)}
-                        className={cn(
-                          "flex items-center gap-3 px-4 py-3 rounded-xl text-base font-semibold transition-colors",
-                          isActive
-                            ? "text-primary bg-primary/10"
-                            : "text-foreground hover:bg-muted"
-                        )}
+                        aria-current={active ? "page" : undefined}
+                        className="group flex items-baseline gap-3 border-b border-line/50 py-3.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
-                        <Icon className="size-5 text-primary" />
-                        {link.name}
+                        <span className="font-body text-[11px] font-semibold text-muted-foreground">
+                          {link.index}
+                        </span>
+                        <span
+                          className={cn(
+                            "font-display text-xl font-bold tracking-tight transition-colors",
+                            active ? "text-ledger" : "text-ink group-hover:text-ledger"
+                          )}
+                        >
+                          {link.name}
+                        </span>
+                        <ArrowUpRight className="ml-auto size-4 text-muted-foreground transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-ledger" />
                       </Link>
                     );
                   })}
+                </nav>
 
-                  <Accordion className="w-full">
-                    <AccordionItem value="company" className="border-none">
-                      <AccordionTrigger className="px-4 py-3 rounded-xl hover:bg-muted hover:no-underline font-semibold text-base">
-                        <div className="flex items-center gap-3 text-foreground">
-                          <Info className="size-5 text-primary" />
-                          Company
-                        </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="pb-0 pl-12 space-y-2 pt-1">
-                        <Link href="/about" onClick={() => setMobileDrawerOpen(false)} className="block py-2 text-muted-foreground hover:text-foreground font-medium">About Us</Link>
-                        <Link href="/contact" onClick={() => setMobileDrawerOpen(false)} className="block py-2 text-muted-foreground hover:text-foreground font-medium">Contact</Link>
-                        <Link href="/faq" onClick={() => setMobileDrawerOpen(false)} className="block py-2 text-muted-foreground hover:text-foreground font-medium">FAQ</Link>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+                <p className="mt-8 font-body text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                  Company
+                </p>
+                <div className="mt-2 flex flex-col">
+                  {[
+                    { name: "About Us", href: "/about" },
+                    { name: "Contact", href: "/contact" },
+                    { name: "FAQ", href: "/faq" },
+                  ].map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className="rounded-lg py-2.5 font-body text-sm font-medium text-muted-foreground transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
                 </div>
               </div>
 
-              <div className="p-4 border-t border-border bg-muted/30">
-                <div className="flex items-center justify-between mb-4 px-1">
-                  <span className="text-sm font-medium">Theme</span>
+              <div className="border-t border-line/60 bg-field/40 px-5 py-5">
+                <div className="mb-4 flex items-center justify-between">
+                  <span className="font-body text-[13px] font-medium text-muted-foreground">Appearance</span>
                   <ThemeToggle />
                 </div>
-                
-                {isUserLoading ? (
-                  <div className="grid grid-cols-1 gap-3 pt-2" aria-hidden="true">
-                    <div className="h-11 w-full animate-pulse rounded-lg bg-muted" />
-                  </div>
-                ) : user ? (
-                  <div className="space-y-4 w-full">
-                    <div className="space-y-2">
-                      <p className="text-xs font-bold tracking-widest text-muted-foreground uppercase px-1 pb-1">Dashboard</p>
-                      <Link href={getDashboardHref(user.role)} onClick={() => setMobileDrawerOpen(false)} className="w-full">
-                        <Button variant="secondary" className="w-full justify-start h-11 font-medium bg-muted/60">
-                          <LayoutDashboard className="mr-3 size-4 text-primary" />
-                          Overview
-                        </Button>
-                      </Link>
-                      
-                      {user.role === "LANDLORD" && (
-                        <Link href="/landlord-dashboard/properties" onClick={() => setMobileDrawerOpen(false)} className="w-full">
-                          <Button variant="secondary" className="w-full justify-start h-11 font-medium bg-muted/60">
-                            <Building className="mr-3 size-4 text-blue-500" />
-                            My Properties
-                          </Button>
-                        </Link>
-                      )}
-                      
-                      {user.role === "TENANT" && (
-                        <Link href="/tenant-dashboard/applications" onClick={() => setMobileDrawerOpen(false)} className="w-full">
-                          <Button variant="secondary" className="w-full justify-start h-11 font-medium bg-muted/60">
-                            <Briefcase className="mr-3 size-4 text-blue-500" />
-                            My Applications
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
 
-                    <Button 
-                      variant="destructive" 
-                      className="w-full h-11 text-sm font-semibold flex items-center justify-center gap-2 group transition-all"
+                {isUserLoading ? (
+                  <div className="h-12 w-full animate-pulse rounded-2xl bg-field" aria-hidden="true" />
+                ) : user ? (
+                  <div className="space-y-2.5">
+                    <div className="flex items-center gap-3 rounded-2xl border border-line/60 bg-paper px-4 py-3">
+                      <span className="flex size-9 items-center justify-center rounded-full bg-ledger/10 font-display text-sm font-bold text-ledger">
+                        {displayInitial}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate font-body text-sm font-semibold text-ink">{displayName}</p>
+                        <p className="font-body text-xs capitalize text-muted-foreground">
+                          {user.role.toLowerCase()} account
+                        </p>
+                      </div>
+                    </div>
+                    <Link
+                      href={primaryCta.href}
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-ledger font-body text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-px active:translate-y-0"
+                    >
+                      <primaryCta.icon className="size-4" />
+                      {primaryCta.label}
+                    </Link>
+                    <button
                       onClick={async () => {
                         setMobileDrawerOpen(false);
                         await logout();
                         setUser(null);
                         window.location.href = "/";
                       }}
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-line/70 font-body text-sm font-semibold text-muted-foreground transition-colors hover:text-destructive"
                     >
-                      <LogOut className="size-4 transition-transform group-hover:-translate-x-1" />
-                      Log Out
-                    </Button>
+                      <LogOut className="size-4" />
+                      Log out
+                    </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 gap-3">
-                    <Link href="/login" onClick={() => setMobileDrawerOpen(false)} className="w-full">
-                      <Button variant="outline" className="w-full h-11 text-sm font-semibold">Log in</Button>
+                  <div className="grid grid-cols-1 gap-2.5">
+                    <Link
+                      href="/login"
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className="flex h-12 w-full items-center justify-center rounded-2xl border border-line/70 font-body text-sm font-semibold text-ink transition-colors hover:bg-field/60"
+                    >
+                      Log in
                     </Link>
-                    <Link href="/register/landlord" onClick={() => setMobileDrawerOpen(false)} className="w-full">
-                      <Button className="w-full h-11 text-sm font-semibold shadow-md">
-                        <Building className="mr-2 size-4" />
-                        List Your Property
-                      </Button>
+                    <Link
+                      href="/register?role=LANDLORD"
+                      onClick={() => setMobileDrawerOpen(false)}
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-ledger font-body text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-px active:translate-y-0"
+                    >
+                      <Plus className="size-4" />
+                      List Your Property
                     </Link>
                   </div>
                 )}

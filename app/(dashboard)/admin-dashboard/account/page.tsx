@@ -1,15 +1,15 @@
+import React, { Suspense } from "react";
 import { getAccountProfile } from "../../_actions/accountActions";
 import { AccountClient } from "../../_components/account/account-client";
+import { FormCardSkeleton } from "@/components/dashboard/section-skeletons";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Admin Account Settings | RentNest",
 };
 
-export default async function AdminAccountPage() {
-  const result = await getAccountProfile();
-  
-  const profile = result.data;
+export default function AdminAccountPage() {
+  const result = getAccountProfile();
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -19,8 +19,17 @@ export default async function AdminAccountPage() {
           Manage your administrator profile and security preferences.
         </p>
       </div>
-      
-      <AccountClient user={profile} />
+
+      <Suspense fallback={<FormCardSkeleton />}>
+        <AccountData promise={result} />
+      </Suspense>
     </div>
   );
+}
+
+async function AccountData({ promise }: { promise: Promise<Awaited<ReturnType<typeof getAccountProfile>>> }) {
+  const result = await promise;
+  const profile = result.data;
+
+  return <AccountClient user={profile} />;
 }

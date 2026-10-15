@@ -42,7 +42,7 @@ export function FinalCTA() {
               List your property, screen tenants, and manage your rentals all in one place with our landlord tools.
             </p>
             <Link 
-              href="/register/landlord" 
+              href="/register?role=LANDLORD" 
               className="inline-flex items-center justify-center rounded-full text-sm font-semibold bg-background border border-border text-foreground shadow-sm hover:bg-card hover:shadow-md transition-all px-8 py-3.5 relative z-10"
             >
               List Your Property

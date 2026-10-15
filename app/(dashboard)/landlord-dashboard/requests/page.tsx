@@ -1,23 +1,20 @@
-import React from "react";
-import { getIncomingRentalRequests, respondToRentalRequest } from "../../_actions/rentRequestActions";
+import React, { Suspense } from "react";
+import { getIncomingRentalRequests } from "../../_actions/rentRequestActions";
 import { format } from "date-fns";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { RentalRequest } from "@/types";
 import { RequestActions } from "./request-actions";
+import { TableCardSkeleton } from "@/components/dashboard/section-skeletons";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Rent Requests | Landlord Dashboard | RentNest",
 };
 
-export default async function RequestsPage() {
-  const result = await getIncomingRentalRequests();
-  const requests: RentalRequest[] = result.data || [];
-
+export default function RequestsPage() {
   return (
     <div className="space-y-6">
       <div>
@@ -27,6 +24,18 @@ export default async function RequestsPage() {
         </p>
       </div>
 
+      <Suspense fallback={<TableCardSkeleton rows={5} />}>
+        <RequestsTable />
+      </Suspense>
+    </div>
+  );
+}
+
+async function RequestsTable() {
+  const result = await getIncomingRentalRequests();
+  const requests: RentalRequest[] = result.data || [];
+
+  return (
       <Card className="border-border shadow-sm overflow-hidden bg-card/50 backdrop-blur-sm">
 
         <CardContent className="p-0">
@@ -110,6 +119,5 @@ export default async function RequestsPage() {
           )}
         </CardContent>
       </Card>
-    </div>
   );
 }

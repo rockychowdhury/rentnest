@@ -10,6 +10,7 @@ import { PropertyStatusBadge } from "./PropertyStatusBadge";
 import { ArchivedIndicator } from "./ArchivedIndicator";
 import { PropertyImage } from "@/components/shared/PropertyImage";
 import { Badge } from "@/components/ui/badge";
+import { formatMoney } from "@/lib/utils/formatUtils";
 
 interface PropertyManageCardProps {
   property: Property;
@@ -62,7 +63,7 @@ export function PropertyManageCard({ property, onArchive, onRestore, onRequestVe
       return (
         <div className="flex items-end gap-1">
           <span className="text-base sm:text-lg font-heading font-bold text-primary tracking-tight leading-none">
-            ৳{minPrice.toLocaleString()}
+            ৳{formatMoney(minPrice)}
           </span>
           <span className="text-[10px] text-muted-foreground font-medium leading-none">/mo</span>
         </div>
@@ -75,7 +76,7 @@ export function PropertyManageCard({ property, onArchive, onRestore, onRequestVe
           ৳{minPrice.toLocaleString()}
         </span>
         <span className="text-[10px] sm:text-xs font-semibold text-muted-foreground leading-none">
-          – ৳{maxPrice.toLocaleString()}
+          – ৳{formatMoney(maxPrice)}
         </span>
         <span className="text-[10px] text-muted-foreground font-medium leading-none">/mo</span>
       </div>

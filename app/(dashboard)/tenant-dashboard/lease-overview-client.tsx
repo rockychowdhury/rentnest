@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, ChevronLeft, ChevronRight, CheckCircle, Clock, AlertCircle, Building, FileText, Key } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { formatMoney } from "@/lib/utils/formatUtils";
 import { CheckoutButton } from "@/components/payments/CheckoutButton";
 
 export function LeaseOverviewClient({ leases }: { leases: any[] }) {
@@ -81,7 +82,7 @@ export function LeaseOverviewClient({ leases }: { leases: any[] }) {
             
             <div className="space-y-1">
               <h4 className="text-4xl font-heading font-bold text-foreground">
-                ৳{Number(lease.agreedAmount).toLocaleString()}
+                ৳{formatMoney(lease.agreedAmount)}
               </h4>
               <p className="text-sm font-medium text-muted-foreground">
                 / {lease.rentType?.toLowerCase()}

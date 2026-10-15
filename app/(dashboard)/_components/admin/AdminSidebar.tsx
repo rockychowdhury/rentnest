@@ -23,6 +23,7 @@ import { logout } from "@/service/logout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User as UserType } from "@/types";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export const adminNavItems = [
   { name: "Overview", href: "/admin-dashboard", icon: LayoutDashboard },
@@ -37,9 +38,14 @@ export const adminNavItems = [
   { name: "Reviews", href: "/admin-dashboard/reviews", icon: Star },
 ];
 
-export function AdminSidebar({ user }: { user?: UserType | null }) {
+export function AdminSidebar({ user: initialUser }: { user?: UserType | null }) {
   const pathname = usePathname();
   const router = useRouter();
+  // Live identity: layout is static, so the sidebar resolves the user
+  // client-side. It mounts once per dashboard session and persists across
+  // route changes — no refetch, no shimmer on navigation.
+  const { user: liveUser, loading: userLoading } = useCurrentUser(initialUser ?? undefined);
+  const user = liveUser ?? null;
 
   const handleLogout = async () => {
     await logout();
@@ -77,16 +83,26 @@ export function AdminSidebar({ user }: { user?: UserType | null }) {
       </div>
 
       <div className="p-4 border-t border-border mt-auto">
-        <div className="flex items-center gap-3 mb-4 px-2">
-          <Avatar className="size-10">
-            <AvatarImage src={user?.profile?.avatarUrl || undefined} />
-            <AvatarFallback>{user?.profile?.fullName?.substring(0, 2).toUpperCase() || "AD"}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col overflow-hidden">
-            <span className="text-sm font-medium truncate">{user?.profile?.fullName || "Admin"}</span>
-            <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
+        {userLoading && !user ? (
+          <div className="flex items-center gap-3 mb-4 px-2" aria-hidden="true">
+            <div className="size-10 rounded-full bg-muted animate-pulse" />
+            <div className="space-y-1.5">
+              <div className="h-3 w-24 rounded bg-muted animate-pulse" />
+              <div className="h-2.5 w-32 rounded bg-muted animate-pulse" />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center gap-3 mb-4 px-2">
+            <Avatar className="size-10">
+              <AvatarImage src={user?.profile?.avatarUrl || undefined} />
+              <AvatarFallback>{user?.profile?.fullName?.substring(0, 2).toUpperCase() || "AD"}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col overflow-hidden">
+              <span className="text-sm font-medium truncate">{user?.profile?.fullName || "Admin"}</span>
+              <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
+            </div>
+          </div>
+        )}
         
         <Link 
           href="/admin-dashboard/account"

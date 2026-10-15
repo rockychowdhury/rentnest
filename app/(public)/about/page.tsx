@@ -119,7 +119,7 @@ export default function AboutPage() {
                 Find a Home
               </Button>
             </Link>
-            <Link href="/register/landlord">
+            <Link href="/register?role=LANDLORD">
               <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full px-8">
                 List a Property
               </Button>

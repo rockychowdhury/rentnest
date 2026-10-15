@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { getAllPayments } from "../../_actions/adminActions";
 import { format } from "date-fns";
+import { formatMoney } from "@/lib/utils/formatUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -131,7 +132,7 @@ export default function AdminPaymentsPage() {
                         {payment.lease?.propertyUnit?.property?.title || "Property"} - {payment.lease?.propertyUnit?.unitLabel || "Unit"}
                       </TableCell>
                       <TableCell className="font-medium">
-                        {payment.currency} {payment.amount.toLocaleString()}
+                        {payment.currency} {formatMoney(payment.amount)}
                       </TableCell>
                       <TableCell>
                         {payment.paymentDate ? format(new Date(payment.paymentDate), "MMM dd, yyyy") : "-"}

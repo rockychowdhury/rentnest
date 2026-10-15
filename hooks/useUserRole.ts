@@ -14,16 +14,30 @@ const clearCacheTimer = () => {
 };
 
 export function useUserRole() {
-  const [role, setRole] = useState<string | null>(
-    cachedUser ? cachedUser.role : null
-  );
-  const [loading, setLoading] = useState<boolean>(cachedUser === undefined);
+  // NOTE: initial state must be constant. The server prerender always bakes
+  // the loading skeleton (module cache is empty server-side since effects
+  // never run there). Reading the warm module cache in useState would render
+  // the loaded buttons on the client's first render -> hydration mismatch.
+  // Cache is consumed inside the effect instead, so server HTML and the
+  // first client render always agree.
+  const [role, setRole] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (cachedUser !== undefined) {
-      setRole(cachedUser?.role || null);
+    let cancelled = false;
+
+    const applyUser = (user: User | null) => {
+      if (cancelled) return;
+      setRole(user?.role || null);
       setLoading(false);
-      return;
+    };
+
+    if (cachedUser !== undefined) {
+      // Warm cache: resolve through a subscription, not a sync setState.
+      Promise.resolve(cachedUser).then(applyUser);
+      return () => {
+        cancelled = true;
+      };
     }
 
     if (!fetchPromise) {
@@ -39,10 +53,10 @@ export function useUserRole() {
       });
     }
 
-    fetchPromise.then((user) => {
-      setRole(user?.role || null);
-      setLoading(false);
-    });
+    fetchPromise.then(applyUser);
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return { role, loading };

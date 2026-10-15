@@ -28,7 +28,7 @@ export default function ForLandlordsPage() {
               Manage your properties, review tenant applications, and track expiring leases all in one place. Stop relying on paper logs and WhatsApp messages.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/register/landlord">
+              <Link href="/register?role=LANDLORD">
                 <Button size="lg" className="w-full sm:w-auto rounded-full px-8 shadow-sm">
                   List Your First Property
                 </Button>
@@ -106,7 +106,7 @@ export default function ForLandlordsPage() {
             </li>
           </ul>
           
-          <Link href="/register/landlord">
+          <Link href="/register?role=LANDLORD">
             <Button size="lg" className="rounded-full px-10 h-14 text-base shadow-sm">
               Create Your Landlord Account
             </Button>

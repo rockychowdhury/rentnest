@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RegisterForm } from "@/components/forms/RegisterForm";
@@ -43,7 +44,9 @@ export default function RegisterPage() {
                 Join RentNest to find or list rental properties today.
               </p>
             </div>
-            <RegisterForm />
+            <Suspense fallback={<div className="h-64 w-full animate-pulse rounded-xl bg-muted" />}>
+              <RegisterForm />
+            </Suspense>
           </div>
         </div>
 

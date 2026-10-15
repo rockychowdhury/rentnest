@@ -24,7 +24,7 @@ export function CategoryBentoGrid() {
           
           {/* Large Tile 1: Family Apartment */}
           <Link 
-            href="/properties?categoryId=family-apartment" 
+            href="/properties" 
             className="group relative md:col-span-2 md:row-span-2 rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300"
           >
             <Image
@@ -48,7 +48,7 @@ export function CategoryBentoGrid() {
 
           {/* Large Tile 2: Bachelor Mess */}
           <Link 
-            href="/properties?categoryId=bachelor-mess" 
+            href="/properties" 
             className="group relative md:col-span-2 md:row-span-1 rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300"
           >
             <Image
@@ -72,7 +72,7 @@ export function CategoryBentoGrid() {
 
           {/* Small Tile 1: Sublet */}
           <Link 
-            href="/properties?categoryId=sublet" 
+            href="/properties" 
             className="group relative md:col-span-1 md:row-span-1 rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300"
           >
             <Image
@@ -91,7 +91,7 @@ export function CategoryBentoGrid() {
 
           {/* Small Tile 2: Commercial */}
           <Link 
-            href="/properties?categoryId=commercial" 
+            href="/properties" 
             className="group relative md:col-span-1 md:row-span-1 rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300"
           >
             <Image

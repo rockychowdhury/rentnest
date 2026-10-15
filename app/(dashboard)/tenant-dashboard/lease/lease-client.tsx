@@ -6,6 +6,7 @@ import { ArrowRight, Key, Calendar, CreditCard, ChevronLeft, ChevronRight, FileC
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { formatMoney } from "@/lib/utils/formatUtils";
 import { CheckoutButton } from "@/components/payments/CheckoutButton";
 import { ReusableModal } from "@/components/shared/reusable-modal";
 
@@ -67,7 +68,7 @@ export function LeaseClient({ leases, reviewedLeaseIds = [] }: { leases: any[], 
                   
                   <div className="space-y-1">
                     <h4 className="text-3xl font-heading font-bold text-foreground truncate">
-                      ৳{Number(primaryLease.agreedAmount || primaryLease.rentAmount || 0).toLocaleString()}
+                      ৳{formatMoney(primaryLease.agreedAmount || primaryLease.rentAmount || 0)}
                     </h4>
                     <p className="text-sm font-medium text-muted-foreground">
                       / {primaryLease.rentType?.toLowerCase() || 'monthly'}
@@ -198,7 +199,7 @@ export function LeaseClient({ leases, reviewedLeaseIds = [] }: { leases: any[], 
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Rent Amount</p>
-                <p className="font-semibold text-foreground">৳{Number(primaryLease.agreedAmount || primaryLease.rentAmount || 0).toLocaleString()}</p>
+                <p className="font-semibold text-foreground">৳{formatMoney(primaryLease.agreedAmount || primaryLease.rentAmount || 0)}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Start Date</p>

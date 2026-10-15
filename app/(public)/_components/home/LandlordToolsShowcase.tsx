@@ -111,7 +111,7 @@ export function LandlordToolsShowcase() {
         </div>
 
                 <div className="text-center pt-4">
-          <Link href="/register">
+          <Link href="/register?role=LANDLORD">
             <Button size="lg" className="font-semibold text-xs gap-2 shadow-md">
               <Building className="size-4" />
               List your first property

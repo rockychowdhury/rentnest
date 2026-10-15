@@ -129,7 +129,7 @@ export default function HowItWorksPage() {
           </div>
           
           <div className="mt-12 text-center">
-            <Link href="/register/landlord">
+            <Link href="/register?role=LANDLORD">
               <Button size="lg" variant="secondary" className="rounded-full px-8 shadow-sm">
                 List Your Property
               </Button>

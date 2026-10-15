@@ -1,22 +1,20 @@
-import React from "react";
-import { getLandlordLeases, updateLeaseStatus } from "../../_actions/leaseActions";
+import React, { Suspense } from "react";
+import { getLandlordLeases } from "../../_actions/leaseActions";
 import { format } from "date-fns";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Lease } from "@/types";
 import { TerminateLeaseButton } from "./terminate-lease-button";
+import { TableCardSkeleton } from "@/components/dashboard/section-skeletons";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Leases | Landlord Dashboard | RentNest",
 };
 
-export default async function LeasesPage() {
-  const result = await getLandlordLeases();
-  const leases: Lease[] = result.data || [];
-
+export default function LeasesPage() {
   return (
     <div className="space-y-6">
       <div>
@@ -26,6 +24,18 @@ export default async function LeasesPage() {
         </p>
       </div>
 
+      <Suspense fallback={<TableCardSkeleton rows={5} />}>
+        <LeasesTable />
+      </Suspense>
+    </div>
+  );
+}
+
+async function LeasesTable() {
+  const result = await getLandlordLeases();
+  const leases: Lease[] = result.data || [];
+
+  return (
       <Card className="border-border shadow-sm overflow-hidden bg-card/50 backdrop-blur-sm">
 
         <CardContent className="p-0">
@@ -108,6 +118,5 @@ export default async function LeasesPage() {
           )}
         </CardContent>
       </Card>
-    </div>
   );
 }

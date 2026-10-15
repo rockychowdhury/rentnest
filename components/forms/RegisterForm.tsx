@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -11,6 +12,9 @@ import { registerAction } from "@/app/(auth)/_actions/auth.actions";
 import type { RegisterState } from "@/types";
 
 export function RegisterForm() {
+  const searchParams = useSearchParams();
+  const roleParam = (searchParams.get("role") || "").toUpperCase();
+  const defaultRole = roleParam === "LANDLORD" ? "LANDLORD" : "TENANT";
   const [state, action, pending] = useActionState(registerAction, {
     success: false,
     message: "",
@@ -84,7 +88,8 @@ export function RegisterForm() {
             name="role"
             required
             disabled={pending}
-            defaultValue="TENANT"
+            defaultValue={defaultRole}
+            key={defaultRole}
             className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 dark:bg-card dark:text-foreground"
           >
             <option value="TENANT">Tenant (Looking for a property)</option>

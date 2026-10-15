@@ -6,7 +6,7 @@ import { Plus, Home } from "lucide-react";
 import { Property, PropertyStatus } from "@/types";
 import { getMyProperties, archiveProperty, restoreProperty, requestPropertyVerification, deactivateProperty } from "@/app/(dashboard)/_actions/propertiesActions";
 import { PropertyManageCard } from "@/app/(dashboard)/_components/properties/PropertyManageCard";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,7 +27,24 @@ export default function PropertiesListPage() {
   };
 
   useEffect(() => {
-    fetchProperties();
+    let cancelled = false;
+    // Subscription-style initial load (avoids sync setState in effect).
+    getMyProperties().then((res) => {
+      if (cancelled) return;
+      if (res.success) {
+        setProperties(res.data);
+      } else {
+        toast.error(res.error || "Failed to load properties");
+      }
+      setIsLoading(false);
+    }).catch(() => {
+      if (cancelled) return;
+      toast.error("Failed to load properties");
+      setIsLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleRequestVerification = async (id: string) => {
@@ -100,17 +117,35 @@ export default function PropertiesListPage() {
     );
   };
 
+  // Header + actions render instantly; only the listing zone skeletons.
+  // This keeps navigation feeling instant instead of blanking the page.
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <Skeleton className="h-10 w-48" />
-          <Skeleton className="h-10 w-32" />
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Properties</h1>
+            <p className="text-muted-foreground">Manage your property portfolio and listings.</p>
+          </div>
+          <Link href="/landlord-dashboard/properties/new" className={`bg-primary hover:bg-primary-hover ${buttonVariants({ variant: "default" })}`}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Property
+          </Link>
         </div>
-        <Skeleton className="h-12 w-full" />
+        <div className="flex gap-1.5">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <Skeleton key={i} className="h-9 w-24 rounded-lg" />
+          ))}
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-80 w-full" />
+            <div key={i} className="rounded-xl border border-border/50 bg-card overflow-hidden">
+              <Skeleton className="aspect-[16/10] w-full rounded-none" />
+              <div className="p-4 space-y-2.5">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -123,7 +158,7 @@ export default function PropertiesListPage() {
         <div className="bg-primary/10 p-4 rounded-full mb-6">
           <Home className="h-12 w-12 text-primary" />
         </div>
-        <h2 className="text-2xl font-bold mb-2">You haven't listed a property yet</h2>
+        <h2 className="text-2xl font-bold mb-2">You haven&apos;t listed a property yet</h2>
         <p className="text-muted-foreground max-w-md mb-8">
           Create your first property listing to start receiving inquiries and managing tenants.
         </p>

@@ -21,6 +21,7 @@ import { logout } from "@/service/logout";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User as UserType } from "@/types";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export const landlordNavItems = [
   { name: "Overview", href: "/landlord-dashboard", icon: LayoutDashboard },
@@ -32,10 +33,15 @@ export const landlordNavItems = [
   { name: "Account", href: "/landlord-dashboard/account", icon: User },
 ];
 
-export function LandlordSidebar({ user }: { user?: UserType | null }) {
+export function LandlordSidebar({ user: initialUser }: { user?: UserType | null }) {
   const pathname = usePathname();
   const router = useRouter();
-  const userName = (user as any)?.fullName || user?.profile?.fullName || "Landlord User";
+  // Live identity: layout is static, so the sidebar resolves the user
+  // client-side. It mounts once per dashboard session and persists across
+  // route changes — no refetch, no shimmer on navigation.
+  const { user: liveUser, loading: userLoading } = useCurrentUser(initialUser ?? undefined);
+  const user = liveUser ?? null;
+  const userName = user?.profile?.fullName || "Landlord User";
   const userInitials = userName.substring(0, 2).toUpperCase();
   const userEmail = user?.email || "";
 
@@ -72,16 +78,26 @@ export function LandlordSidebar({ user }: { user?: UserType | null }) {
       </div>
       
             <div className="p-4 border-t border-border/40 mt-auto">
-        <div className="flex items-center gap-3 mb-4 px-2">
-          <Avatar className="size-10 border border-border">
-            <AvatarImage src={user?.profile?.avatarUrl || undefined} />
-            <AvatarFallback className="bg-primary/10 text-primary font-medium">{userInitials}</AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col overflow-hidden">
-            <span className="text-sm font-semibold truncate">{userName}</span>
-            <span className="text-xs text-muted-foreground truncate">{userEmail}</span>
+        {userLoading && !user ? (
+          <div className="flex items-center gap-3 mb-4 px-2" aria-hidden="true">
+            <div className="size-10 rounded-full bg-muted animate-pulse border border-border" />
+            <div className="space-y-1.5">
+              <div className="h-3 w-24 rounded bg-muted animate-pulse" />
+              <div className="h-2.5 w-32 rounded bg-muted animate-pulse" />
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="flex items-center gap-3 mb-4 px-2">
+            <Avatar className="size-10 border border-border">
+              <AvatarImage src={user?.profile?.avatarUrl || undefined} />
+              <AvatarFallback className="bg-primary/10 text-primary font-medium">{userInitials}</AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col overflow-hidden">
+              <span className="text-sm font-semibold truncate">{userName}</span>
+              <span className="text-xs text-muted-foreground truncate">{userEmail}</span>
+            </div>
+          </div>
+        )}
         <form action={async () => {
           await logout();
           router.push("/login");

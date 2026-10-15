@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AmenityToggleGrid } from "./AmenityToggleGrid";
 import { CheckSquare } from "lucide-react";
+import { formatMoney } from "@/lib/utils/formatUtils";
 
 interface UnitCardProps {
   unit: PropertyUnit;
@@ -82,7 +83,7 @@ export function UnitCard({ unit, onUnitUpdated }: UnitCardProps) {
           <div className="flex items-center gap-4">
             {lowestRent !== undefined && (
               <span className="font-medium text-primary hidden sm:inline-block">
-                From {unit.pricing?.[0]?.currency || "$"}{lowestRent.toLocaleString()}
+                From {unit.pricing?.[0]?.currency || "$"}{formatMoney(lowestRent)}
               </span>
             )}
             {isArchived && <span className="text-xs text-destructive font-medium">Removed</span>}

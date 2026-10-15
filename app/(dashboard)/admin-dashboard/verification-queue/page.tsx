@@ -1,15 +1,11 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { getVerificationQueue } from "@/app/(dashboard)/_actions/adminActions";
 import { VerificationList } from "./_components/VerificationList";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ShieldCheck } from "lucide-react";
+import { ListRowsSkeleton } from "@/components/dashboard/section-skeletons";
 
-export const dynamic = 'force-dynamic';
-
-export default async function VerificationQueuePage() {
-  const result = await getVerificationQueue();
-  const queue = result.success && result.data ? result.data : [];
-
+export default function VerificationQueuePage() {
   return (
     <div className="space-y-6 animate-in fade-in-50 duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -24,11 +20,22 @@ export default async function VerificationQueuePage() {
         </div>
       </div>
 
-      <Card>
-        <CardContent className="p-0 sm:p-0">
-          <VerificationList initialQueue={queue} />
-        </CardContent>
-      </Card>
+      <Suspense fallback={<ListRowsSkeleton rows={4} />}>
+        <VerificationQueueData />
+      </Suspense>
     </div>
+  );
+}
+
+async function VerificationQueueData() {
+  const result = await getVerificationQueue();
+  const queue = result.success && result.data ? result.data : [];
+
+  return (
+    <Card>
+      <CardContent className="p-0 sm:p-0">
+        <VerificationList initialQueue={queue} />
+      </CardContent>
+    </Card>
   );
 }

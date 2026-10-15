@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FileText, Calendar, CheckCircle2, Clock, XCircle, ArrowRight } from "lucide-react";
 import { ReusableModal } from "@/components/shared/reusable-modal";
+import { formatDateShort, formatDateLong, formatMoney } from "@/lib/utils/formatUtils";
 import { cancelRentalRequest, getRentalRequestDetails } from "../../_actions/tenantApplications";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -68,7 +69,7 @@ export function ApplicationsClient({ applications }: { applications: any[] }) {
               <span className="size-1 bg-border rounded-full" />
               <span>{app.duration} {app.rentType === 'YEARLY' ? 'Yrs' : app.rentType === 'MONTHLY' ? 'Mos' : 'Units'}</span>
               <span className="size-1 bg-border rounded-full" />
-              <span>Move-in {new Date(app.moveInDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+              <span>Move-in {formatDateShort(app.moveInDate)}</span>
             </p>
           </div>
         </div>
@@ -76,7 +77,7 @@ export function ApplicationsClient({ applications }: { applications: any[] }) {
         <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 pl-14 sm:pl-0 mt-2 sm:mt-0 border-t sm:border-t-0 pt-3 sm:pt-0 border-border/50">
           <div className="text-left sm:text-right">
             <span className="font-semibold text-sm text-foreground block">
-              ৳{Number(app.agreedAmount).toLocaleString()}
+              ৳{formatMoney(app.agreedAmount)}
             </span>
             <span className="text-xs text-muted-foreground block">
                / {app.rentType?.toLowerCase()}
@@ -159,7 +160,7 @@ export function ApplicationsClient({ applications }: { applications: any[] }) {
                </h4>
                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
                  <span className="text-muted-foreground flex items-center gap-1.5"><FileText className="size-4"/> {selectedApp.propertyUnit?.unitLabel}</span>
-                 <span className="text-muted-foreground flex items-center gap-1.5"><Calendar className="size-4"/> {new Date(selectedApp.moveInDate).toLocaleDateString()}</span>
+                 <span className="text-muted-foreground flex items-center gap-1.5"><Calendar className="size-4"/> {formatDateLong(selectedApp.moveInDate)}</span>
                </div>
              </div>
 
@@ -178,7 +179,7 @@ export function ApplicationsClient({ applications }: { applications: any[] }) {
                </div>
                <div className="flex justify-between items-center py-2 border-b border-border/50">
                  <span className="text-muted-foreground font-medium">Agreed Rent</span>
-                 <span className="font-bold text-base">৳{Number(selectedApp.agreedAmount).toLocaleString()} <span className="text-xs text-muted-foreground font-normal">/ {selectedApp.rentType?.toLowerCase()}</span></span>
+                 <span className="font-bold text-base">৳{formatMoney(selectedApp.agreedAmount)} <span className="text-xs text-muted-foreground font-normal">/ {selectedApp.rentType?.toLowerCase()}</span></span>
                </div>
                <div className="flex justify-between items-center py-2 border-b border-border/50">
                  <span className="text-muted-foreground font-medium">Duration</span>

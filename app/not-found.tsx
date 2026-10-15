@@ -1,41 +1,37 @@
-
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, House } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center overflow-hidden relative font-sans">
-      
-      {/* Radial glow background effect */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] bg-orange-100/40 rounded-full blur-3xl pointer-events-none" />
-
-
-
-      {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center text-center px-4">
-        
-        <h1 className="text-[12rem] md:text-[20rem] leading-none font-serif text-slate-800 tracking-tight drop-shadow-sm">
+    <main className="min-h-screen bg-background flex items-center justify-center relative">
+      <div className="relative z-10 flex flex-col items-center text-center px-4 py-20 max-w-xl mx-auto w-full">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-muted text-muted-foreground border border-border mb-6">
+          <House className="size-3.5" />
+          Error 404
+        </span>
+        <h1 className="font-heading text-7xl sm:text-8xl font-bold tracking-tight text-foreground leading-none">
           404
         </h1>
-        
-        <div className="mt-8 mb-4">
-          <h2 className="text-3xl md:text-5xl font-serif font-bold text-slate-900 mb-4">
-            Oops! Page Not Found.
-          </h2>
-          <p className="text-slate-600 text-lg md:text-xl max-w-lg mx-auto">
-            Looks like the space you're looking for hasn't been designed yet.
-          </p>
+        <h2 className="mt-4 font-heading text-2xl sm:text-3xl font-bold text-foreground">
+          Page not found
+        </h2>
+        <p className="mt-3 text-sm sm:text-base text-muted-foreground leading-relaxed max-w-md">
+          The page you are looking for may have moved, or the link is no longer valid.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link href="/">
+            <Button className="gap-1.5">
+              Back to home
+              <ArrowRight className="size-4" />
+            </Button>
+          </Link>
+          <Link href="/properties">
+            <Button variant="secondary" className="gap-1.5">
+              Browse properties
+            </Button>
+          </Link>
         </div>
-
-        <Link 
-          href="/"
-          className="mt-8 flex items-center gap-2 bg-gradient-to-r from-orange-600 to-orange-400 text-white px-8 py-4 rounded-full font-medium tracking-wide hover:shadow-lg hover:scale-105 transition-all duration-300"
-        >
-          BACK TO HOME
-          <span className="bg-white/20 p-1 rounded-full">
-            <ArrowUpRight className="w-5 h-5" />
-          </span>
-        </Link>
       </div>
     </main>
   );

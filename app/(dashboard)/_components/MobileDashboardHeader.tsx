@@ -21,6 +21,7 @@ import {
 import { User as UserType } from "@/types";
 
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 export interface DashboardNavItem {
   name: string;
@@ -34,12 +35,15 @@ interface MobileDashboardHeaderProps {
   roleTitle: string;
 }
 
-export function MobileDashboardHeader({ user, navItems, roleTitle }: MobileDashboardHeaderProps) {
+export function MobileDashboardHeader({ user: initialUser, navItems, roleTitle }: MobileDashboardHeaderProps) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const userName = (user as any)?.fullName || user?.profile?.fullName || "User";
+  // Live identity: header persists across navigations, resolves once.
+  const { user: liveUser, loading: userLoading } = useCurrentUser(initialUser ?? undefined);
+  const user = liveUser ?? null;
+  const userName = user?.profile?.fullName || "User";
   const userInitials = userName.substring(0, 2).toUpperCase();
   const userEmail = user?.email || "";
 
@@ -100,16 +104,26 @@ export function MobileDashboardHeader({ user, navItems, roleTitle }: MobileDashb
 
             <div className="p-4 border-t border-border mt-auto">
               <div className="flex items-center justify-between mb-3 px-1">
-                <div className="flex items-center gap-3">
-                  <Avatar className="size-9 border border-border">
-                    <AvatarImage src={user?.profile?.avatarUrl || undefined} />
-                    <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{userInitials}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col overflow-hidden text-left">
-                    <span className="text-xs font-semibold text-foreground truncate">{userName}</span>
-                    <span className="text-[10px] text-muted-foreground truncate">{userEmail}</span>
+                {userLoading && !user ? (
+                  <div className="flex items-center gap-3" aria-hidden="true">
+                    <div className="size-9 rounded-full bg-muted animate-pulse border border-border" />
+                    <div className="space-y-1.5">
+                      <div className="h-3 w-20 rounded bg-muted animate-pulse" />
+                      <div className="h-2.5 w-28 rounded bg-muted animate-pulse" />
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <Avatar className="size-9 border border-border">
+                      <AvatarImage src={user?.profile?.avatarUrl || undefined} />
+                      <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{userInitials}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col overflow-hidden text-left">
+                      <span className="text-xs font-semibold text-foreground truncate">{userName}</span>
+                      <span className="text-[10px] text-muted-foreground truncate">{userEmail}</span>
+                    </div>
+                  </div>
+                )}
                 <ThemeToggle />
               </div>
               <Button
@@ -129,10 +143,14 @@ export function MobileDashboardHeader({ user, navItems, roleTitle }: MobileDashb
 
       <div className="flex items-center gap-2">
         <ThemeToggle />
-        <Avatar className="size-8 border border-border">
-          <AvatarImage src={user?.profile?.avatarUrl || undefined} />
-          <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{userInitials}</AvatarFallback>
-        </Avatar>
+        {userLoading && !user ? (
+          <div className="size-8 rounded-full bg-muted animate-pulse border border-border" aria-hidden="true" />
+        ) : (
+          <Avatar className="size-8 border border-border">
+            <AvatarImage src={user?.profile?.avatarUrl || undefined} />
+            <AvatarFallback className="bg-primary/10 text-primary text-xs font-semibold">{userInitials}</AvatarFallback>
+          </Avatar>
+        )}
       </div>
     </header>
   );
